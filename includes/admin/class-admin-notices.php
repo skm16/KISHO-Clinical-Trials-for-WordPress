@@ -69,10 +69,13 @@ final class Admin_Notices {
 
 		if ( '' !== $last_error ) {
 			echo '<div class="notice notice-warning is-dismissible"><p>';
-			printf(
-				/* translators: %s: the last recorded error message */
-				esc_html__( 'Last sync error: %s', 'kisho-clinical-trials' ),
-				'<strong>' . esc_html( $last_error ) . '</strong>'
+			echo wp_kses(
+				sprintf(
+					/* translators: %s: the last recorded error message */
+					esc_html__( 'Last sync error: %s', 'kisho-clinical-trials' ),
+					'<strong>' . esc_html( $last_error ) . '</strong>'
+				),
+				[ 'strong' => [] ]
 			);
 			echo '</p></div>';
 		}

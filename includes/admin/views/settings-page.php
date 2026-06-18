@@ -24,10 +24,11 @@ use SKMCTF\Admin\Settings;
 use SKMCTF\Admin\Sync_Now_Controller;
 use SKMCTF\Admin\Settings_Page;
 
-// Convenience shorthands for the arrays stored in $s.
-$conditions    = implode( "\n", array_map( 'esc_html', (array) $s['conditions'] ) );
-$include_ncts  = implode( "\n", array_map( 'esc_html', (array) $s['include_ncts'] ) );
-$exclude_ncts  = implode( "\n", array_map( 'esc_html', (array) $s['exclude_ncts'] ) );
+// Convenience shorthands for the arrays stored in $s. Raw values here; each is
+// escaped with esc_textarea() at the point of output below.
+$conditions    = implode( "\n", (array) $s['conditions'] );
+$include_ncts  = implode( "\n", (array) $s['include_ncts'] );
+$exclude_ncts  = implode( "\n", (array) $s['exclude_ncts'] );
 $cur_statuses  = (array) $s['statuses'];
 $cur_fields    = (array) $s['display_fields'];
 
@@ -67,7 +68,7 @@ $all_display_fields = [
 								rows="5"
 								cols="50"
 								class="large-text"
-							><?php echo $conditions; // Pre-escaped above. ?></textarea>
+							><?php echo esc_textarea( $conditions ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One search term per line, e.g. "Pompe disease".', 'kisho-clinical-trials' ); ?></p>
 						</td>
 					</tr>
@@ -83,7 +84,7 @@ $all_display_fields = [
 								rows="4"
 								cols="50"
 								class="large-text"
-							><?php echo $include_ncts; // Pre-escaped above. ?></textarea>
+							><?php echo esc_textarea( $include_ncts ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One NCT ID per line (NCT########). These trials are always included.', 'kisho-clinical-trials' ); ?></p>
 						</td>
 					</tr>
@@ -99,7 +100,7 @@ $all_display_fields = [
 								rows="4"
 								cols="50"
 								class="large-text"
-							><?php echo $exclude_ncts; // Pre-escaped above. ?></textarea>
+							><?php echo esc_textarea( $exclude_ncts ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One NCT ID per line. These trials are always excluded.', 'kisho-clinical-trials' ); ?></p>
 						</td>
 					</tr>
