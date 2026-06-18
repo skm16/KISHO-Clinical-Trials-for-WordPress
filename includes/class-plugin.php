@@ -26,6 +26,12 @@ final class Plugin {
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Taxonomies::class, 'register' ] );
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Meta::class, 'register' ] );
 		( new \SKMCTF\Sync\Scheduler() )->register();
+
+		if ( is_admin() ) {
+			( new \SKMCTF\Admin\Settings_Page() )->register();
+			( new \SKMCTF\Admin\Sync_Now_Controller() )->register();
+			( new \SKMCTF\Admin\Admin_Notices() )->register();
+		}
 	}
 
 	public function load_textdomain(): void {
