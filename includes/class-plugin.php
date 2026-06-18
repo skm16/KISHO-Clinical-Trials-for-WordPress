@@ -22,7 +22,9 @@ final class Plugin {
 	 */
 	public function boot(): void {
 		add_action( 'init', [ $this, 'load_textdomain' ] );
-		// Subsystems are registered here as later tasks add them.
+		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Post_Type::class, 'register' ] );
+		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Taxonomies::class, 'register' ] );
+		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Meta::class, 'register' ] );
 	}
 
 	public function load_textdomain(): void {
