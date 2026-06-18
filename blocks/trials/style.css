@@ -1,0 +1,18 @@
+/**
+ * Clinical Trials block — shared front-end + editor styles.
+ *
+ * These supplement (not replace) the plugin's main stylesheet enqueued
+ * by Assets::enqueue(). Block-specific layout overrides live here.
+ *
+ * @package kisho-clinical-trials
+ * @license GPL-2.0-or-later
+ */
+
+.wp-block-skmctf-trials {
+	width: 100%;
+}
+
+.wp-block-skmctf-trials.alignwide,
+.wp-block-skmctf-trials.alignfull {
+	max-width: none;
+}

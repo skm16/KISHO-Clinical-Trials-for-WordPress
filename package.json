@@ -1,0 +1,14 @@
+{
+  "name": "kisho-clinical-trials",
+  "private": true,
+  "scripts": {
+    "build": "wp-scripts build blocks/trials/index.js --output-path=blocks/trials/build",
+    "start": "wp-scripts start blocks/trials/index.js --output-path=blocks/trials/build"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^28"
+  },
+  "dependencies": {
+    "@babel/runtime": "^8.0.0"
+  }
+}

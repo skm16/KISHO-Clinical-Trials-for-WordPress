@@ -31,6 +31,9 @@ final class Plugin {
 		add_action( 'init', [ \SKMCTF\Frontend\Shortcode::class, 'register' ] );
 		\SKMCTF\Frontend\Assets::register();
 
+		// Gutenberg block (server-rendered via render_callback → List_Renderer).
+		( new \SKMCTF\Frontend\Block() )->register();
+
 		if ( is_admin() ) {
 			( new \SKMCTF\Admin\Settings_Page() )->register();
 			( new \SKMCTF\Admin\Sync_Now_Controller() )->register();
