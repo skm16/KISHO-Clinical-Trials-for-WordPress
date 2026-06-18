@@ -22,5 +22,9 @@ final class AutoloaderTest extends TestCase {
 			$autoloader->path_for( 'SKMCTF\\Plugin' )
 		);
 		$this->assertNull( $autoloader->path_for( 'Other\\Thing' ) );
+		$this->assertSame(
+			'/plugin/includes/post-types/class-trial-meta.php',
+			$autoloader->path_for( 'SKMCTF\\Post_Types\\Trial_Meta' )
+		);
 	}
 }

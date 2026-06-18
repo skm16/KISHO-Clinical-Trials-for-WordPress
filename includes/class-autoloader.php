@@ -39,7 +39,7 @@ final class Autoloader {
 		$parts      = explode( '\\', $relative );
 		$class_part = array_pop( $parts );
 		$file       = 'class-' . str_replace( '_', '-', strtolower( $class_part ) ) . '.php';
-		$dir        = $parts ? strtolower( implode( '/', $parts ) ) . '/' : '';
+		$dir        = $parts ? implode( '/', array_map( static function ( $p ) { return str_replace( '_', '-', strtolower( $p ) ); }, $parts ) ) . '/' : '';
 		return $this->base_dir . $dir . $file;
 	}
 }
