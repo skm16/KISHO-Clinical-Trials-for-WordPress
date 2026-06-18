@@ -118,9 +118,13 @@ final class Sync_Engine {
 		);
 
 		$conditions = Settings::conditions();
+		$include    = Settings::include_ncts();
 
-		if ( empty( $conditions ) ) {
-			$this->log->warn( 'Sync skipped: no conditions configured.' );
+		// Nothing to sync unless there is at least one condition OR one manually
+		// included NCT. An include-only configuration is a valid use case: a PAG
+		// that wants to track a fixed set of trials without a condition search.
+		if ( empty( $conditions ) && empty( $include ) ) {
+			$this->log->warn( 'Sync skipped: no conditions or included NCTs configured.' );
 			$summary['errors'][] = 'no_conditions';
 			$this->log->record_sync( $summary );
 			return $summary;
@@ -149,7 +153,6 @@ final class Sync_Engine {
 		}
 
 		// Manual include list: fetch specific NCTs and upsert them.
-		$include = Settings::include_ncts();
 		if ( ! empty( $include ) ) {
 			$inc_result = $this->client->fetch_by_nct_ids( $include );
 			if ( null !== $inc_result['error'] ) {
@@ -165,12 +168,23 @@ final class Sync_Engine {
 			}
 		}
 
-		// Reconciler skips automatically when $had_error is true (no-wipe safety).
-		$summary['dropped_result'] = $this->reconciler->reconcile(
-			array_values( array_unique( $seen ) ),
-			$had_error,
-			Settings::reconcile_mode()
-		);
+		// Reconciliation removes trials no longer in the result set. It is only
+		// meaningful when at least one CONDITION search ran successfully — that is
+		// what defines the "full" expected set. In an include-only configuration
+		// (no conditions), $seen holds only the manually included NCTs, which is
+		// NOT the full set, so reconciling against it would wrongly close every
+		// other stored trial. Skip reconciliation entirely in that case.
+		// The Reconciler's own guards (had_error, empty-set, drop-ratio) provide
+		// additional no-wipe safety on top of this.
+		if ( ! empty( $conditions ) ) {
+			$summary['dropped_result'] = $this->reconciler->reconcile(
+				array_values( array_unique( $seen ) ),
+				$had_error,
+				Settings::reconcile_mode()
+			);
+		} else {
+			$summary['dropped_result'] = 'skipped_include_only';
+		}
 
 		$this->log->record_sync( $summary );
 		return $summary;

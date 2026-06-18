@@ -157,6 +157,9 @@ final class SyncEngineTest extends WP_UnitTestCase {
 			( new Trial_Repository() )->find_id_by_nct( 'NCT99999999' ),
 			'Included NCT must be findable after run.'
 		);
+		// In include-only mode (no conditions) reconciliation must be skipped,
+		// because $seen does not represent the full expected set.
+		$this->assertSame( 'skipped_include_only', $summary['dropped_result'] );
 	}
 
 	/**
