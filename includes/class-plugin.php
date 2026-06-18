@@ -25,6 +25,7 @@ final class Plugin {
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Post_Type::class, 'register' ] );
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Taxonomies::class, 'register' ] );
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Meta::class, 'register' ] );
+		( new \SKMCTF\Sync\Scheduler() )->register();
 	}
 
 	public function load_textdomain(): void {
