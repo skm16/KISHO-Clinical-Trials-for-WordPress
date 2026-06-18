@@ -35,6 +35,7 @@ final class List_Renderer {
 			'state'    => '',
 			'per_page' => 20,
 			'columns'  => 1,
+			'map'      => false,
 		], $atts );
 
 		// Merge any GET params that match filter keys (form submission).
@@ -59,8 +60,92 @@ final class List_Renderer {
 		$display_fields  = Settings::display_fields();
 		$attribution     = Settings::attribution_enabled();
 
+		// Map is enabled only when the block/shortcode requests it AND the
+		// global setting is on (or the block/shortcode explicitly enables it).
+		// Per-block showMap overrides the global default: if the block passes
+		// map=true the map shows even if the global default is off; the global
+		// setting acts as the default when the attribute is absent/false.
+		$map_requested = ! empty( $atts['map'] ) || Settings::show_map();
+
 		// --- Enqueue assets --------------------------------------------------
 		Assets::enqueue();
+
+		// --- Collect map points (when map is requested and query has posts) ----
+		$map_points = [];
+
+		if ( $map_requested && $query->have_posts() ) {
+			$location_key = Trial_Meta::KEYS['locations'];
+
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				global $post;
+
+				$post_id   = $post->ID;
+				$post_url  = get_permalink( $post_id );
+				$post_title = get_the_title( $post_id );
+
+				$locations = get_post_meta( $post_id, $location_key, true );
+
+				if ( is_array( $locations ) ) {
+					foreach ( $locations as $loc ) {
+						if (
+							! is_array( $loc ) ||
+							! isset( $loc['lat'], $loc['lng'] ) ||
+							null === $loc['lat'] ||
+							null === $loc['lng']
+						) {
+							continue;
+						}
+
+						$lat = (float) $loc['lat'];
+						$lng = (float) $loc['lng'];
+
+						// Skip zero/invalid coordinates.
+						if ( 0.0 === $lat && 0.0 === $lng ) {
+							continue;
+						}
+
+						// Build popup label: facility + city, escaped.
+						$facility = sanitize_text_field( $loc['facility'] ?? '' );
+						$city     = sanitize_text_field( $loc['city'] ?? '' );
+						$label    = $facility ?: $post_title;
+						if ( $city ) {
+							$label .= ' — ' . $city;
+						}
+
+						$map_points[] = [
+							'lat'   => $lat,
+							'lng'   => $lng,
+							'title' => esc_html( $label ),
+							'url'   => esc_url( (string) $post_url ),
+						];
+					}
+				}
+			}
+
+			wp_reset_postdata();
+			$query->rewind_posts();
+		}
+
+		// Only render map when at least one valid coordinate exists.
+		$show_map = $map_requested && ! empty( $map_points );
+
+		if ( $show_map ) {
+			Assets::enqueue_map();
+
+			// OSM attribution (required by OpenStreetMap licence).
+			$osm_attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+			wp_localize_script(
+				Assets::MAP_SCRIPT_HANDLE,
+				'skmctfMap',
+				[
+					'points'      => $map_points,
+					'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
+					'attribution' => $osm_attribution,
+				]
+			);
+		}
 
 		// --- Build output ----------------------------------------------------
 		ob_start();
@@ -69,6 +154,15 @@ final class List_Renderer {
 
 		// Filter form — works with or without JS.
 		self::render_filter_form( $filters );
+
+		// Map container — only output when map is enabled AND ≥1 coordinate.
+		// No empty container is emitted when there are no valid coordinates
+		// (graceful degradation to list-only view).
+		if ( $show_map ) {
+			echo '<div class="skmctf-map" role="region" aria-label="'
+				. esc_attr__( 'Trial locations map', 'kisho-clinical-trials' )
+				. '"></div>';
+		}
 
 		if ( ! $query->have_posts() ) {
 			echo '<p class="skmctf-no-results">'
