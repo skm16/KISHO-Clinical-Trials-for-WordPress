@@ -56,6 +56,9 @@ final class ReconcilerTest extends TestCase {
 		$repo = new FakeRepo( [ 'NCT00000001' ] );
 		$r    = new Reconciler( $repo, new NullLog() );
 		$this->assertSame( 'skipped_empty', $r->reconcile( [], false, 'mark_closed' ) );
+		// Guard must not touch the repo on an empty result set (protects against empty API responses).
+		$this->assertSame( [], $repo->closed );
+		$this->assertSame( [], $repo->deleted );
 	}
 
 	public function test_skips_when_drop_ratio_exceeded(): void {
