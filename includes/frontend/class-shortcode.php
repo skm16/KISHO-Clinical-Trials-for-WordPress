@@ -24,7 +24,7 @@ final class Shortcode {
 	 * @return void
 	 */
 	public static function register(): void {
-		add_shortcode( self::TAG, [ self::class, 'handle' ] );
+		add_shortcode( self::TAG, array( self::class, 'handle' ) );
 	}
 
 	/**
@@ -37,13 +37,13 @@ final class Shortcode {
 	 */
 	public static function handle( $atts, ?string $content = null, string $tag = '' ): string {
 		$atts = shortcode_atts(
-			[
+			array(
 				'status'   => '',
 				'phase'    => '',
 				'state'    => '',
 				'per_page' => 20,
 				'columns'  => 1,
-			],
+			),
 			$atts,
 			self::TAG
 		);

@@ -36,14 +36,14 @@ final class Scheduler {
 	 */
 	public function register(): void {
 		// Wire the AS action hook to our sync runner.
-		add_action( self::ACTION, [ $this, 'run_sync' ] );
+		add_action( self::ACTION, array( $this, 'run_sync' ) );
 
 		// Ensure the recurring action exists on every init (simple self-heal).
-		add_action( 'init', [ $this, 'ensure_scheduled' ] );
+		add_action( 'init', array( $this, 'ensure_scheduled' ) );
 
 		// Opt into Action Scheduler's dedicated recurring-action ensure hook when available.
 		if ( function_exists( 'as_supports' ) && as_supports( 'ensure_recurring_actions_hook' ) ) {
-			add_action( 'action_scheduler_ensure_recurring_actions', [ $this, 'ensure_scheduled' ] );
+			add_action( 'action_scheduler_ensure_recurring_actions', array( $this, 'ensure_scheduled' ) );
 		}
 	}
 
@@ -67,12 +67,12 @@ final class Scheduler {
 		if ( ! function_exists( 'as_has_scheduled_action' ) ) {
 			return;
 		}
-		if ( ! as_has_scheduled_action( self::ACTION, [], self::GROUP ) ) {
+		if ( ! as_has_scheduled_action( self::ACTION, array(), self::GROUP ) ) {
 			as_schedule_recurring_action(
 				strtotime( 'tomorrow 3:00am' ),
 				DAY_IN_SECONDS,
 				self::ACTION,
-				[],
+				array(),
 				self::GROUP
 			);
 		}
@@ -94,7 +94,7 @@ final class Scheduler {
 	 */
 	public function deactivate(): void {
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
-			as_unschedule_all_actions( self::ACTION, [], self::GROUP );
+			as_unschedule_all_actions( self::ACTION, array(), self::GROUP );
 		}
 	}
 }

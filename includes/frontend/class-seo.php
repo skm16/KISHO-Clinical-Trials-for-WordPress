@@ -27,7 +27,7 @@ final class Seo {
 	 * @return void
 	 */
 	public function register(): void {
-		add_filter( 'wp_robots', [ $this, 'maybe_noindex' ] );
+		add_filter( 'wp_robots', array( $this, 'maybe_noindex' ) );
 	}
 
 	/**

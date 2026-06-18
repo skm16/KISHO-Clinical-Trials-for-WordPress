@@ -29,8 +29,8 @@ final class Settings_Page {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_menu', [ $this, 'add_menu' ] );
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'admin_menu', array( $this, 'add_menu' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
 	/**
@@ -44,7 +44,7 @@ final class Settings_Page {
 			__( 'Clinical Trials', 'kisho-clinical-trials' ),
 			'manage_options',
 			self::MENU_SLUG,
-			[ $this, 'render' ]
+			array( $this, 'render' )
 		);
 	}
 
@@ -60,17 +60,17 @@ final class Settings_Page {
 		// Ensure the option row exists with autoload disabled before
 		// WordPress's Settings API touches it.
 		if ( false === get_option( Settings::OPTION ) ) {
-			add_option( Settings::OPTION, [], '', 'no' );
+			add_option( Settings::OPTION, array(), '', 'no' );
 		}
 
 		register_setting(
 			'skmctf_group',
 			Settings::OPTION,
-			[
+			array(
 				'type'              => 'array',
-				'sanitize_callback' => [ $this, 'sanitize' ],
-				'default'           => [],
-			]
+				'sanitize_callback' => array( $this, 'sanitize' ),
+				'default'           => array(),
+			)
 		);
 	}
 
@@ -85,10 +85,10 @@ final class Settings_Page {
 	 */
 	public function sanitize( $input ): array {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return (array) get_option( Settings::OPTION, [] );
+			return (array) get_option( Settings::OPTION, array() );
 		}
-		$existing = (array) get_option( Settings::OPTION, [] );
-		return Settings::sanitize( is_array( $input ) ? $input : [], $existing );
+		$existing = (array) get_option( Settings::OPTION, array() );
+		return Settings::sanitize( is_array( $input ) ? $input : array(), $existing );
 	}
 
 	// -------------------------------------------------------------------------

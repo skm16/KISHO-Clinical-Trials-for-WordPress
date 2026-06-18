@@ -17,24 +17,27 @@ final class Trial_Post_Type {
 	 * @return void
 	 */
 	public static function register(): void {
-		$labels = [
+		$labels = array(
 			'name'          => __( 'Clinical Trials', 'kisho-clinical-trials' ),
 			'singular_name' => __( 'Clinical Trial', 'kisho-clinical-trials' ),
 			'menu_name'     => __( 'Clinical Trials', 'kisho-clinical-trials' ),
 			'all_items'     => __( 'All Trials', 'kisho-clinical-trials' ),
 			'search_items'  => __( 'Search Trials', 'kisho-clinical-trials' ),
 			'not_found'     => __( 'No trials found.', 'kisho-clinical-trials' ),
-		];
+		);
 
-		register_post_type( self::POST_TYPE, [
-			'labels'          => $labels,
-			'public'          => true,
-			'has_archive'     => true,
-			'show_in_rest'    => true,
-			'supports'        => [ 'title', 'editor', 'custom-fields' ],
-			'rewrite'         => [ 'slug' => apply_filters( 'skmctf_trial_rewrite_slug', 'clinical-trials' ) ],
-			'menu_icon'       => 'dashicons-clipboard',
-			'capability_type' => 'post',
-		] );
+		register_post_type(
+			self::POST_TYPE,
+			array(
+				'labels'          => $labels,
+				'public'          => true,
+				'has_archive'     => true,
+				'show_in_rest'    => true,
+				'supports'        => array( 'title', 'editor', 'custom-fields' ),
+				'rewrite'         => array( 'slug' => apply_filters( 'skmctf_trial_rewrite_slug', 'clinical-trials' ) ),
+				'menu_icon'       => 'dashicons-clipboard',
+				'capability_type' => 'post',
+			)
+		);
 	}
 }

@@ -78,10 +78,10 @@ final class Reconciler {
 		if ( count( $existing ) > 0 && ( count( $dropped ) / count( $existing ) ) > $max_ratio ) {
 			$this->log->warn(
 				'Reconcile skipped: drop ratio exceeded.',
-				[
+				array(
 					'dropped'  => count( $dropped ),
 					'existing' => count( $existing ),
-				]
+				)
 			);
 			return 'skipped_ratio';
 		}
@@ -97,10 +97,10 @@ final class Reconciler {
 
 		$this->log->info(
 			'Reconcile complete.',
-			[
+			array(
 				'dropped' => count( $dropped ),
 				'mode'    => $mode,
-			]
+			)
 		);
 		return 'done';
 	}

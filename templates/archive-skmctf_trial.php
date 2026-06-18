@@ -30,7 +30,7 @@ get_header();
 		<?php
 		$archive_description = get_the_archive_description();
 		if ( $archive_description ) :
-		?>
+			?>
 		<div class="skmctf-archive-trials__description archive-description">
 			<?php echo wp_kses_post( $archive_description ); ?>
 		</div>
@@ -42,7 +42,7 @@ get_header();
 		// Delegate entirely to List_Renderer — it handles pagination, filters,
 		// query, templates, and optional map from GET params.
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo \SKMCTF\Frontend\List_Renderer::render( [] );
+		echo \SKMCTF\Frontend\List_Renderer::render( array() );
 		?>
 	</div>
 

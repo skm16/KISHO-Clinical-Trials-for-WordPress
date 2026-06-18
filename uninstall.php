@@ -12,13 +12,13 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 // Remove all plugin options.
-foreach ( [ 'skmctf_settings', 'skmctf_last_sync', 'skmctf_last_error', 'skmctf_log' ] as $opt ) {
+foreach ( array( 'skmctf_settings', 'skmctf_last_sync', 'skmctf_last_error', 'skmctf_log' ) as $opt ) {
 	delete_option( $opt );
 }
 
 // Unschedule the daily sync action (best-effort; Action Scheduler may already be gone).
 if ( function_exists( 'as_unschedule_all_actions' ) ) {
-	as_unschedule_all_actions( 'skmctf_daily_sync', [], 'kisho-clinical-trials' );
+	as_unschedule_all_actions( 'skmctf_daily_sync', array(), 'kisho-clinical-trials' );
 }
 
 // NOTE: trial posts are deliberately NOT deleted on uninstall (user content / SEO value).

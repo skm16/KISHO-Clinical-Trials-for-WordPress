@@ -42,8 +42,8 @@ final class Prompt_Builder {
 	 * @return string
 	 */
 	public static function user( array $meta ): string {
-		$elig  = is_array( $meta['eligibility'] ?? null ) ? $meta['eligibility'] : [];
-		$lines = [];
+		$elig  = is_array( $meta['eligibility'] ?? null ) ? $meta['eligibility'] : array();
+		$lines = array();
 
 		/* translators: %s: the trial's brief title. */
 		$lines[] = sprintf( __( 'Title: %s', 'kisho-clinical-trials' ), $meta['brief_title'] ?? '' );
@@ -54,7 +54,7 @@ final class Prompt_Builder {
 		$lines[] = sprintf(
 			/* translators: %s: comma-separated list of conditions. */
 			__( 'Conditions: %s', 'kisho-clinical-trials' ),
-			implode( ', ', (array) ( $meta['conditions'] ?? [] ) )
+			implode( ', ', (array) ( $meta['conditions'] ?? array() ) )
 		);
 		/* translators: %s: the trial's lead sponsor name. */
 		$lines[] = sprintf( __( 'Sponsor: %s', 'kisho-clinical-trials' ), $meta['lead_sponsor'] ?? '' );

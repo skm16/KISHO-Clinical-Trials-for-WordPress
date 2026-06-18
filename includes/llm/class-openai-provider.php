@@ -44,26 +44,32 @@ final class Openai_Provider implements Llm_Provider {
 	 *
 	 * @return string|\WP_Error
 	 */
-	public function generate_summary( string $system, string $user, array $opts = [] ) {
-		$body = [
+	public function generate_summary( string $system, string $user, array $opts = array() ) {
+		$body = array(
 			'model'      => $this->model,
-			'messages'   => [
-				[ 'role' => 'system', 'content' => $system ],
-				[ 'role' => 'user',   'content' => $user ],
-			],
+			'messages'   => array(
+				array(
+					'role'    => 'system',
+					'content' => $system,
+				),
+				array(
+					'role'    => 'user',
+					'content' => $user,
+				),
+			),
 			'max_tokens' => (int) ( $opts['max_tokens'] ?? 700 ),
-		];
+		);
 
 		$res = wp_remote_post(
 			self::URL,
-			[
+			array(
 				'timeout' => 30,
-				'headers' => [
+				'headers' => array(
 					'Authorization' => 'Bearer ' . $this->key,
 					'Content-Type'  => 'application/json',
-				],
+				),
 				'body'    => wp_json_encode( $body ),
-			]
+			)
 		);
 
 		if ( is_wp_error( $res ) ) {

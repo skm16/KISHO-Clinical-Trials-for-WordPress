@@ -26,20 +26,20 @@ use SKMCTF\Admin\Settings_Page;
 
 // Convenience shorthands for the arrays stored in $s. Raw values here; each is
 // escaped with esc_textarea() at the point of output below.
-$conditions    = implode( "\n", (array) $s['conditions'] );
-$include_ncts  = implode( "\n", (array) $s['include_ncts'] );
-$exclude_ncts  = implode( "\n", (array) $s['exclude_ncts'] );
-$cur_statuses  = (array) $s['statuses'];
-$cur_fields    = (array) $s['display_fields'];
+$conditions   = implode( "\n", (array) $s['conditions'] );
+$include_ncts = implode( "\n", (array) $s['include_ncts'] );
+$exclude_ncts = implode( "\n", (array) $s['exclude_ncts'] );
+$cur_statuses = (array) $s['statuses'];
+$cur_fields   = (array) $s['display_fields'];
 
-$all_display_fields = [
+$all_display_fields = array(
 	'status'     => __( 'Status', 'kisho-clinical-trials' ),
 	'phase'      => __( 'Phase', 'kisho-clinical-trials' ),
 	'conditions' => __( 'Conditions', 'kisho-clinical-trials' ),
 	'sponsor'    => __( 'Sponsor', 'kisho-clinical-trials' ),
 	'locations'  => __( 'Locations', 'kisho-clinical-trials' ),
 	'summary'    => __( 'Summary', 'kisho-clinical-trials' ),
-];
+);
 ?>
 <div class="wrap">
 	<h1><?php esc_html_e( 'Clinical Trials Feed', 'kisho-clinical-trials' ); ?></h1>
@@ -47,8 +47,8 @@ $all_display_fields = [
 	<div id="skmctf-settings-wrap" style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
 
 		<!-- =====================================================================
-		     Main settings form
-		     ===================================================================== -->
+			Main settings form
+			===================================================================== -->
 		<div style="flex:1;min-width:520px;">
 			<form method="post" action="options.php">
 				<?php settings_fields( 'skmctf_group' ); ?>
@@ -337,8 +337,8 @@ $all_display_fields = [
 		</div><!-- /main -->
 
 		<!-- =====================================================================
-		     Sidebar
-		     ===================================================================== -->
+			Sidebar
+			===================================================================== -->
 		<div style="width:280px;flex-shrink:0;">
 
 			<!-- ── Sync Status ─────────────────────────────────────────── -->

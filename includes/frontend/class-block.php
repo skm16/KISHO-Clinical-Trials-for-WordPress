@@ -24,7 +24,7 @@ final class Block {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'init', [ $this, 'register_block' ] );
+		add_action( 'init', array( $this, 'register_block' ) );
 	}
 
 	/**
@@ -43,9 +43,9 @@ final class Block {
 		// We override editorScript to the compiled asset.
 		register_block_type(
 			$block_dir,
-			[
-				'render_callback' => [ $this, 'render' ],
-			]
+			array(
+				'render_callback' => array( $this, 'render' ),
+			)
 		);
 
 		// Register translations for the editor script if the compiled asset
@@ -70,14 +70,14 @@ final class Block {
 	 */
 	public function render( array $attributes ): string {
 		return List_Renderer::render(
-			[
-				'status'   => $attributes['status']  ?? '',
-				'phase'    => $attributes['phase']   ?? '',
-				'state'    => $attributes['state']   ?? '',
+			array(
+				'status'   => $attributes['status'] ?? '',
+				'phase'    => $attributes['phase'] ?? '',
+				'state'    => $attributes['state'] ?? '',
 				'per_page' => $attributes['perPage'] ?? 20,
 				'map'      => ! empty( $attributes['showMap'] ),
 				'columns'  => $attributes['columns'] ?? 1,
-			]
+			)
 		);
 	}
 }

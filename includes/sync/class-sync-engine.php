@@ -86,13 +86,13 @@ final class Sync_Engine {
 	 * @return array{inserted:int,updated:int,summarized:int,dropped_result:string,errors:array}
 	 */
 	public function run( string $trigger = 'manual' ): array {
-		$summary = [
+		$summary = array(
 			'inserted'       => 0,
 			'updated'        => 0,
 			'summarized'     => 0,
 			'dropped_result' => '',
-			'errors'         => [],
-		];
+			'errors'         => array(),
+		);
 
 		$conditions = Settings::conditions();
 
@@ -106,14 +106,14 @@ final class Sync_Engine {
 		$statuses  = Settings::statuses();
 		$exclude   = array_flip( Settings::exclude_ncts() );
 		$had_error = false;
-		$seen      = [];
+		$seen      = array();
 
 		foreach ( $conditions as $condition ) {
 			$result = $this->client->fetch_all_for_condition( $condition, $statuses );
 
 			if ( null !== $result['error'] ) {
-				$had_error         = true;
-				$msg               = 'Fetch failed for "' . $condition . '": ' . $result['error']->get_error_message();
+				$had_error           = true;
+				$msg                 = 'Fetch failed for "' . $condition . '": ' . $result['error']->get_error_message();
 				$summary['errors'][] = $msg;
 				$this->log->error( $msg );
 				// Per-condition error: continue to next condition; do NOT abort the run.
@@ -137,15 +137,15 @@ final class Sync_Engine {
 				}
 
 				if ( $existing ) {
-					$summary['updated']++;
+					++$summary['updated'];
 				} else {
-					$summary['inserted']++;
+					++$summary['inserted'];
 				}
 
 				$seen[] = $meta['nct_id'];
 
 				if ( $this->summaries->maybe_generate( $post_id, $meta ) ) {
-					$summary['summarized']++;
+					++$summary['summarized'];
 				}
 			}
 		}

@@ -71,7 +71,7 @@ final class Summary_Service {
 		if ( is_wp_error( $text ) ) {
 			$this->log->error(
 				'Summary generation failed: ' . $text->get_error_message(),
-				[ 'post' => $post_id ]
+				array( 'post' => $post_id )
 			);
 			return false; // Front end unaffected; falls back to raw display.
 		}

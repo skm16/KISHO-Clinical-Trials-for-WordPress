@@ -17,7 +17,7 @@ if ( empty( $locations ) || ! is_array( $locations ) ) {
 }
 
 // Collect valid map points when map is requested.
-$map_points = [];
+$map_points = array();
 
 if ( $show_map ) {
 	foreach ( $locations as $loc ) {
@@ -40,11 +40,11 @@ if ( $show_map ) {
 		if ( $facility && $city ) {
 			$label .= ' — ' . $city;
 		}
-		$map_points[] = [
+		$map_points[] = array(
 			'lat'   => $lat,
 			'lng'   => $lng,
 			'title' => esc_html( $label ),
-		];
+		);
 	}
 
 	if ( ! empty( $map_points ) ) {
@@ -55,11 +55,11 @@ if ( $show_map ) {
 		wp_localize_script(
 			\SKMCTF\Frontend\Assets::MAP_SCRIPT_HANDLE,
 			'skmctfMap',
-			[
+			array(
 				'points'      => $map_points,
 				'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
 				'attribution' => $osm_attribution,
-			]
+			)
 		);
 	}
 }
@@ -77,21 +77,22 @@ if ( $show_map ) {
 	<?php endif; ?>
 
 	<ul class="skmctf-trial__locations-list">
-		<?php foreach ( $locations as $loc ) :
+		<?php
+		foreach ( $locations as $loc ) :
 			if ( ! is_array( $loc ) ) {
 				continue;
 			}
-			$facility = ! empty( $loc['facility'] ) ? $loc['facility'] : '';
-			$city     = ! empty( $loc['city'] )     ? $loc['city']     : '';
-			$state    = ! empty( $loc['state'] )    ? $loc['state']    : '';
-			$country  = ! empty( $loc['country'] )  ? $loc['country']  : '';
-			$loc_status = ! empty( $loc['status'] ) ? $loc['status']   : '';
+			$facility   = ! empty( $loc['facility'] ) ? $loc['facility'] : '';
+			$city       = ! empty( $loc['city'] ) ? $loc['city'] : '';
+			$state      = ! empty( $loc['state'] ) ? $loc['state'] : '';
+			$country    = ! empty( $loc['country'] ) ? $loc['country'] : '';
+			$loc_status = ! empty( $loc['status'] ) ? $loc['status'] : '';
 
-			$address_parts = array_filter( [ $city, $state, $country ] );
+			$address_parts = array_filter( array( $city, $state, $country ) );
 			if ( ! $facility && ! $address_parts ) {
 				continue;
 			}
-		?>
+			?>
 		<li class="skmctf-trial__location">
 			<?php if ( $facility ) : ?>
 				<span class="skmctf-trial__location-facility"><?php echo esc_html( $facility ); ?></span>

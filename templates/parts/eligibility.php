@@ -11,9 +11,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$elig_sex      = ! empty( $eligibility['sex'] )      ? $eligibility['sex']      : '';
-$elig_min_age  = ! empty( $eligibility['min_age'] )  ? $eligibility['min_age']  : '';
-$elig_max_age  = ! empty( $eligibility['max_age'] )  ? $eligibility['max_age']  : '';
+$elig_sex      = ! empty( $eligibility['sex'] ) ? $eligibility['sex'] : '';
+$elig_min_age  = ! empty( $eligibility['min_age'] ) ? $eligibility['min_age'] : '';
+$elig_max_age  = ! empty( $eligibility['max_age'] ) ? $eligibility['max_age'] : '';
 $elig_criteria = ! empty( $eligibility['criteria'] ) ? $eligibility['criteria'] : '';
 
 if ( ! $elig_sex && ! $elig_min_age && ! $elig_max_age && ! $elig_criteria ) {

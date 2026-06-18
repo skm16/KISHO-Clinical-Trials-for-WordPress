@@ -44,25 +44,30 @@ final class Anthropic_Provider implements Llm_Provider {
 	 *
 	 * @return string|\WP_Error
 	 */
-	public function generate_summary( string $system, string $user, array $opts = [] ) {
-		$body = [
+	public function generate_summary( string $system, string $user, array $opts = array() ) {
+		$body = array(
 			'model'      => $this->model,
 			'max_tokens' => (int) ( $opts['max_tokens'] ?? 700 ),
 			'system'     => $system,
-			'messages'   => [ [ 'role' => 'user', 'content' => $user ] ],
-		];
+			'messages'   => array(
+				array(
+					'role'    => 'user',
+					'content' => $user,
+				),
+			),
+		);
 
 		$res = wp_remote_post(
 			self::URL,
-			[
+			array(
 				'timeout' => 30,
-				'headers' => [
+				'headers' => array(
 					'x-api-key'         => $this->key,
 					'anthropic-version' => '2023-06-01',
 					'content-type'      => 'application/json',
-				],
+				),
 				'body'    => wp_json_encode( $body ),
-			]
+			)
 		);
 
 		if ( is_wp_error( $res ) ) {

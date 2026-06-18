@@ -14,7 +14,7 @@ namespace SKMCTF\Post_Types;
 final class Trial_Meta {
 
 	/** short_key => full meta_key */
-	public const KEYS = [
+	public const KEYS = array(
 		'nct_id'                    => 'skmctf_nct_id',
 		'official_title'            => 'skmctf_official_title',
 		'brief_title'               => 'skmctf_brief_title',
@@ -31,7 +31,7 @@ final class Trial_Meta {
 		'ct_last_update'            => 'skmctf_ct_last_update',
 		'last_synced'               => 'skmctf_last_synced',
 		'ct_url'                    => 'skmctf_ct_url',
-	];
+	);
 
 	/**
 	 * Sanitize an NCT ID to uppercase canonical form (NCT########).
@@ -62,10 +62,14 @@ final class Trial_Meta {
 	 * @return array Sanitized array of strings.
 	 */
 	public static function sanitize_string_list( $value ): array {
-		return array_values( array_filter( array_map(
-			'sanitize_text_field',
-			is_array( $value ) ? $value : []
-		) ) );
+		return array_values(
+			array_filter(
+				array_map(
+					'sanitize_text_field',
+					is_array( $value ) ? $value : array()
+				)
+			)
+		);
 	}
 
 	/**
@@ -75,12 +79,12 @@ final class Trial_Meta {
 	 * @return array Sanitized array of location objects.
 	 */
 	public static function sanitize_locations( $value ): array {
-		$out = [];
+		$out = array();
 		foreach ( (array) $value as $loc ) {
 			if ( ! is_array( $loc ) ) {
 				continue;
 			}
-			$out[] = [
+			$out[] = array(
 				'facility' => sanitize_text_field( $loc['facility'] ?? '' ),
 				'city'     => sanitize_text_field( $loc['city'] ?? '' ),
 				'state'    => sanitize_text_field( $loc['state'] ?? '' ),
@@ -88,7 +92,7 @@ final class Trial_Meta {
 				'status'   => sanitize_text_field( $loc['status'] ?? '' ),
 				'lat'      => isset( $loc['lat'] ) ? (float) $loc['lat'] : null,
 				'lng'      => isset( $loc['lng'] ) ? (float) $loc['lng'] : null,
-			];
+			);
 		}
 		return $out;
 	}
@@ -100,13 +104,13 @@ final class Trial_Meta {
 	 * @return array Sanitized eligibility object.
 	 */
 	public static function sanitize_eligibility( $value ): array {
-		$value = is_array( $value ) ? $value : [];
-		return [
+		$value = is_array( $value ) ? $value : array();
+		return array(
 			'sex'      => sanitize_text_field( $value['sex'] ?? '' ),
 			'min_age'  => sanitize_text_field( $value['min_age'] ?? '' ),
 			'max_age'  => sanitize_text_field( $value['max_age'] ?? '' ),
 			'criteria' => sanitize_textarea_field( $value['criteria'] ?? '' ),
-		];
+		);
 	}
 
 	/**
@@ -116,72 +120,112 @@ final class Trial_Meta {
 	 */
 	public static function definitions(): array {
 		$k    = self::KEYS;
-		$str  = [ 'type' => 'string', 'single' => true, 'sanitize_callback' => 'sanitize_text_field', 'show_in_rest' => true ];
-		$text = [ 'type' => 'string', 'single' => true, 'sanitize_callback' => 'sanitize_textarea_field', 'show_in_rest' => true ];
-		return [
-			$k['nct_id']                    => [ 'type' => 'string', 'single' => true, 'sanitize_callback' => [ self::class, 'sanitize_nct' ], 'show_in_rest' => true ],
+		$str  = array(
+			'type'              => 'string',
+			'single'            => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'show_in_rest'      => true,
+		);
+		$text = array(
+			'type'              => 'string',
+			'single'            => true,
+			'sanitize_callback' => 'sanitize_textarea_field',
+			'show_in_rest'      => true,
+		);
+		return array(
+			$k['nct_id']                    => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => array( self::class, 'sanitize_nct' ),
+				'show_in_rest'      => true,
+			),
 			$k['official_title']            => $str,
 			$k['brief_title']               => $str,
 			$k['overall_status']            => $str,
 			$k['phase']                     => $str,
 			$k['study_type']                => $str,
 			$k['lead_sponsor']              => $str,
-			$k['ct_last_update']            => [ 'type' => 'string', 'single' => true, 'sanitize_callback' => [ self::class, 'sanitize_date' ], 'show_in_rest' => true ],
-			$k['plain_summary_source_date'] => [ 'type' => 'string', 'single' => true, 'sanitize_callback' => [ self::class, 'sanitize_date' ], 'show_in_rest' => true ],
-			$k['last_synced']               => [ 'type' => 'integer', 'single' => true, 'sanitize_callback' => 'absint', 'show_in_rest' => true ],
-			$k['ct_url']                    => [ 'type' => 'string', 'single' => true, 'sanitize_callback' => 'esc_url_raw', 'show_in_rest' => true ],
+			$k['ct_last_update']            => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => array( self::class, 'sanitize_date' ),
+				'show_in_rest'      => true,
+			),
+			$k['plain_summary_source_date'] => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => array( self::class, 'sanitize_date' ),
+				'show_in_rest'      => true,
+			),
+			$k['last_synced']               => array(
+				'type'              => 'integer',
+				'single'            => true,
+				'sanitize_callback' => 'absint',
+				'show_in_rest'      => true,
+			),
+			$k['ct_url']                    => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => 'esc_url_raw',
+				'show_in_rest'      => true,
+			),
 			$k['brief_summary']             => $text,
-			$k['plain_summary']             => [ 'type' => 'string', 'single' => true, 'sanitize_callback' => 'wp_kses_post', 'show_in_rest' => true ],
-			$k['conditions']                => [
+			$k['plain_summary']             => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => 'wp_kses_post',
+				'show_in_rest'      => true,
+			),
+			$k['conditions']                => array(
 				'type'              => 'array',
 				'single'            => true,
-				'sanitize_callback' => [ self::class, 'sanitize_string_list' ],
-				'show_in_rest'      => [
-					'schema' => [
+				'sanitize_callback' => array( self::class, 'sanitize_string_list' ),
+				'show_in_rest'      => array(
+					'schema' => array(
 						'type'  => 'array',
-						'items' => [ 'type' => 'string' ],
-					],
-				],
-			],
-			$k['locations']                 => [
+						'items' => array( 'type' => 'string' ),
+					),
+				),
+			),
+			$k['locations']                 => array(
 				'type'              => 'array',
 				'single'            => true,
-				'sanitize_callback' => [ self::class, 'sanitize_locations' ],
-				'show_in_rest'      => [
-					'schema' => [
+				'sanitize_callback' => array( self::class, 'sanitize_locations' ),
+				'show_in_rest'      => array(
+					'schema' => array(
 						'type'  => 'array',
-						'items' => [
+						'items' => array(
 							'type'       => 'object',
-							'properties' => [
-								'facility' => [ 'type' => 'string' ],
-								'city'     => [ 'type' => 'string' ],
-								'state'    => [ 'type' => 'string' ],
-								'country'  => [ 'type' => 'string' ],
-								'status'   => [ 'type' => 'string' ],
-								'lat'      => [ 'type' => [ 'number', 'null' ] ],
-								'lng'      => [ 'type' => [ 'number', 'null' ] ],
-							],
-						],
-					],
-				],
-			],
-			$k['eligibility']               => [
+							'properties' => array(
+								'facility' => array( 'type' => 'string' ),
+								'city'     => array( 'type' => 'string' ),
+								'state'    => array( 'type' => 'string' ),
+								'country'  => array( 'type' => 'string' ),
+								'status'   => array( 'type' => 'string' ),
+								'lat'      => array( 'type' => array( 'number', 'null' ) ),
+								'lng'      => array( 'type' => array( 'number', 'null' ) ),
+							),
+						),
+					),
+				),
+			),
+			$k['eligibility']               => array(
 				'type'              => 'object',
 				'single'            => true,
-				'sanitize_callback' => [ self::class, 'sanitize_eligibility' ],
-				'show_in_rest'      => [
-					'schema' => [
+				'sanitize_callback' => array( self::class, 'sanitize_eligibility' ),
+				'show_in_rest'      => array(
+					'schema' => array(
 						'type'       => 'object',
-						'properties' => [
-							'sex'      => [ 'type' => 'string' ],
-							'min_age'  => [ 'type' => 'string' ],
-							'max_age'  => [ 'type' => 'string' ],
-							'criteria' => [ 'type' => 'string' ],
-						],
-					],
-				],
-			],
-		];
+						'properties' => array(
+							'sex'      => array( 'type' => 'string' ),
+							'min_age'  => array( 'type' => 'string' ),
+							'max_age'  => array( 'type' => 'string' ),
+							'criteria' => array( 'type' => 'string' ),
+						),
+					),
+				),
+			),
+		);
 	}
 
 	/**

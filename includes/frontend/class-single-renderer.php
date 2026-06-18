@@ -32,35 +32,37 @@ final class Single_Renderer {
 		$status_slug    = sanitize_html_class( strtolower( str_replace( '_', '-', $overall_status ) ) );
 
 		$official_title = ! empty( $meta['official_title'] ) ? $meta['official_title'] : '';
-		$phase         = ! empty( $meta['phase'] ) ? $meta['phase'] : '';
-		$conditions    = ! empty( $meta['conditions'] ) && is_array( $meta['conditions'] ) ? $meta['conditions'] : [];
-		$sponsor       = ! empty( $meta['lead_sponsor'] ) ? $meta['lead_sponsor'] : '';
-		$plain_summary = ! empty( $meta['plain_summary'] ) ? $meta['plain_summary'] : '';
-		$brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : '';
-		$eligibility   = ! empty( $meta['eligibility'] ) && is_array( $meta['eligibility'] ) ? $meta['eligibility'] : [];
-		$locations     = ! empty( $meta['locations'] ) && is_array( $meta['locations'] ) ? $meta['locations'] : [];
-		$ct_url        = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
-		$show_map      = Settings::show_map();
+		$phase          = ! empty( $meta['phase'] ) ? $meta['phase'] : '';
+		$conditions     = ! empty( $meta['conditions'] ) && is_array( $meta['conditions'] ) ? $meta['conditions'] : array();
+		$sponsor        = ! empty( $meta['lead_sponsor'] ) ? $meta['lead_sponsor'] : '';
+		$plain_summary  = ! empty( $meta['plain_summary'] ) ? $meta['plain_summary'] : '';
+		$brief_summary  = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : '';
+		$eligibility    = ! empty( $meta['eligibility'] ) && is_array( $meta['eligibility'] ) ? $meta['eligibility'] : array();
+		$locations      = ! empty( $meta['locations'] ) && is_array( $meta['locations'] ) ? $meta['locations'] : array();
+		$ct_url         = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
+		$show_map       = Settings::show_map();
 
 		ob_start();
 		// phpcs:disable WordPress.PHP.DontExtract.extract_extract
-		extract( compact(
-			'post_id',
-			'meta',
-			'overall_status',
-			'status_label',
-			'status_slug',
-			'official_title',
-			'phase',
-			'conditions',
-			'sponsor',
-			'plain_summary',
-			'brief_summary',
-			'eligibility',
-			'locations',
-			'ct_url',
-			'show_map'
-		) );
+		extract(
+			compact(
+				'post_id',
+				'meta',
+				'overall_status',
+				'status_label',
+				'status_slug',
+				'official_title',
+				'phase',
+				'conditions',
+				'sponsor',
+				'plain_summary',
+				'brief_summary',
+				'eligibility',
+				'locations',
+				'ct_url',
+				'show_map'
+			)
+		);
 		// phpcs:enable
 
 		try {
@@ -80,18 +82,18 @@ final class Single_Renderer {
 	 */
 	private static function get_meta( int $post_id ): array {
 		$keys = Trial_Meta::KEYS;
-		return [
-			'nct_id'         => get_post_meta( $post_id, $keys['nct_id'],          true ),
-			'official_title' => get_post_meta( $post_id, $keys['official_title'],   true ),
-			'overall_status' => get_post_meta( $post_id, $keys['overall_status'],   true ),
-			'phase'          => get_post_meta( $post_id, $keys['phase'],            true ),
-			'conditions'     => get_post_meta( $post_id, $keys['conditions'],       true ),
-			'lead_sponsor'   => get_post_meta( $post_id, $keys['lead_sponsor'],     true ),
-			'locations'      => get_post_meta( $post_id, $keys['locations'],        true ),
-			'eligibility'    => get_post_meta( $post_id, $keys['eligibility'],      true ),
-			'brief_summary'  => get_post_meta( $post_id, $keys['brief_summary'],    true ),
-			'plain_summary'  => get_post_meta( $post_id, $keys['plain_summary'],    true ),
-			'ct_url'         => get_post_meta( $post_id, $keys['ct_url'],           true ),
-		];
+		return array(
+			'nct_id'         => get_post_meta( $post_id, $keys['nct_id'], true ),
+			'official_title' => get_post_meta( $post_id, $keys['official_title'], true ),
+			'overall_status' => get_post_meta( $post_id, $keys['overall_status'], true ),
+			'phase'          => get_post_meta( $post_id, $keys['phase'], true ),
+			'conditions'     => get_post_meta( $post_id, $keys['conditions'], true ),
+			'lead_sponsor'   => get_post_meta( $post_id, $keys['lead_sponsor'], true ),
+			'locations'      => get_post_meta( $post_id, $keys['locations'], true ),
+			'eligibility'    => get_post_meta( $post_id, $keys['eligibility'], true ),
+			'brief_summary'  => get_post_meta( $post_id, $keys['brief_summary'], true ),
+			'plain_summary'  => get_post_meta( $post_id, $keys['plain_summary'], true ),
+			'ct_url'         => get_post_meta( $post_id, $keys['ct_url'], true ),
+		);
 	}
 }

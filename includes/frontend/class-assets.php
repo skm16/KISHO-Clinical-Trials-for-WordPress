@@ -32,7 +32,7 @@ final class Assets {
 	 * @return void
 	 */
 	public static function register(): void {
-		add_action( 'wp_enqueue_scripts', [ self::class, 'do_register' ] );
+		add_action( 'wp_enqueue_scripts', array( self::class, 'do_register' ) );
 	}
 
 	/**
@@ -44,14 +44,14 @@ final class Assets {
 		wp_register_style(
 			self::STYLE_HANDLE,
 			plugins_url( 'assets/css/frontend.css', SKMCTF_FILE ),
-			[],
+			array(),
 			SKMCTF_VERSION
 		);
 
 		wp_register_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/js/filters.js', SKMCTF_FILE ),
-			[],
+			array(),
 			SKMCTF_VERSION,
 			true // load in footer
 		);
@@ -60,14 +60,14 @@ final class Assets {
 		wp_register_style(
 			self::LEAFLET_STYLE_HANDLE,
 			plugins_url( 'assets/lib/leaflet/leaflet.css', SKMCTF_FILE ),
-			[],
+			array(),
 			'1.9.4'
 		);
 
 		wp_register_script(
 			self::LEAFLET_SCRIPT_HANDLE,
 			plugins_url( 'assets/lib/leaflet/leaflet.js', SKMCTF_FILE ),
-			[],
+			array(),
 			'1.9.4',
 			true // load in footer
 		);
@@ -75,7 +75,7 @@ final class Assets {
 		wp_register_script(
 			self::MAP_SCRIPT_HANDLE,
 			plugins_url( 'assets/js/map.js', SKMCTF_FILE ),
-			[ self::LEAFLET_SCRIPT_HANDLE ],
+			array( self::LEAFLET_SCRIPT_HANDLE ),
 			SKMCTF_VERSION,
 			true // load in footer
 		);

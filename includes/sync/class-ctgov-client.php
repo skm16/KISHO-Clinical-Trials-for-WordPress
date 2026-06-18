@@ -42,19 +42,19 @@ final class Ctgov_Client {
 	 * @return array { studies: array[], error: \WP_Error|null }
 	 */
 	public function fetch_all_for_condition( string $condition, array $statuses ): array {
-		$studies = [];
+		$studies = array();
 		$token   = null;
 		$pages   = 0;
 
 		do {
-			$pages++;
-			$args = [
+			++$pages;
+			$args = array(
 				'query.cond'           => $condition,
 				'filter.overallStatus' => implode( '|', array_map( 'sanitize_text_field', $statuses ) ),
 				'fields'               => self::FIELDS,
 				'pageSize'             => 100,
 				'format'               => 'json',
-			];
+			);
 
 			if ( null === $token ) {
 				$args['countTotal'] = 'true';
@@ -66,23 +66,26 @@ final class Ctgov_Client {
 			$response = $this->request( $url );
 
 			if ( is_wp_error( $response ) ) {
-				return [ 'studies' => [], 'error' => $response ];
+				return array(
+					'studies' => array(),
+					'error'   => $response,
+				);
 			}
 
 			$code = (int) wp_remote_retrieve_response_code( $response );
 			if ( 200 !== $code ) {
-				return [
-					'studies' => [],
+				return array(
+					'studies' => array(),
 					'error'   => new \WP_Error( 'skmctf_http', "CT.gov returned HTTP {$code}." ),
-				];
+				);
 			}
 
 			$data = json_decode( wp_remote_retrieve_body( $response ), true );
 			if ( ! is_array( $data ) || ! isset( $data['studies'] ) ) {
-				return [
-					'studies' => [],
+				return array(
+					'studies' => array(),
 					'error'   => new \WP_Error( 'skmctf_parse', 'Unexpected CT.gov response.' ),
-				];
+				);
 			}
 
 			foreach ( $data['studies'] as $s ) {
@@ -93,7 +96,10 @@ final class Ctgov_Client {
 
 		} while ( $token && $pages < self::MAX_PAGES );
 
-		return [ 'studies' => $studies, 'error' => null ];
+		return array(
+			'studies' => $studies,
+			'error'   => null,
+		);
 	}
 
 	/**
@@ -103,11 +109,11 @@ final class Ctgov_Client {
 	 * @return array|\WP_Error WordPress HTTP response or WP_Error.
 	 */
 	private function request( string $url ) {
-		$opts = [
+		$opts = array(
 			'timeout'    => 15,
 			'user-agent' => 'KishoClinicalTrials/1.0 (+https://skm.digital)',
-			'headers'    => [ 'Accept' => 'application/json' ],
-		];
+			'headers'    => array( 'Accept' => 'application/json' ),
+		);
 
 		$response = wp_remote_get( $url, $opts );
 

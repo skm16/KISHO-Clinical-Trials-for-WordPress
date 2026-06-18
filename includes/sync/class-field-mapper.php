@@ -15,14 +15,14 @@ final class Field_Mapper {
 	/**
 	 * Map phase codes to human-readable labels.
 	 */
-	private const PHASE_LABELS = [
+	private const PHASE_LABELS = array(
 		'EARLY_PHASE1' => 'Early Phase 1',
 		'PHASE1'       => 'Phase 1',
 		'PHASE2'       => 'Phase 2',
 		'PHASE3'       => 'Phase 3',
 		'PHASE4'       => 'Phase 4',
 		'NA'           => 'Not Applicable',
-	];
+	);
 
 	/**
 	 * Map a single CT.gov v2 study object to our flat meta array.
@@ -34,19 +34,19 @@ final class Field_Mapper {
 	 * @return array Flat array keyed by Trial_Meta::KEYS short keys.
 	 */
 	public static function map( array $study ): array {
-		$p    = $study['protocolSection'] ?? [];
-		$id   = $p['identificationModule'] ?? [];
-		$st   = $p['statusModule'] ?? [];
-		$des  = $p['designModule'] ?? [];
-		$spo  = $p['sponsorCollaboratorsModule'] ?? [];
-		$con  = $p['conditionsModule'] ?? [];
-		$dsc  = $p['descriptionModule'] ?? [];
-		$elig = $p['eligibilityModule'] ?? [];
-		$locs = $p['contactsLocationsModule']['locations'] ?? [];
+		$p    = $study['protocolSection'] ?? array();
+		$id   = $p['identificationModule'] ?? array();
+		$st   = $p['statusModule'] ?? array();
+		$des  = $p['designModule'] ?? array();
+		$spo  = $p['sponsorCollaboratorsModule'] ?? array();
+		$con  = $p['conditionsModule'] ?? array();
+		$dsc  = $p['descriptionModule'] ?? array();
+		$elig = $p['eligibilityModule'] ?? array();
+		$locs = $p['contactsLocationsModule']['locations'] ?? array();
 
 		$nct = strtoupper( (string) ( $id['nctId'] ?? '' ) );
 		if ( ! preg_match( '/^NCT\d{8}$/', $nct ) ) {
-			return [ 'nct_id' => '' ];
+			return array( 'nct_id' => '' );
 		}
 
 		$phases = array_map(
@@ -56,16 +56,16 @@ final class Field_Mapper {
 					? self::PHASE_LABELS[ $ph ]
 					: ucfirst( strtolower( str_replace( '_', ' ', $ph ) ) );
 			},
-			(array) ( $des['phases'] ?? [] )
+			(array) ( $des['phases'] ?? array() )
 		);
 
-		$locations = [];
+		$locations = array();
 		foreach ( (array) $locs as $loc ) {
 			if ( ! is_array( $loc ) ) {
 				continue;
 			}
-			$geo         = $loc['geoPoint'] ?? [];
-			$locations[] = [
+			$geo         = $loc['geoPoint'] ?? array();
+			$locations[] = array(
 				'facility' => (string) ( $loc['facility'] ?? '' ),
 				'city'     => (string) ( $loc['city'] ?? '' ),
 				'state'    => (string) ( $loc['state'] ?? '' ),
@@ -73,28 +73,28 @@ final class Field_Mapper {
 				'status'   => (string) ( $loc['status'] ?? '' ),
 				'lat'      => isset( $geo['lat'] ) ? (float) $geo['lat'] : null,
 				'lng'      => isset( $geo['lon'] ) ? (float) $geo['lon'] : null,
-			];
+			);
 		}
 
-		return [
+		return array(
 			'nct_id'         => $nct,
 			'official_title' => (string) ( $id['officialTitle'] ?? '' ),
 			'brief_title'    => (string) ( $id['briefTitle'] ?? '' ),
 			'overall_status' => (string) ( $st['overallStatus'] ?? '' ),
 			'phase'          => implode( '/', $phases ),
 			'study_type'     => (string) ( $des['studyType'] ?? '' ),
-			'conditions'     => array_values( array_map( 'strval', (array) ( $con['conditions'] ?? [] ) ) ),
+			'conditions'     => array_values( array_map( 'strval', (array) ( $con['conditions'] ?? array() ) ) ),
 			'lead_sponsor'   => (string) ( $spo['leadSponsor']['name'] ?? '' ),
 			'locations'      => $locations,
-			'eligibility'    => [
+			'eligibility'    => array(
 				'sex'      => (string) ( $elig['sex'] ?? '' ),
 				'min_age'  => (string) ( $elig['minimumAge'] ?? '' ),
 				'max_age'  => (string) ( $elig['maximumAge'] ?? '' ),
 				'criteria' => (string) ( $elig['eligibilityCriteria'] ?? '' ),
-			],
+			),
 			'brief_summary'  => (string) ( $dsc['briefSummary'] ?? '' ),
 			'ct_last_update' => (string) ( $st['lastUpdatePostDateStruct']['date'] ?? '' ),
 			'ct_url'         => 'https://clinicaltrials.gov/study/' . $nct,
-		];
+		);
 	}
 }

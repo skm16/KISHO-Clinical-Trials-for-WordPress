@@ -21,7 +21,7 @@ interface Logger_Interface {
 	 * @param array  $context Optional contextual data.
 	 * @return void
 	 */
-	public function info( string $message, array $context = [] ): void;
+	public function info( string $message, array $context = array() ): void;
 
 	/**
 	 * Log a warning message.
@@ -30,7 +30,7 @@ interface Logger_Interface {
 	 * @param array  $context Optional contextual data.
 	 * @return void
 	 */
-	public function warn( string $message, array $context = [] ): void;
+	public function warn( string $message, array $context = array() ): void;
 
 	/**
 	 * Log an error message.
@@ -39,5 +39,5 @@ interface Logger_Interface {
 	 * @param array  $context Optional contextual data.
 	 * @return void
 	 */
-	public function error( string $message, array $context = [] ): void;
+	public function error( string $message, array $context = array() ): void;
 }

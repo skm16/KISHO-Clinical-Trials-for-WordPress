@@ -18,12 +18,12 @@ interface Llm_Provider {
 	/**
 	 * Generate a plain-language summary.
 	 *
-	 * @param string  $system System / instruction prompt.
-	 * @param string  $user   User / content prompt.
-	 * @param array   $opts   Optional overrides (e.g. 'max_tokens').
+	 * @param string $system System / instruction prompt.
+	 * @param string $user   User / content prompt.
+	 * @param array  $opts   Optional overrides (e.g. 'max_tokens').
 	 * @return string|\WP_Error Plain text on success, WP_Error on any failure.
 	 */
-	public function generate_summary( string $system, string $user, array $opts = [] );
+	public function generate_summary( string $system, string $user, array $opts = array() );
 
 	/**
 	 * Return a short stable identifier for this provider (e.g. 'anthropic').

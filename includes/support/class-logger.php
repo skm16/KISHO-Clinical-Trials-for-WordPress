@@ -43,7 +43,7 @@ final class Logger implements Logger_Interface {
 	 * @param mixed[] $context Optional contextual data.
 	 * @return void
 	 */
-	public function info( string $message, array $context = [] ): void {
+	public function info( string $message, array $context = array() ): void {
 		$this->push( 'info', $message, $context );
 	}
 
@@ -54,7 +54,7 @@ final class Logger implements Logger_Interface {
 	 * @param mixed[] $context Optional contextual data.
 	 * @return void
 	 */
-	public function warn( string $message, array $context = [] ): void {
+	public function warn( string $message, array $context = array() ): void {
 		$this->push( 'warn', $message, $context );
 	}
 
@@ -65,7 +65,7 @@ final class Logger implements Logger_Interface {
 	 * @param mixed[] $context Optional contextual data.
 	 * @return void
 	 */
-	public function error( string $message, array $context = [] ): void {
+	public function error( string $message, array $context = array() ): void {
 		$this->push( 'error', $message, $context );
 		update_option( self::ERROR_OPTION, $message, false );
 	}
@@ -84,7 +84,7 @@ final class Logger implements Logger_Interface {
 	 * @return void
 	 */
 	public function record_sync( array $summary ): void {
-		update_option( self::SYNC_OPTION, array_merge( [ 't' => time() ], $summary ), false );
+		update_option( self::SYNC_OPTION, array_merge( array( 't' => time() ), $summary ), false );
 		if ( empty( $summary['errors'] ) ) {
 			update_option( self::ERROR_OPTION, '', false );
 		}
@@ -96,8 +96,8 @@ final class Logger implements Logger_Interface {
 	 * @return mixed[]
 	 */
 	public function last_sync(): array {
-		$v = get_option( self::SYNC_OPTION, [] );
-		return is_array( $v ) ? $v : [];
+		$v = get_option( self::SYNC_OPTION, array() );
+		return is_array( $v ) ? $v : array();
 	}
 
 	/**
@@ -115,8 +115,8 @@ final class Logger implements Logger_Interface {
 	 * @return mixed[]
 	 */
 	public function recent(): array {
-		$v = get_option( self::LOG_OPTION, [] );
-		return is_array( $v ) ? $v : [];
+		$v = get_option( self::LOG_OPTION, array() );
+		return is_array( $v ) ? $v : array();
 	}
 
 	// -------------------------------------------------------------------------
@@ -132,18 +132,18 @@ final class Logger implements Logger_Interface {
 	 * @return void
 	 */
 	private function push( string $level, string $message, array $context ): void {
-		$log = get_option( self::LOG_OPTION, [] );
+		$log = get_option( self::LOG_OPTION, array() );
 		if ( ! is_array( $log ) ) {
-			$log = [];
+			$log = array();
 		}
 		array_unshift(
 			$log,
-			[
+			array(
 				't'     => time(),
 				'level' => $level,
 				'msg'   => $message,
 				'ctx'   => $context,
-			]
+			)
 		);
 		update_option( self::LOG_OPTION, array_slice( $log, 0, self::MAX_ENTRIES ), false );
 	}

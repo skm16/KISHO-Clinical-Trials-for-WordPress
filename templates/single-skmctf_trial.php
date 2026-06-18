@@ -28,7 +28,10 @@ get_header();
 ?>
 
 <main id="main" class="site-main skmctf-single-trial" role="main">
-	<?php while ( have_posts() ) : the_post(); ?>
+	<?php
+	while ( have_posts() ) :
+		the_post();
+		?>
 
 	<article id="skmctf-trial-<?php echo esc_attr( (string) $post_id ); ?>"
 		class="skmctf-trial"

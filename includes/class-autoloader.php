@@ -15,7 +15,7 @@ final class Autoloader {
 	}
 
 	public function register(): void {
-		spl_autoload_register( [ $this, 'load' ] );
+		spl_autoload_register( array( $this, 'load' ) );
 	}
 
 	public function load( string $class ): void {
@@ -39,7 +39,15 @@ final class Autoloader {
 		$parts      = explode( '\\', $relative );
 		$class_part = array_pop( $parts );
 		$file       = 'class-' . str_replace( '_', '-', strtolower( $class_part ) ) . '.php';
-		$dir        = $parts ? implode( '/', array_map( static function ( $p ) { return str_replace( '_', '-', strtolower( $p ) ); }, $parts ) ) . '/' : '';
+		$dir        = $parts ? implode(
+			'/',
+			array_map(
+				static function ( $p ) {
+					return str_replace( '_', '-', strtolower( $p ) );
+				},
+				$parts
+			)
+		) . '/' : '';
 		return $this->base_dir . $dir . $file;
 	}
 }

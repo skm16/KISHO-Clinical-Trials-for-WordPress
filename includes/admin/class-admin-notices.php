@@ -22,7 +22,7 @@ final class Admin_Notices {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_notices', [ $this, 'render' ] );
+		add_action( 'admin_notices', array( $this, 'render' ) );
 	}
 
 	/**
@@ -75,7 +75,7 @@ final class Admin_Notices {
 					esc_html__( 'Last sync error: %s', 'kisho-clinical-trials' ),
 					'<strong>' . esc_html( $last_error ) . '</strong>'
 				),
-				[ 'strong' => [] ]
+				array( 'strong' => array() )
 			);
 			echo '</p></div>';
 		}

@@ -24,7 +24,7 @@ final class Sync_Now_Controller {
 	 * @return void
 	 */
 	public function register(): void {
-		add_action( 'admin_post_' . self::ACTION, [ $this, 'handle' ] );
+		add_action( 'admin_post_' . self::ACTION, array( $this, 'handle' ) );
 	}
 
 	/**
@@ -40,7 +40,7 @@ final class Sync_Now_Controller {
 			wp_die(
 				esc_html__( 'You are not allowed to do this.', 'kisho-clinical-trials' ),
 				esc_html__( 'Forbidden', 'kisho-clinical-trials' ),
-				[ 'response' => 403 ]
+				array( 'response' => 403 )
 			);
 		}
 
@@ -51,10 +51,10 @@ final class Sync_Now_Controller {
 		$success = empty( $summary['errors'] ) ? '1' : '0';
 
 		$redirect = add_query_arg(
-			[
-				'page'           => Settings_Page::MENU_SLUG,
-				'skmctf_synced'  => $success,
-			],
+			array(
+				'page'          => Settings_Page::MENU_SLUG,
+				'skmctf_synced' => $success,
+			),
 			admin_url( 'options-general.php' )
 		);
 

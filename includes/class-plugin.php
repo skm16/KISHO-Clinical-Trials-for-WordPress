@@ -21,14 +21,14 @@ final class Plugin {
 	 * Wire up all hooks. Each subsystem registers itself here.
 	 */
 	public function boot(): void {
-		add_action( 'init', [ $this, 'load_textdomain' ] );
-		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Post_Type::class, 'register' ] );
-		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Taxonomies::class, 'register' ] );
-		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Meta::class, 'register' ] );
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action( 'init', array( \SKMCTF\Post_Types\Trial_Post_Type::class, 'register' ) );
+		add_action( 'init', array( \SKMCTF\Post_Types\Trial_Taxonomies::class, 'register' ) );
+		add_action( 'init', array( \SKMCTF\Post_Types\Trial_Meta::class, 'register' ) );
 		( new \SKMCTF\Sync\Scheduler() )->register();
 
 		// Front-end: shortcode + assets (registered early; assets enqueued lazily by renderer).
-		add_action( 'init', [ \SKMCTF\Frontend\Shortcode::class, 'register' ] );
+		add_action( 'init', array( \SKMCTF\Frontend\Shortcode::class, 'register' ) );
 		\SKMCTF\Frontend\Assets::register();
 
 		// Single trial SEO (noindex via wp_robots filter) + template routing.

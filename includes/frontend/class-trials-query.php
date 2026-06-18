@@ -31,7 +31,7 @@ final class Trials_Query {
 	 * @return array<string,mixed> WP_Query-compatible args array.
 	 */
 	public static function args( array $filters ): array {
-		$args = [
+		$args = array(
 			'post_type'      => Trial_Post_Type::POST_TYPE,
 			'post_status'    => 'publish',
 			'posts_per_page' => isset( $filters['per_page'] ) ? absint( $filters['per_page'] ) : 20,
@@ -39,36 +39,38 @@ final class Trials_Query {
 			'orderby'        => 'title',
 			'order'          => 'ASC',
 			'no_found_rows'  => false,
-		];
+		);
 
 		// --- Taxonomy filters ---------------------------------------------------
-		$tax = [];
+		$tax = array();
 		if ( ! empty( $filters['status'] ) ) {
-			$tax[] = [
+			$tax[] = array(
 				'taxonomy' => Trial_Taxonomies::STATUS,
 				'field'    => 'name',
 				'terms'    => sanitize_text_field( $filters['status'] ),
-			];
+			);
 		}
 		if ( ! empty( $filters['phase'] ) ) {
-			$tax[] = [
+			$tax[] = array(
 				'taxonomy' => Trial_Taxonomies::PHASE,
 				'field'    => 'name',
 				'terms'    => sanitize_text_field( $filters['phase'] ),
-			];
+			);
 		}
 		if ( $tax ) {
-			$tax['relation']     = 'AND';
+			$tax['relation']   = 'AND';
 			$args['tax_query'] = $tax;
 		}
 
 		// --- Meta filters -------------------------------------------------------
 		if ( ! empty( $filters['state'] ) ) {
-			$args['meta_query'] = [ [
-				'key'     => Trial_Meta::KEYS['locations'],
-				'value'   => sanitize_text_field( $filters['state'] ),
-				'compare' => 'LIKE',
-			] ];
+			$args['meta_query'] = array(
+				array(
+					'key'     => Trial_Meta::KEYS['locations'],
+					'value'   => sanitize_text_field( $filters['state'] ),
+					'compare' => 'LIKE',
+				),
+			);
 		}
 
 		return $args;

@@ -20,8 +20,8 @@ $show = static function ( string $field ) use ( $display_fields ): bool {
 };
 
 // --- Title / link ------------------------------------------------------------
-$title   = get_the_title( $post );
-$ct_url  = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
+$title  = get_the_title( $post );
+$ct_url = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
 
 if ( $single_pages ) {
 	$title_link = get_permalink( $post );
@@ -42,20 +42,22 @@ $phase = ! empty( $meta['phase'] ) ? $meta['phase'] : '';
 // --- Conditions --------------------------------------------------------------
 $conditions = ! empty( $meta['conditions'] ) && is_array( $meta['conditions'] )
 	? $meta['conditions']
-	: [];
+	: array();
 
 // --- Sponsor -----------------------------------------------------------------
 $sponsor = ! empty( $meta['lead_sponsor'] ) ? $meta['lead_sponsor'] : '';
 
 // --- Locations ---------------------------------------------------------------
-$locations = ! empty( $meta['locations'] ) && is_array( $meta['locations'] ) ? $meta['locations'] : [];
-$location_parts = [];
+$locations      = ! empty( $meta['locations'] ) && is_array( $meta['locations'] ) ? $meta['locations'] : array();
+$location_parts = array();
 foreach ( $locations as $loc ) {
-	$pieces = array_filter( [
-		! empty( $loc['city'] )    ? $loc['city']    : '',
-		! empty( $loc['state'] )   ? $loc['state']   : '',
-		! empty( $loc['country'] ) ? $loc['country'] : '',
-	] );
+	$pieces = array_filter(
+		array(
+			! empty( $loc['city'] ) ? $loc['city'] : '',
+			! empty( $loc['state'] ) ? $loc['state'] : '',
+			! empty( $loc['country'] ) ? $loc['country'] : '',
+		)
+	);
 	if ( $pieces ) {
 		$location_parts[] = implode( ', ', $pieces );
 	}
@@ -77,9 +79,9 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 			<h2 class="skmctf-card__title" id="skmctf-title-<?php echo esc_attr( (string) $post->ID ); ?>">
 				<?php if ( $title_link ) : ?>
 					<a href="<?php echo esc_url( $title_link ); ?>"
-					   <?php if ( ! $single_pages && $ct_url ) : ?>
-					   target="_blank" rel="noopener noreferrer"
-					   <?php endif; ?>>
+						<?php if ( ! $single_pages && $ct_url ) : ?>
+						target="_blank" rel="noopener noreferrer"
+						<?php endif; ?>>
 						<?php echo esc_html( $title ); ?>
 					</a>
 				<?php else : ?>
@@ -150,9 +152,9 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 
 			<?php if ( $ct_url ) : ?>
 				<a class="skmctf-card__ctgov-link"
-				   href="<?php echo esc_url( $ct_url ); ?>"
-				   target="_blank"
-				   rel="noopener noreferrer">
+					href="<?php echo esc_url( $ct_url ); ?>"
+					target="_blank"
+					rel="noopener noreferrer">
 					<?php esc_html_e( 'View on ClinicalTrials.gov', 'kisho-clinical-trials' ); ?>
 					<span class="screen-reader-text"><?php echo esc_html( ' (' . get_the_title( $post ) . ')' ); ?></span>
 				</a>

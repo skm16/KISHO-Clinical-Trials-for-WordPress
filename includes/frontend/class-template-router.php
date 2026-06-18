@@ -25,12 +25,12 @@ final class Template_Router {
 	 * @return void
 	 */
 	public function register(): void {
-		add_filter( 'single_template',  [ $this, 'single_template' ] );
-		add_filter( 'archive_template', [ $this, 'archive_template' ] );
+		add_filter( 'single_template', array( $this, 'single_template' ) );
+		add_filter( 'archive_template', array( $this, 'archive_template' ) );
 
 		// When single pages are disabled, redirect to the archive early.
 		if ( ! Settings::single_pages_enabled() ) {
-			add_action( 'template_redirect', [ $this, 'redirect_singles_to_archive' ] );
+			add_action( 'template_redirect', array( $this, 'redirect_singles_to_archive' ) );
 		}
 	}
 

@@ -21,7 +21,7 @@ final class Settings {
 	public const OPTION = 'skmctf_settings';
 
 	/** @var string[] Allowed trial status values from ClinicalTrials.gov. */
-	public const VALID_STATUSES = [
+	public const VALID_STATUSES = array(
 		'RECRUITING',
 		'NOT_YET_RECRUITING',
 		'ENROLLING_BY_INVITATION',
@@ -31,10 +31,10 @@ final class Settings {
 		'TERMINATED',
 		'WITHDRAWN',
 		'UNKNOWN',
-	];
+	);
 
 	/** @var string[] Supported LLM providers. */
-	public const PROVIDERS = [ 'anthropic', 'openai' ];
+	public const PROVIDERS = array( 'anthropic', 'openai' );
 
 	// -------------------------------------------------------------------------
 	// Defaults
@@ -46,11 +46,11 @@ final class Settings {
 	 * @return array<string,mixed>
 	 */
 	private static function defaults(): array {
-		return [
-			'conditions'             => [],
-			'include_ncts'           => [],
-			'exclude_ncts'           => [],
-			'statuses'               => [ 'RECRUITING' ],
+		return array(
+			'conditions'             => array(),
+			'include_ncts'           => array(),
+			'exclude_ncts'           => array(),
+			'statuses'               => array( 'RECRUITING' ),
 			'reconcile_mode'         => 'mark_closed',
 			'summaries_enabled'      => false,
 			'provider'               => 'anthropic',
@@ -59,9 +59,9 @@ final class Settings {
 			'show_map'               => false,
 			'single_pages'           => true,
 			'index_singles_override' => false,
-			'display_fields'         => [ 'status', 'phase', 'conditions', 'sponsor', 'locations', 'summary' ],
+			'display_fields'         => array( 'status', 'phase', 'conditions', 'sponsor', 'locations', 'summary' ),
 			'attribution'            => false,
-		];
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -74,8 +74,8 @@ final class Settings {
 	 * @return array<string,mixed>
 	 */
 	public static function all(): array {
-		$o = get_option( self::OPTION, [] );
-		return array_merge( self::defaults(), is_array( $o ) ? $o : [] );
+		$o = get_option( self::OPTION, array() );
+		return array_merge( self::defaults(), is_array( $o ) ? $o : array() );
 	}
 
 	/**
@@ -92,23 +92,23 @@ final class Settings {
 
 	/** @return string[] */
 	public static function conditions(): array {
-		return (array) self::get( 'conditions', [] );
+		return (array) self::get( 'conditions', array() );
 	}
 
 	/** @return string[] */
 	public static function statuses(): array {
-		$s = (array) self::get( 'statuses', [ 'RECRUITING' ] );
-		return $s ?: [ 'RECRUITING' ];
+		$s = (array) self::get( 'statuses', array( 'RECRUITING' ) );
+		return $s ?: array( 'RECRUITING' );
 	}
 
 	/** @return string[] */
 	public static function include_ncts(): array {
-		return (array) self::get( 'include_ncts', [] );
+		return (array) self::get( 'include_ncts', array() );
 	}
 
 	/** @return string[] */
 	public static function exclude_ncts(): array {
-		return (array) self::get( 'exclude_ncts', [] );
+		return (array) self::get( 'exclude_ncts', array() );
 	}
 
 	/** @return string 'mark_closed'|'remove' */
@@ -160,7 +160,7 @@ final class Settings {
 
 	/** @return string[] */
 	public static function display_fields(): array {
-		return (array) self::get( 'display_fields', [] );
+		return (array) self::get( 'display_fields', array() );
 	}
 
 	/** @return bool */
@@ -179,7 +179,7 @@ final class Settings {
 	 * @return string[]
 	 */
 	private static function parse_ncts( string $raw ): array {
-		$out = [];
+		$out = array();
 		foreach ( preg_split( '/\r\n|\r|\n/', $raw ) as $line ) {
 			$nct = strtoupper( trim( $line ) );
 			if ( preg_match( '/^NCT\d{8}$/', $nct ) ) {
@@ -209,7 +209,7 @@ final class Settings {
 
 		// Conditions — array or newline-delimited string.
 		if ( isset( $input['conditions'] ) ) {
-			$conds = is_array( $input['conditions'] )
+			$conds             = is_array( $input['conditions'] )
 				? $input['conditions']
 				: preg_split( '/\r\n|\r|\n/', (string) $input['conditions'] );
 			$out['conditions'] = array_values(
@@ -239,7 +239,7 @@ final class Settings {
 				)
 			);
 			if ( ! $out['statuses'] ) {
-				$out['statuses'] = [ 'RECRUITING' ];
+				$out['statuses'] = array( 'RECRUITING' );
 			}
 		}
 
@@ -256,7 +256,7 @@ final class Settings {
 		$out['attribution']            = ! empty( $input['attribution'] );
 
 		// LLM provider (whitelisted).
-		$p             = sanitize_text_field( $input['provider'] ?? 'anthropic' );
+		$p               = sanitize_text_field( $input['provider'] ?? 'anthropic' );
 		$out['provider'] = in_array( $p, self::PROVIDERS, true ) ? $p : 'anthropic';
 
 		// Model name.

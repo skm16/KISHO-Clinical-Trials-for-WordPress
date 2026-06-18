@@ -25,14 +25,16 @@ final class Trial_Repository implements Repo_Interface {
 	 * @return int|null Post ID, or null if not found.
 	 */
 	public function find_id_by_nct( string $nct ): ?int {
-		$found = get_posts( [
-			'post_type'     => Trial_Post_Type::POST_TYPE,
-			'post_status'   => 'any',
-			'name'          => strtolower( $nct ),
-			'numberposts'   => 1,
-			'fields'        => 'ids',
-			'no_found_rows' => true,
-		] );
+		$found = get_posts(
+			array(
+				'post_type'     => Trial_Post_Type::POST_TYPE,
+				'post_status'   => 'any',
+				'name'          => strtolower( $nct ),
+				'numberposts'   => 1,
+				'fields'        => 'ids',
+				'no_found_rows' => true,
+			)
+		);
 		return $found ? (int) $found[0] : null;
 	}
 
@@ -49,13 +51,13 @@ final class Trial_Repository implements Repo_Interface {
 	 */
 	public function upsert( array $meta ): int {
 		$nct     = $meta['nct_id'];
-		$postarr = [
+		$postarr = array(
 			'post_type'    => Trial_Post_Type::POST_TYPE,
 			'post_status'  => 'publish',
 			'post_title'   => $meta['brief_title'] !== '' ? $meta['brief_title'] : $meta['official_title'],
 			'post_name'    => strtolower( $nct ),
 			'post_content' => '',
-		];
+		);
 
 		$id = $this->find_id_by_nct( $nct );
 		if ( $id ) {
@@ -95,14 +97,16 @@ final class Trial_Repository implements Repo_Interface {
 	 * @return array Array of NCT ID strings.
 	 */
 	public function all_nct_ids(): array {
-		$ids = get_posts( [
-			'post_type'     => Trial_Post_Type::POST_TYPE,
-			'post_status'   => 'any',
-			'numberposts'   => -1,
-			'fields'        => 'ids',
-			'no_found_rows' => true,
-		] );
-		$ncts = [];
+		$ids  = get_posts(
+			array(
+				'post_type'     => Trial_Post_Type::POST_TYPE,
+				'post_status'   => 'any',
+				'numberposts'   => -1,
+				'fields'        => 'ids',
+				'no_found_rows' => true,
+			)
+		);
+		$ncts = array();
 		foreach ( $ids as $id ) {
 			$nct = get_post_meta( $id, Trial_Meta::KEYS['nct_id'], true );
 			if ( $nct ) {

@@ -29,36 +29,39 @@ final class List_Renderer {
 	 */
 	public static function render( array $atts ): string {
 		// --- Normalise atts --------------------------------------------------
-		$atts = array_merge( [
-			'status'   => '',
-			'phase'    => '',
-			'state'    => '',
-			'per_page' => 20,
-			'columns'  => 1,
-			'map'      => false,
-		], $atts );
+		$atts = array_merge(
+			array(
+				'status'   => '',
+				'phase'    => '',
+				'state'    => '',
+				'per_page' => 20,
+				'columns'  => 1,
+				'map'      => false,
+			),
+			$atts
+		);
 
 		// Merge any GET params that match filter keys (form submission).
 		$get_status = isset( $_GET['skmctf_status'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_phase  = isset( $_GET['skmctf_phase'] )  ? sanitize_text_field( wp_unslash( $_GET['skmctf_phase'] ) )  : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_state  = isset( $_GET['skmctf_state'] )  ? sanitize_text_field( wp_unslash( $_GET['skmctf_state'] ) )  : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_paged  = isset( $_GET['skmctf_paged'] )  ? max( 1, absint( wp_unslash( $_GET['skmctf_paged'] ) ) )     : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_phase  = isset( $_GET['skmctf_phase'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_phase'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_state  = isset( $_GET['skmctf_state'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_paged  = isset( $_GET['skmctf_paged'] ) ? max( 1, absint( wp_unslash( $_GET['skmctf_paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-		$filters = [
+		$filters = array(
 			'status'   => $get_status ?: $atts['status'],
-			'phase'    => $get_phase  ?: $atts['phase'],
-			'state'    => $get_state  ?: $atts['state'],
+			'phase'    => $get_phase ?: $atts['phase'],
+			'state'    => $get_state ?: $atts['state'],
 			'per_page' => absint( $atts['per_page'] ),
 			'paged'    => $get_paged,
-		];
+		);
 
 		// --- Query -----------------------------------------------------------
 		$query = Trials_Query::query( $filters );
 
 		// --- Settings --------------------------------------------------------
-		$single_pages    = Settings::single_pages_enabled();
-		$display_fields  = Settings::display_fields();
-		$attribution     = Settings::attribution_enabled();
+		$single_pages   = Settings::single_pages_enabled();
+		$display_fields = Settings::display_fields();
+		$attribution    = Settings::attribution_enabled();
 
 		// Map is enabled only when the block/shortcode requests it AND the
 		// global setting is on (or the block/shortcode explicitly enables it).
@@ -71,7 +74,7 @@ final class List_Renderer {
 		Assets::enqueue();
 
 		// --- Collect map points (when map is requested and query has posts) ----
-		$map_points = [];
+		$map_points = array();
 
 		if ( $map_requested && $query->have_posts() ) {
 			$location_key = Trial_Meta::KEYS['locations'];
@@ -80,8 +83,8 @@ final class List_Renderer {
 				$query->the_post();
 				global $post;
 
-				$post_id   = $post->ID;
-				$post_url  = get_permalink( $post_id );
+				$post_id    = $post->ID;
+				$post_url   = get_permalink( $post_id );
 				$post_title = get_the_title( $post_id );
 
 				$locations = get_post_meta( $post_id, $location_key, true );
@@ -113,12 +116,12 @@ final class List_Renderer {
 							$label .= ' — ' . $city;
 						}
 
-						$map_points[] = [
+						$map_points[] = array(
 							'lat'   => $lat,
 							'lng'   => $lng,
 							'title' => esc_html( $label ),
 							'url'   => esc_url( (string) $post_url ),
-						];
+						);
 					}
 				}
 			}
@@ -139,11 +142,11 @@ final class List_Renderer {
 			wp_localize_script(
 				Assets::MAP_SCRIPT_HANDLE,
 				'skmctfMap',
-				[
+				array(
 					'points'      => $map_points,
 					'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
 					'attribution' => $osm_attribution,
-				]
+				)
 			);
 		}
 
@@ -183,13 +186,15 @@ final class List_Renderer {
 
 				// Make template variables available to the template file.
 				// phpcs:disable WordPress.PHP.DontExtract.extract_extract
-				extract( [
-					'post'           => $post,
-					'meta'           => $meta,
-					'display_fields' => $display_fields,
-					'single_pages'   => $single_pages,
-					'attribution'    => $attribution,
-				] );
+				extract(
+					array(
+						'post'           => $post,
+						'meta'           => $meta,
+						'display_fields' => $display_fields,
+						'single_pages'   => $single_pages,
+						'attribution'    => $attribution,
+					)
+				);
 				// phpcs:enable
 
 				try {
@@ -207,16 +212,20 @@ final class List_Renderer {
 			echo '</ul>';
 
 			// Pagination.
-			$pagination = paginate_links( [
-				'total'   => $query->max_num_pages,
-				'current' => $get_paged,
-				'format'  => '?skmctf_paged=%#%',
-				'add_args' => array_filter( [
-					'skmctf_status' => $filters['status'],
-					'skmctf_phase'  => $filters['phase'],
-					'skmctf_state'  => $filters['state'],
-				] ),
-			] );
+			$pagination = paginate_links(
+				array(
+					'total'    => $query->max_num_pages,
+					'current'  => $get_paged,
+					'format'   => '?skmctf_paged=%#%',
+					'add_args' => array_filter(
+						array(
+							'skmctf_status' => $filters['status'],
+							'skmctf_phase'  => $filters['phase'],
+							'skmctf_state'  => $filters['state'],
+						)
+					),
+				)
+			);
 			if ( $pagination ) {
 				echo '<nav class="skmctf-pagination" aria-label="' . esc_attr__( 'Clinical trials pages', 'kisho-clinical-trials' ) . '">';
 				echo wp_kses_post( $pagination );
@@ -229,13 +238,13 @@ final class List_Renderer {
 		// SKM Digital line is only shown when attribution_enabled() is true (off by default).
 		// Links are preserved through wp_kses() so the <a> tags render instead of
 		// being escaped to literal text by esc_html__(); only safe attrs pass.
-		$allowed_links = [
-			'a' => [
-				'href'   => [],
-				'rel'    => [],
-				'target' => [],
-			],
-		];
+		$allowed_links = array(
+			'a' => array(
+				'href'   => array(),
+				'rel'    => array(),
+				'target' => array(),
+			),
+		);
 
 		echo '<p class="skmctf-attribution">';
 		echo wp_kses(
@@ -281,19 +290,23 @@ final class List_Renderer {
 	 * @return void
 	 */
 	private static function render_filter_form( array $current ): void {
-		$statuses = get_terms( [
-			'taxonomy'   => Trial_Taxonomies::STATUS,
-			'hide_empty' => true,
-			'orderby'    => 'name',
-		] );
-		$phases = get_terms( [
-			'taxonomy'   => Trial_Taxonomies::PHASE,
-			'hide_empty' => true,
-			'orderby'    => 'name',
-		] );
+		$statuses = get_terms(
+			array(
+				'taxonomy'   => Trial_Taxonomies::STATUS,
+				'hide_empty' => true,
+				'orderby'    => 'name',
+			)
+		);
+		$phases   = get_terms(
+			array(
+				'taxonomy'   => Trial_Taxonomies::PHASE,
+				'hide_empty' => true,
+				'orderby'    => 'name',
+			)
+		);
 
-		$statuses = is_wp_error( $statuses ) ? [] : (array) $statuses;
-		$phases   = is_wp_error( $phases )   ? [] : (array) $phases;
+		$statuses = is_wp_error( $statuses ) ? array() : (array) $statuses;
+		$phases   = is_wp_error( $phases ) ? array() : (array) $phases;
 		?>
 		<form method="get" class="skmctf-filters" data-skmctf-filters>
 			<fieldset class="skmctf-filters__fieldset">
@@ -355,7 +368,7 @@ final class List_Renderer {
 						<?php esc_html_e( 'Filter', 'kisho-clinical-trials' ); ?>
 					</button>
 					<?php if ( $current['status'] || $current['phase'] || $current['state'] ) : ?>
-						<a href="<?php echo esc_url( remove_query_arg( [ 'skmctf_status', 'skmctf_phase', 'skmctf_state', 'skmctf_paged' ] ) ); ?>" class="skmctf-filters__reset">
+						<a href="<?php echo esc_url( remove_query_arg( array( 'skmctf_status', 'skmctf_phase', 'skmctf_state', 'skmctf_paged' ) ) ); ?>" class="skmctf-filters__reset">
 							<?php esc_html_e( 'Reset filters', 'kisho-clinical-trials' ); ?>
 						</a>
 					<?php endif; ?>
@@ -373,16 +386,16 @@ final class List_Renderer {
 	 */
 	private static function get_meta( int $post_id ): array {
 		$keys = Trial_Meta::KEYS;
-		return [
-			'nct_id'         => get_post_meta( $post_id, $keys['nct_id'],         true ),
-			'overall_status' => get_post_meta( $post_id, $keys['overall_status'],  true ),
-			'phase'          => get_post_meta( $post_id, $keys['phase'],           true ),
-			'conditions'     => get_post_meta( $post_id, $keys['conditions'],      true ),
-			'lead_sponsor'   => get_post_meta( $post_id, $keys['lead_sponsor'],    true ),
-			'locations'      => get_post_meta( $post_id, $keys['locations'],       true ),
-			'brief_summary'  => get_post_meta( $post_id, $keys['brief_summary'],   true ),
-			'plain_summary'  => get_post_meta( $post_id, $keys['plain_summary'],   true ),
-			'ct_url'         => get_post_meta( $post_id, $keys['ct_url'],          true ),
-		];
+		return array(
+			'nct_id'         => get_post_meta( $post_id, $keys['nct_id'], true ),
+			'overall_status' => get_post_meta( $post_id, $keys['overall_status'], true ),
+			'phase'          => get_post_meta( $post_id, $keys['phase'], true ),
+			'conditions'     => get_post_meta( $post_id, $keys['conditions'], true ),
+			'lead_sponsor'   => get_post_meta( $post_id, $keys['lead_sponsor'], true ),
+			'locations'      => get_post_meta( $post_id, $keys['locations'], true ),
+			'brief_summary'  => get_post_meta( $post_id, $keys['brief_summary'], true ),
+			'plain_summary'  => get_post_meta( $post_id, $keys['plain_summary'], true ),
+			'ct_url'         => get_post_meta( $post_id, $keys['ct_url'], true ),
+		);
 	}
 }
