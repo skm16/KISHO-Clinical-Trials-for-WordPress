@@ -35,6 +35,8 @@ final class FieldMapperTest extends TestCase {
 		$this->assertSame( [ 'Pompe Disease' ], $m['conditions'] );
 		$this->assertSame( 'https://clinicaltrials.gov/study/NCT06121011', $m['ct_url'] );
 		$this->assertSame( 42.36, $m['locations'][0]['lat'] );
+		// Guard the CT.gov `geoPoint.lon` -> stored `lng` rename (silent-data-loss risk).
+		$this->assertSame( -71.06, $m['locations'][0]['lng'] );
 		$this->assertSame( 'ALL', $m['eligibility']['sex'] );
 	}
 
