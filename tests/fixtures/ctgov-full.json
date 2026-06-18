@@ -1,0 +1,55 @@
+{
+  "studies": [
+    {
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT06121011",
+          "briefTitle": "A Registry",
+          "officialTitle": "A Global Registry"
+        },
+        "statusModule": {
+          "overallStatus": "RECRUITING",
+          "lastUpdatePostDateStruct": {
+            "date": "2026-03-10"
+          }
+        },
+        "sponsorCollaboratorsModule": {
+          "leadSponsor": {
+            "name": "Amicus Therapeutics"
+          }
+        },
+        "designModule": {
+          "phases": ["PHASE2", "PHASE3"],
+          "studyType": "INTERVENTIONAL"
+        },
+        "conditionsModule": {
+          "conditions": ["Pompe Disease"]
+        },
+        "descriptionModule": {
+          "briefSummary": "Some summary."
+        },
+        "eligibilityModule": {
+          "sex": "ALL",
+          "minimumAge": "18 Years",
+          "maximumAge": "N/A",
+          "eligibilityCriteria": "Inclusion: ..."
+        },
+        "contactsLocationsModule": {
+          "locations": [
+            {
+              "facility": "Clinic",
+              "city": "Boston",
+              "state": "MA",
+              "country": "United States",
+              "status": "RECRUITING",
+              "geoPoint": {
+                "lat": 42.36,
+                "lon": -71.06
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
