@@ -125,7 +125,7 @@ final class List_Renderer {
 			] );
 			if ( $pagination ) {
 				echo '<nav class="skmctf-pagination" aria-label="' . esc_attr__( 'Clinical trials pages', 'kisho-clinical-trials' ) . '">';
-				echo $pagination; // paginate_links returns pre-escaped HTML.
+				echo wp_kses_post( $pagination );
 				echo '</nav>';
 			}
 		}
@@ -220,7 +220,7 @@ final class List_Renderer {
 						<?php esc_html_e( 'Filter', 'kisho-clinical-trials' ); ?>
 					</button>
 					<?php if ( $current['status'] || $current['phase'] || $current['state'] ) : ?>
-						<a href="?" class="skmctf-filters__reset">
+						<a href="<?php echo esc_url( remove_query_arg( [ 'skmctf_status', 'skmctf_phase', 'skmctf_state', 'skmctf_paged' ] ) ); ?>" class="skmctf-filters__reset">
 							<?php esc_html_e( 'Reset filters', 'kisho-clinical-trials' ); ?>
 						</a>
 					<?php endif; ?>

@@ -21,10 +21,10 @@ $show = static function ( string $field ) use ( $display_fields ): bool {
 
 // --- Title / link ------------------------------------------------------------
 $title   = get_the_title( $post );
-$ct_url  = ! empty( $meta['ct_url'] ) ? esc_url( $meta['ct_url'] ) : '';
+$ct_url  = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
 
 if ( $single_pages ) {
-	$title_link = esc_url( get_permalink( $post ) );
+	$title_link = get_permalink( $post );
 } elseif ( $ct_url ) {
 	$title_link = $ct_url;
 } else {
@@ -33,28 +33,28 @@ if ( $single_pages ) {
 
 // --- Status badge ------------------------------------------------------------
 $overall_status = ! empty( $meta['overall_status'] ) ? $meta['overall_status'] : '';
-$status_label   = esc_html( ucwords( strtolower( str_replace( '_', ' ', $overall_status ) ) ) );
+$status_label   = ucwords( strtolower( str_replace( '_', ' ', $overall_status ) ) );
 $status_slug    = sanitize_html_class( strtolower( str_replace( '_', '-', $overall_status ) ) );
 
 // --- Phase -------------------------------------------------------------------
-$phase = ! empty( $meta['phase'] ) ? esc_html( $meta['phase'] ) : '';
+$phase = ! empty( $meta['phase'] ) ? $meta['phase'] : '';
 
 // --- Conditions --------------------------------------------------------------
 $conditions = ! empty( $meta['conditions'] ) && is_array( $meta['conditions'] )
-	? array_map( 'esc_html', $meta['conditions'] )
+	? $meta['conditions']
 	: [];
 
 // --- Sponsor -----------------------------------------------------------------
-$sponsor = ! empty( $meta['lead_sponsor'] ) ? esc_html( $meta['lead_sponsor'] ) : '';
+$sponsor = ! empty( $meta['lead_sponsor'] ) ? $meta['lead_sponsor'] : '';
 
 // --- Locations ---------------------------------------------------------------
 $locations = ! empty( $meta['locations'] ) && is_array( $meta['locations'] ) ? $meta['locations'] : [];
 $location_parts = [];
 foreach ( $locations as $loc ) {
 	$pieces = array_filter( [
-		! empty( $loc['city'] )    ? sanitize_text_field( $loc['city'] )    : '',
-		! empty( $loc['state'] )   ? sanitize_text_field( $loc['state'] )   : '',
-		! empty( $loc['country'] ) ? sanitize_text_field( $loc['country'] ) : '',
+		! empty( $loc['city'] )    ? $loc['city']    : '',
+		! empty( $loc['state'] )   ? $loc['state']   : '',
+		! empty( $loc['country'] ) ? $loc['country'] : '',
 	] );
 	if ( $pieces ) {
 		$location_parts[] = implode( ', ', $pieces );
@@ -100,21 +100,21 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 			<?php if ( $show( 'phase' ) && $phase ) : ?>
 				<p class="skmctf-card__phase">
 					<span class="skmctf-card__label"><?php esc_html_e( 'Phase:', 'kisho-clinical-trials' ); ?></span>
-					<?php echo $phase; // already esc_html'd above ?>
+					<?php echo esc_html( $phase ); ?>
 				</p>
 			<?php endif; ?>
 
 			<?php if ( $show( 'conditions' ) && $conditions ) : ?>
 				<p class="skmctf-card__conditions">
 					<span class="skmctf-card__label"><?php esc_html_e( 'Conditions:', 'kisho-clinical-trials' ); ?></span>
-					<?php echo implode( ', ', $conditions ); // each item esc_html'd above ?>
+					<?php echo esc_html( implode( ', ', $conditions ) ); ?>
 				</p>
 			<?php endif; ?>
 
 			<?php if ( $show( 'sponsor' ) && $sponsor ) : ?>
 				<p class="skmctf-card__sponsor">
 					<span class="skmctf-card__label"><?php esc_html_e( 'Sponsor:', 'kisho-clinical-trials' ); ?></span>
-					<?php echo $sponsor; // already esc_html'd above ?>
+					<?php echo esc_html( $sponsor ); ?>
 				</p>
 			<?php endif; ?>
 
@@ -150,7 +150,7 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 
 			<?php if ( $ct_url ) : ?>
 				<a class="skmctf-card__ctgov-link"
-				   href="<?php echo $ct_url; // already esc_url'd above ?>"
+				   href="<?php echo esc_url( $ct_url ); ?>"
 				   target="_blank"
 				   rel="noopener noreferrer">
 					<?php esc_html_e( 'View on ClinicalTrials.gov', 'kisho-clinical-trials' ); ?>
