@@ -1,0 +1,12 @@
+{
+  "studies": [
+    {
+      "protocolSection": {
+        "identificationModule": {
+          "nctId": "NCT00000000"
+        },
+        "designModule": {}
+      }
+    }
+  ]
+}

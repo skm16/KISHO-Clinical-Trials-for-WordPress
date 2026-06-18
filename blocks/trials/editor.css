@@ -1,0 +1,16 @@
+/**
+ * Clinical Trials block — editor-only styles.
+ *
+ * @package kisho-clinical-trials
+ * @license GPL-2.0-or-later
+ */
+
+.wp-block-skmctf-trials {
+	min-height: 80px;
+	border: 1px dashed #c0c0c0;
+	padding: 8px;
+}
+
+.wp-block-skmctf-trials .components-placeholder {
+	min-height: 80px;
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "skmctf/trials",
+  "title": "Clinical Trials",
+  "category": "widgets",
+  "icon": "clipboard",
+  "description": "Display clinical trials synced from ClinicalTrials.gov.",
+  "textdomain": "kisho-clinical-trials",
+  "attributes": {
+    "status":  { "type": "string",  "default": "" },
+    "phase":   { "type": "string",  "default": "" },
+    "state":   { "type": "string",  "default": "" },
+    "perPage": { "type": "number",  "default": 20 },
+    "showMap": { "type": "boolean", "default": false },
+    "columns": { "type": "number",  "default": 1 }
+  },
+  "supports": { "html": false, "align": [ "wide", "full" ] },
+  "editorScript": "file:./build/index.js",
+  "editorStyle":  "file:./editor.css",
+  "style":        "file:./style.css"
+}
