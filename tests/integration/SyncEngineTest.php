@@ -106,8 +106,12 @@ final class SyncEngineTest extends WP_UnitTestCase {
 		// Second run: only NCT1 returned -> NCT2 should be marked closed (default mode).
 		$this->mock_ctgov( [ [ $this->study( 'NCT00000001' ) ] ] );
 		$summary2 = Sync_Engine::build()->run( 'test' );
-		$repo     = new Trial_Repository();
-		$id2      = $repo->find_id_by_nct( 'NCT00000002' );
+		// Guard: a clean second run must report no errors, so the close below
+		// is attributable to reconciliation, not to a masked fetch failure.
+		$this->assertEmpty( $summary2['errors'] );
+		$this->assertSame( 'done', $summary2['dropped_result'] );
+		$repo = new Trial_Repository();
+		$id2  = $repo->find_id_by_nct( 'NCT00000002' );
 		$this->assertSame( 'CLOSED', get_post_meta( $id2, Trial_Meta::KEYS['overall_status'], true ) );
 	}
 
