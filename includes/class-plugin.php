@@ -31,6 +31,10 @@ final class Plugin {
 		add_action( 'init', [ \SKMCTF\Frontend\Shortcode::class, 'register' ] );
 		\SKMCTF\Frontend\Assets::register();
 
+		// Single trial SEO (noindex via wp_robots filter) + template routing.
+		( new \SKMCTF\Frontend\Seo() )->register();
+		( new \SKMCTF\Frontend\Template_Router() )->register();
+
 		// Gutenberg block (server-rendered via render_callback → List_Renderer).
 		( new \SKMCTF\Frontend\Block() )->register();
 
