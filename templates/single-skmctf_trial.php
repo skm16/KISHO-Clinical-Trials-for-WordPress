@@ -39,9 +39,21 @@ get_header();
 				<?php echo esc_html( get_the_title() ); ?>
 			</h1>
 
+			<?php if ( ! empty( $official_title ) && $official_title !== get_the_title() ) : ?>
+			<p class="skmctf-trial__official-title">
+				<span class="skmctf-trial__label"><?php esc_html_e( 'Official title:', 'kisho-clinical-trials' ); ?></span>
+				<?php echo esc_html( $official_title ); ?>
+			</p>
+			<?php endif; ?>
+
 			<?php if ( $overall_status ) : ?>
 				<?php
-				include \SKMCTF\Support\Template_Loader::locate( 'parts/badge.php' );
+				// Status badge partial.
+				try {
+					include \SKMCTF\Support\Template_Loader::locate( 'parts/badge.php' );
+				} catch ( \RuntimeException $e ) {
+					// Badge template missing — skip gracefully.
+				}
 				?>
 			<?php endif; ?>
 		</header>

@@ -31,6 +31,7 @@ final class Single_Renderer {
 		$status_label   = ucwords( strtolower( str_replace( '_', ' ', $overall_status ) ) );
 		$status_slug    = sanitize_html_class( strtolower( str_replace( '_', '-', $overall_status ) ) );
 
+		$official_title = ! empty( $meta['official_title'] ) ? $meta['official_title'] : '';
 		$phase         = ! empty( $meta['phase'] ) ? $meta['phase'] : '';
 		$conditions    = ! empty( $meta['conditions'] ) && is_array( $meta['conditions'] ) ? $meta['conditions'] : [];
 		$sponsor       = ! empty( $meta['lead_sponsor'] ) ? $meta['lead_sponsor'] : '';
@@ -49,6 +50,7 @@ final class Single_Renderer {
 			'overall_status',
 			'status_label',
 			'status_slug',
+			'official_title',
 			'phase',
 			'conditions',
 			'sponsor',
