@@ -27,6 +27,10 @@ final class Plugin {
 		add_action( 'init', [ \SKMCTF\Post_Types\Trial_Meta::class, 'register' ] );
 		( new \SKMCTF\Sync\Scheduler() )->register();
 
+		// Front-end: shortcode + assets (registered early; assets enqueued lazily by renderer).
+		add_action( 'init', [ \SKMCTF\Frontend\Shortcode::class, 'register' ] );
+		\SKMCTF\Frontend\Assets::register();
+
 		if ( is_admin() ) {
 			( new \SKMCTF\Admin\Settings_Page() )->register();
 			( new \SKMCTF\Admin\Sync_Now_Controller() )->register();
