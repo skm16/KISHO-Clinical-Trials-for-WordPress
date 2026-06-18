@@ -1,0 +1,14 @@
+tests/
+node_modules/
+vendor/
+.git
+.gitignore
+.gitattributes
+composer.json
+composer.lock
+phpunit-unit.xml.dist
+phpunit-integration.xml.dist
+package.json
+package-lock.json
+docs/
+.distignore
