@@ -1,0 +1,618 @@
+# Copyright (C) 2026 SKM Digital
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Clinical Trials Feed 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kisho-clinical-trials\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-06-18T19:29:09+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: kisho-clinical-trials\n"
+
+#. Plugin Name of the plugin
+#: kisho-clinical-trials.php
+#: includes/admin/class-settings-page.php:43
+#: includes/admin/views/settings-page.php:45
+msgid "Clinical Trials Feed"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: kisho-clinical-trials.php
+msgid "https://skm.digital/clinical-trials-feed"
+msgstr ""
+
+#. Description of the plugin
+#: kisho-clinical-trials.php
+msgid "Pulls condition-relevant trials from ClinicalTrials.gov and displays them on your site, kept fresh automatically, with optional plain-language summaries via your own LLM API key."
+msgstr ""
+
+#. Author of the plugin
+#: kisho-clinical-trials.php
+#: includes/frontend/class-list-renderer.php:260
+msgid "SKM Digital"
+msgstr ""
+
+#. Author URI of the plugin
+#: kisho-clinical-trials.php
+msgid "https://skm.digital"
+msgstr ""
+
+#: includes/admin/class-admin-notices.php:57
+msgid "Clinical Trials feed synced successfully."
+msgstr ""
+
+#: includes/admin/class-admin-notices.php:61
+msgid "Sync completed with errors. Check the log for details."
+msgstr ""
+
+#. translators: %s: the last recorded error message
+#: includes/admin/class-admin-notices.php:75
+#, php-format
+msgid "Last sync error: %s"
+msgstr ""
+
+#: includes/admin/class-settings-page.php:44
+#: includes/post-types/class-trial-post-type.php:21
+#: includes/post-types/class-trial-post-type.php:23
+#: templates/archive-skmctf_trial.php:27
+msgid "Clinical Trials"
+msgstr ""
+
+#: includes/admin/class-sync-now-controller.php:41
+msgid "You are not allowed to do this."
+msgstr ""
+
+#: includes/admin/class-sync-now-controller.php:42
+msgid "Forbidden"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:36
+#: includes/frontend/class-list-renderer.php:307
+#: blocks/trials/edit.js:45
+msgid "Status"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:37
+#: includes/frontend/class-list-renderer.php:324
+#: blocks/trials/edit.js:61
+msgid "Phase"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:38
+msgid "Conditions"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:39
+msgid "Sponsor"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:40
+#: templates/parts/locations.php:69
+msgid "Locations"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:41
+#: templates/single-skmctf_trial.php:106
+msgid "Summary"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:57
+msgid "Trial Discovery"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:62
+msgid "Conditions to search"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:72
+msgid "One search term per line, e.g. \"Pompe disease\"."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:78
+msgid "Always include NCT IDs"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:88
+msgid "One NCT ID per line (NCT########). These trials are always included."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:94
+msgid "Always exclude NCT IDs"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:104
+msgid "One NCT ID per line. These trials are always excluded."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:109
+msgid "Trial statuses to include"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:122
+msgid "At least one status must be selected; defaults to Recruiting."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:129
+msgid "Sync Behaviour"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:133
+msgid "When a trial leaves the feed"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:142
+msgid "Mark as closed (keep the post)"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:151
+msgid "Remove the post entirely"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:159
+msgid "Display"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:163
+msgid "Fields to display"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:180
+msgid "Interactive map"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:189
+msgid "Show a trial-location map on listing pages"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:195
+msgid "Single trial pages"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:204
+msgid "Enable individual pages for each trial"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:210
+msgid "Index single trial pages"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:219
+msgid "Allow search engines to index individual trial pages (overrides default noindex)"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:225
+msgid "Attribution"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:234
+msgid "Show \"Data sourced from ClinicalTrials.gov\" attribution on trial listings"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:242
+msgid "AI Summaries (optional)"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:246
+msgid "Enable AI summaries"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:255
+msgid "Generate plain-language summaries via your own LLM API key"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:262
+msgid "LLM provider"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:280
+msgid "API key"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:286
+msgid "A key is saved."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:287
+msgid "Leave the field below empty to keep it unchanged."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:296
+msgid "Clear saved key"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:307
+msgid "Enter a new key to replace"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:307
+msgid "Paste your API key"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:310
+msgid "Your key is stored encrypted-at-rest in the WordPress database and is never displayed here."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:317
+msgid "Model name (optional)"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:326
+msgid "e.g. claude-3-5-haiku-latest"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:328
+msgid "Leave blank to use the provider default."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:334
+msgid "Save Settings"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:346
+msgid "Sync Status"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:350
+msgid "Last sync:"
+msgstr ""
+
+#. translators: %d: number of trials fetched
+#: includes/admin/views/settings-page.php:358
+#, php-format
+msgid "Fetched: %d trials"
+msgstr ""
+
+#. translators: %d: number of trials upserted
+#: includes/admin/views/settings-page.php:369
+#, php-format
+msgid "Upserted: %d"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:376
+msgid "No sync has run yet."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:381
+msgid "Last error:"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:392
+msgid "Sync now"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:403
+msgid "About this plugin"
+msgstr ""
+
+#: includes/admin/views/settings-page.php:405
+msgid "Built by SKM Digital — custom rare disease tools, Salesforce integrations, and headless builds for PAGs."
+msgstr ""
+
+#: includes/admin/views/settings-page.php:409
+msgid "skm.digital"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:163
+#: templates/parts/locations.php:75
+msgid "Trial locations map"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:169
+msgid "No clinical trials match your current filters."
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:200
+#: includes/frontend/class-single-renderer.php:69
+msgid "Template error."
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:221
+msgid "Clinical trials pages"
+msgstr ""
+
+#. translators: %s: linked "ClinicalTrials.gov" text
+#: includes/frontend/class-list-renderer.php:244
+#, php-format
+msgid "Data from %s"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:246
+#: templates/list-item.php:139
+#: templates/parts/summary-disclaimer.php:33
+#: templates/single-skmctf_trial.php:156
+msgid "ClinicalTrials.gov"
+msgstr ""
+
+#. translators: %s: linked "SKM Digital" text
+#: includes/frontend/class-list-renderer.php:258
+#, php-format
+msgid "Trial display by %s"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:301
+msgid "Filter clinical trials"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:310
+#: blocks/trials/edit.js:48
+msgid "All statuses"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:327
+#: blocks/trials/edit.js:64
+msgid "All phases"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:340
+#: blocks/trials/edit.js:78
+msgid "State"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:348
+msgid "e.g. MA"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:355
+msgid "Filter"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:359
+msgid "Reset filters"
+msgstr ""
+
+#: includes/llm/class-prompt-builder.php:20
+msgid "This is a plain-language summary — please read the full trial record and talk to your doctor before making any decisions."
+msgstr ""
+
+#: includes/llm/class-prompt-builder.php:32
+msgid "You write short, plain-language summaries of clinical trials for patients and families. Use about an 8th-grade reading level. Be factual and only use the information provided. Do not give medical advice, do not speculate, and do not invent details. Write 2-4 short sentences. End with the exact disclaimer sentence the user provides."
+msgstr ""
+
+#. translators: %s: the trial's brief title.
+#: includes/llm/class-prompt-builder.php:49
+#, php-format
+msgid "Title: %s"
+msgstr ""
+
+#. translators: %s: the trial's recruitment status.
+#: includes/llm/class-prompt-builder.php:51
+#, php-format
+msgid "Status: %s"
+msgstr ""
+
+#. translators: %s: the trial's phase.
+#: includes/llm/class-prompt-builder.php:53
+#, php-format
+msgid "Phase: %s"
+msgstr ""
+
+#. translators: %s: comma-separated list of conditions.
+#: includes/llm/class-prompt-builder.php:56
+#, php-format
+msgid "Conditions: %s"
+msgstr ""
+
+#. translators: %s: the trial's lead sponsor name.
+#: includes/llm/class-prompt-builder.php:60
+#, php-format
+msgid "Sponsor: %s"
+msgstr ""
+
+#. translators: 1: eligible sex, 2: minimum age, 3: maximum age.
+#: includes/llm/class-prompt-builder.php:63
+#, php-format
+msgid "Who can join: sex %1$s, ages %2$s to %3$s"
+msgstr ""
+
+#. translators: %s: the official brief summary text from ClinicalTrials.gov.
+#: includes/llm/class-prompt-builder.php:70
+#, php-format
+msgid "Official description: %s"
+msgstr ""
+
+#. translators: %s: the required disclaimer sentence.
+#: includes/llm/class-prompt-builder.php:76
+#, php-format
+msgid "End your summary with exactly this sentence: %s"
+msgstr ""
+
+#: includes/post-types/class-trial-post-type.php:22
+msgid "Clinical Trial"
+msgstr ""
+
+#: includes/post-types/class-trial-post-type.php:24
+msgid "All Trials"
+msgstr ""
+
+#: includes/post-types/class-trial-post-type.php:25
+msgid "Search Trials"
+msgstr ""
+
+#: includes/post-types/class-trial-post-type.php:26
+msgid "No trials found."
+msgstr ""
+
+#: includes/post-types/class-trial-taxonomies.php:22
+msgid "Trial Status"
+msgstr ""
+
+#: includes/post-types/class-trial-taxonomies.php:23
+msgid "Trial Phase"
+msgstr ""
+
+#. translators: %d is the number of additional locations.
+#: templates/list-item.php:66
+#, php-format
+msgid "(+%d more)"
+msgstr ""
+
+#: templates/list-item.php:102
+#: templates/single-skmctf_trial.php:65
+msgid "Phase:"
+msgstr ""
+
+#: templates/list-item.php:109
+#: templates/single-skmctf_trial.php:72
+msgid "Conditions:"
+msgstr ""
+
+#: templates/list-item.php:116
+#: templates/single-skmctf_trial.php:79
+msgid "Sponsor:"
+msgstr ""
+
+#: templates/list-item.php:123
+msgid "Locations:"
+msgstr ""
+
+#: templates/list-item.php:137
+#: templates/parts/summary-disclaimer.php:31
+#: templates/single-skmctf_trial.php:154
+msgid "Data from"
+msgstr ""
+
+#: templates/list-item.php:145
+#: templates/parts/summary-disclaimer.php:39
+msgid "Trial display by SKM Digital."
+msgstr ""
+
+#: templates/list-item.php:156
+msgid "View on ClinicalTrials.gov"
+msgstr ""
+
+#: templates/parts/eligibility.php:25
+msgid "Eligibility"
+msgstr ""
+
+#: templates/parts/eligibility.php:32
+msgid "Sex"
+msgstr ""
+
+#: templates/parts/eligibility.php:39
+msgid "Minimum age"
+msgstr ""
+
+#: templates/parts/eligibility.php:46
+msgid "Maximum age"
+msgstr ""
+
+#: templates/parts/eligibility.php:55
+msgid "Inclusion/Exclusion Criteria"
+msgstr ""
+
+#: templates/single-skmctf_trial.php:44
+msgid "Official title:"
+msgstr ""
+
+#: templates/single-skmctf_trial.php:88
+msgid "Plain-Language Summary"
+msgstr ""
+
+#: templates/single-skmctf_trial.php:138
+msgid "View full record on ClinicalTrials.gov"
+msgstr ""
+
+#. translators: %s: trial title.
+#: templates/single-skmctf_trial.php:142
+#, php-format
+msgid "(opens %s on ClinicalTrials.gov in a new tab)"
+msgstr ""
+
+#: blocks/trials/edit.js:41
+msgid "Filter Settings"
+msgstr ""
+
+#: blocks/trials/edit.js:49
+msgid "Recruiting"
+msgstr ""
+
+#: blocks/trials/edit.js:50
+msgid "Active, not recruiting"
+msgstr ""
+
+#: blocks/trials/edit.js:51
+msgid "Completed"
+msgstr ""
+
+#: blocks/trials/edit.js:52
+msgid "Not yet recruiting"
+msgstr ""
+
+#: blocks/trials/edit.js:53
+msgid "Terminated"
+msgstr ""
+
+#: blocks/trials/edit.js:54
+msgid "Withdrawn"
+msgstr ""
+
+#: blocks/trials/edit.js:55
+msgid "Suspended"
+msgstr ""
+
+#: blocks/trials/edit.js:65
+msgid "Early Phase 1"
+msgstr ""
+
+#: blocks/trials/edit.js:66
+msgid "Phase 1"
+msgstr ""
+
+#: blocks/trials/edit.js:67
+msgid "Phase 1/Phase 2"
+msgstr ""
+
+#: blocks/trials/edit.js:68
+msgid "Phase 2"
+msgstr ""
+
+#: blocks/trials/edit.js:69
+msgid "Phase 2/Phase 3"
+msgstr ""
+
+#: blocks/trials/edit.js:70
+msgid "Phase 3"
+msgstr ""
+
+#: blocks/trials/edit.js:71
+msgid "Phase 4"
+msgstr ""
+
+#: blocks/trials/edit.js:72
+msgid "Not applicable"
+msgstr ""
+
+#: blocks/trials/edit.js:79
+msgid "Filter by US state abbreviation, e.g. MA"
+msgstr ""
+
+#: blocks/trials/edit.js:86
+msgid "Display Settings"
+msgstr ""
+
+#: blocks/trials/edit.js:90
+msgid "Trials per page"
+msgstr ""
+
+#: blocks/trials/edit.js:98
+msgid "Columns"
+msgstr ""
+
+#: blocks/trials/edit.js:106
+msgid "Show map"
+msgstr ""
+
+#: blocks/trials/block.json
+msgctxt "block title"
+msgid "Clinical Trials"
+msgstr ""
+
+#: blocks/trials/block.json
+msgctxt "block description"
+msgid "Display clinical trials synced from ClinicalTrials.gov."
+msgstr ""

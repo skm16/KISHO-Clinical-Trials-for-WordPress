@@ -45,26 +45,34 @@ final class Prompt_Builder {
 		$elig  = is_array( $meta['eligibility'] ?? null ) ? $meta['eligibility'] : [];
 		$lines = [];
 
+		/* translators: %s: the trial's brief title. */
 		$lines[] = sprintf( __( 'Title: %s', 'kisho-clinical-trials' ), $meta['brief_title'] ?? '' );
+		/* translators: %s: the trial's recruitment status. */
 		$lines[] = sprintf( __( 'Status: %s', 'kisho-clinical-trials' ), $meta['overall_status'] ?? '' );
+		/* translators: %s: the trial's phase. */
 		$lines[] = sprintf( __( 'Phase: %s', 'kisho-clinical-trials' ), $meta['phase'] ?? '' );
 		$lines[] = sprintf(
+			/* translators: %s: comma-separated list of conditions. */
 			__( 'Conditions: %s', 'kisho-clinical-trials' ),
 			implode( ', ', (array) ( $meta['conditions'] ?? [] ) )
 		);
+		/* translators: %s: the trial's lead sponsor name. */
 		$lines[] = sprintf( __( 'Sponsor: %s', 'kisho-clinical-trials' ), $meta['lead_sponsor'] ?? '' );
 		$lines[] = sprintf(
+			/* translators: 1: eligible sex, 2: minimum age, 3: maximum age. */
 			__( 'Who can join: sex %1$s, ages %2$s to %3$s', 'kisho-clinical-trials' ),
 			$elig['sex'] ?? '',
 			$elig['min_age'] ?? '',
 			$elig['max_age'] ?? ''
 		);
 		$lines[] = sprintf(
+			/* translators: %s: the official brief summary text from ClinicalTrials.gov. */
 			__( 'Official description: %s', 'kisho-clinical-trials' ),
 			$meta['brief_summary'] ?? ''
 		);
 		$lines[] = '';
 		$lines[] = sprintf(
+			/* translators: %s: the required disclaimer sentence. */
 			__( 'End your summary with exactly this sentence: %s', 'kisho-clinical-trials' ),
 			self::disclaimer()
 		);

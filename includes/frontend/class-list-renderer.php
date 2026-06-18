@@ -224,6 +224,47 @@ final class List_Renderer {
 			}
 		}
 
+		// --- Attribution footer -----------------------------------------------
+		// CT.gov credit is ALWAYS shown (data source attribution).
+		// SKM Digital line is only shown when attribution_enabled() is true (off by default).
+		// Links are preserved through wp_kses() so the <a> tags render instead of
+		// being escaped to literal text by esc_html__(); only safe attrs pass.
+		$allowed_links = [
+			'a' => [
+				'href'   => [],
+				'rel'    => [],
+				'target' => [],
+			],
+		];
+
+		echo '<p class="skmctf-attribution">';
+		echo wp_kses(
+			sprintf(
+				/* translators: %s: linked "ClinicalTrials.gov" text */
+				esc_html__( 'Data from %s', 'kisho-clinical-trials' ),
+				'<a href="' . esc_url( 'https://clinicaltrials.gov' ) . '" rel="noopener noreferrer" target="_blank">'
+					. esc_html__( 'ClinicalTrials.gov', 'kisho-clinical-trials' )
+				. '</a>'
+			),
+			$allowed_links
+		);
+		echo '</p>';
+
+		if ( $attribution ) {
+			echo '<p class="skmctf-attribution skmctf-attribution--skm">';
+			echo wp_kses(
+				sprintf(
+					/* translators: %s: linked "SKM Digital" text */
+					esc_html__( 'Trial display by %s', 'kisho-clinical-trials' ),
+					'<a href="' . esc_url( 'https://skm.digital' ) . '" rel="noopener">'
+						. esc_html__( 'SKM Digital', 'kisho-clinical-trials' )
+					. '</a>'
+				),
+				$allowed_links
+			);
+			echo '</p>';
+		}
+
 		echo '</div><!-- .skmctf-trials-wrap -->';
 
 		return ob_get_clean();
