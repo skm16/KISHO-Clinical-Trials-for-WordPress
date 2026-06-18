@@ -12,6 +12,9 @@
 
 namespace SKMCTF\Frontend;
 
+/**
+ * Registers and conditionally enqueues frontend CSS and JavaScript assets.
+ */
 final class Assets {
 
 	public const STYLE_HANDLE  = 'skmctf-frontend';
@@ -53,7 +56,7 @@ final class Assets {
 			plugins_url( 'assets/js/filters.js', SKMCTF_FILE ),
 			array(),
 			SKMCTF_VERSION,
-			true // load in footer
+			true // Load in footer.
 		);
 
 		// Bundled Leaflet 1.9.4 (no CDN).
@@ -69,7 +72,7 @@ final class Assets {
 			plugins_url( 'assets/lib/leaflet/leaflet.js', SKMCTF_FILE ),
 			array(),
 			'1.9.4',
-			true // load in footer
+			true // Load in footer.
 		);
 
 		wp_register_script(
@@ -77,7 +80,7 @@ final class Assets {
 			plugins_url( 'assets/js/map.js', SKMCTF_FILE ),
 			array( self::LEAFLET_SCRIPT_HANDLE ),
 			SKMCTF_VERSION,
-			true // load in footer
+			true // Load in footer.
 		);
 	}
 

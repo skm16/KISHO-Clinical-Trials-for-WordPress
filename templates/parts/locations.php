@@ -10,6 +10,7 @@
  * @license GPL-2.0-or-later
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables injected by caller; not global assignments.
 defined( 'ABSPATH' ) || exit;
 
 if ( empty( $locations ) || ! is_array( $locations ) ) {
@@ -36,7 +37,7 @@ if ( $show_map ) {
 		}
 		$facility = sanitize_text_field( $loc['facility'] ?? '' );
 		$city     = sanitize_text_field( $loc['city'] ?? '' );
-		$label    = $facility ?: $city;
+		$label    = $facility ? $facility : $city;
 		if ( $facility && $city ) {
 			$label .= ' — ' . $city;
 		}

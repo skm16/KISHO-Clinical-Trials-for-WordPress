@@ -11,27 +11,48 @@
 
 namespace SKMCTF\LLM;
 
+/**
+ * LLM provider implementation for the Anthropic Messages API.
+ */
 final class Anthropic_Provider implements Llm_Provider {
 
-	/** @var string Anthropic Messages API endpoint. */
+	/**
+	 * Anthropic Messages API endpoint.
+	 *
+	 * @var string
+	 */
 	private const URL = 'https://api.anthropic.com/v1/messages';
 
-	/** @var string Default model — cheapest tier suitable for 8th-grade summaries. */
+	/**
+	 * Default model — cheapest tier suitable for 8th-grade summaries.
+	 *
+	 * @var string
+	 */
 	private const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
 
-	/** @var string */
+	/**
+	 * Anthropic API key.
+	 *
+	 * @var string
+	 */
 	private $key;
 
-	/** @var string */
+	/**
+	 * Active model identifier.
+	 *
+	 * @var string
+	 */
 	private $model;
 
 	/**
+	 * Constructor.
+	 *
 	 * @param string $api_key Anthropic API key (never logged or echoed).
 	 * @param string $model   Override model ID; empty string uses the default.
 	 */
 	public function __construct( string $api_key, string $model = '' ) {
 		$this->key   = $api_key;
-		$this->model = $model !== '' ? $model : self::DEFAULT_MODEL;
+		$this->model = '' !== $model ? $model : self::DEFAULT_MODEL;
 	}
 
 	/** {@inheritdoc} */
@@ -40,9 +61,12 @@ final class Anthropic_Provider implements Llm_Provider {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Generate a plain-language summary via the Anthropic Messages API.
 	 *
-	 * @return string|\WP_Error
+	 * @param string              $system System prompt.
+	 * @param string              $user   User prompt containing trial data.
+	 * @param array<string,mixed> $opts   Optional overrides (e.g. 'max_tokens').
+	 * @return string|\WP_Error Plain text on success, WP_Error on failure.
 	 */
 	public function generate_summary( string $system, string $user, array $opts = array() ) {
 		$body = array(
@@ -89,6 +113,6 @@ final class Anthropic_Provider implements Llm_Provider {
 		}
 
 		$text = isset( $data['content'][0]['text'] ) ? $data['content'][0]['text'] : '';
-		return $text !== '' ? $text : new \WP_Error( 'skmctf_anthropic_empty', 'Empty response.' );
+		return '' !== $text ? $text : new \WP_Error( 'skmctf_anthropic_empty', 'Empty response.' );
 	}
 }

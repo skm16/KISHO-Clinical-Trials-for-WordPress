@@ -15,6 +15,9 @@ use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Admin\Settings;
 use SKMCTF\Support\Template_Loader;
 
+/**
+ * Renders the full detail view for a single skmctf_trial post.
+ */
 final class Single_Renderer {
 
 	/**

@@ -11,27 +11,48 @@
 
 namespace SKMCTF\LLM;
 
+/**
+ * LLM provider implementation for the OpenAI Chat Completions API.
+ */
 final class Openai_Provider implements Llm_Provider {
 
-	/** @var string OpenAI Chat Completions endpoint. */
+	/**
+	 * OpenAI Chat Completions endpoint.
+	 *
+	 * @var string
+	 */
 	private const URL = 'https://api.openai.com/v1/chat/completions';
 
-	/** @var string Default model. */
+	/**
+	 * Default model.
+	 *
+	 * @var string
+	 */
 	private const DEFAULT_MODEL = 'gpt-4o-mini';
 
-	/** @var string */
+	/**
+	 * OpenAI API key.
+	 *
+	 * @var string
+	 */
 	private $key;
 
-	/** @var string */
+	/**
+	 * Active model identifier.
+	 *
+	 * @var string
+	 */
 	private $model;
 
 	/**
+	 * Constructor.
+	 *
 	 * @param string $api_key OpenAI API key (never logged or echoed).
 	 * @param string $model   Override model ID; empty string uses the default.
 	 */
 	public function __construct( string $api_key, string $model = '' ) {
 		$this->key   = $api_key;
-		$this->model = $model !== '' ? $model : self::DEFAULT_MODEL;
+		$this->model = '' !== $model ? $model : self::DEFAULT_MODEL;
 	}
 
 	/** {@inheritdoc} */
@@ -40,9 +61,12 @@ final class Openai_Provider implements Llm_Provider {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Generate a plain-language summary via the OpenAI Chat Completions API.
 	 *
-	 * @return string|\WP_Error
+	 * @param string              $system System prompt.
+	 * @param string              $user   User prompt containing trial data.
+	 * @param array<string,mixed> $opts   Optional overrides (e.g. 'max_tokens').
+	 * @return string|\WP_Error Plain text on success, WP_Error on failure.
 	 */
 	public function generate_summary( string $system, string $user, array $opts = array() ) {
 		$body = array(
@@ -91,6 +115,6 @@ final class Openai_Provider implements Llm_Provider {
 		}
 
 		$text = isset( $data['choices'][0]['message']['content'] ) ? $data['choices'][0]['message']['content'] : '';
-		return $text !== '' ? $text : new \WP_Error( 'skmctf_openai_empty', 'Empty response.' );
+		return '' !== $text ? $text : new \WP_Error( 'skmctf_openai_empty', 'Empty response.' );
 	}
 }

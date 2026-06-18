@@ -15,6 +15,9 @@ namespace SKMCTF\LLM;
 
 use SKMCTF\Admin\Settings;
 
+/**
+ * Reads settings and returns the configured LLM provider instance, or null when unavailable.
+ */
 final class Provider_Factory {
 
 	/**

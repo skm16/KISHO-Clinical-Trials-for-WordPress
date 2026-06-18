@@ -17,6 +17,9 @@ use SKMCTF\Post_Types\Trial_Post_Type;
 use SKMCTF\Admin\Settings;
 use SKMCTF\Support\Template_Loader;
 
+/**
+ * Swaps in plugin or theme-override templates for single and archive trial views.
+ */
 final class Template_Router {
 
 	/**

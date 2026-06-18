@@ -13,6 +13,8 @@
  * @license GPL-2.0-or-later
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables; not global assignments.
+// phpcs:disable WordPress.Files.FileName.NotHyphenatedLowercase -- WP template hierarchy requires archive-{post_type}.php naming; post type slug contains underscore (skmctf_trial).
 defined( 'ABSPATH' ) || exit;
 
 get_header();
@@ -24,7 +26,7 @@ get_header();
 		<h1 class="skmctf-archive-trials__title page-title">
 			<?php
 			$archive_title = post_type_archive_title( '', false );
-			echo esc_html( $archive_title ?: __( 'Clinical Trials', 'kisho-clinical-trials' ) );
+			echo esc_html( $archive_title ? $archive_title : __( 'Clinical Trials', 'kisho-clinical-trials' ) );
 			?>
 		</h1>
 		<?php

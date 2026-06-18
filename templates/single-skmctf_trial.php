@@ -22,6 +22,8 @@
  * @license GPL-2.0-or-later
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables injected by Single_Renderer; not global assignments.
+// phpcs:disable WordPress.Files.FileName.NotHyphenatedLowercase -- WP template hierarchy requires single-{post_type}.php naming; post type slug contains underscore (skmctf_trial).
 defined( 'ABSPATH' ) || exit;
 
 get_header();
@@ -42,7 +44,7 @@ get_header();
 				<?php echo esc_html( get_the_title() ); ?>
 			</h1>
 
-			<?php if ( ! empty( $official_title ) && $official_title !== get_the_title() ) : ?>
+			<?php if ( ! empty( $official_title ) && get_the_title() !== $official_title ) : ?>
 			<p class="skmctf-trial__official-title">
 				<span class="skmctf-trial__label"><?php esc_html_e( 'Official title:', 'kisho-clinical-trials' ); ?></span>
 				<?php echo esc_html( $official_title ); ?>
@@ -54,7 +56,7 @@ get_header();
 				// Status badge partial.
 				try {
 					include \SKMCTF\Support\Template_Loader::locate( 'parts/badge.php' );
-				} catch ( \RuntimeException $e ) {
+				} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- badge template missing; skip gracefully
 					// Badge template missing — skip gracefully.
 				}
 				?>
@@ -97,7 +99,7 @@ get_header();
 				// Summary disclaimer partial.
 				try {
 					include \SKMCTF\Support\Template_Loader::locate( 'parts/summary-disclaimer.php' );
-				} catch ( \RuntimeException $e ) {
+				} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- disclaimer template missing; skip gracefully
 					// Disclaimer template missing — skip gracefully.
 				}
 				?>
@@ -118,7 +120,7 @@ get_header();
 			// Eligibility partial.
 			try {
 				include \SKMCTF\Support\Template_Loader::locate( 'parts/eligibility.php' );
-			} catch ( \RuntimeException $e ) {
+			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- eligibility template missing; skip gracefully
 				// Eligibility template missing — skip gracefully.
 			}
 			?>
@@ -127,7 +129,7 @@ get_header();
 			// Locations partial (includes optional map).
 			try {
 				include \SKMCTF\Support\Template_Loader::locate( 'parts/locations.php' );
-			} catch ( \RuntimeException $e ) {
+			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- locations template missing; skip gracefully
 				// Locations template missing — skip gracefully.
 			}
 			?>

@@ -14,6 +14,9 @@ namespace SKMCTF\Admin;
 
 use SKMCTF\Support\Logger;
 
+/**
+ * Displays sync-result and last-error admin notices on the settings screen.
+ */
 final class Admin_Notices {
 
 	/**

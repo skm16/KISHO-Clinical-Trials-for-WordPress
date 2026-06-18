@@ -12,6 +12,7 @@
  * @package SKMCTF
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables injected by List_Renderer via extract(); not global assignments.
 defined( 'ABSPATH' ) || exit;
 
 // ---  Helpers ----------------------------------------------------------------
@@ -20,8 +21,8 @@ $show = static function ( string $field ) use ( $display_fields ): bool {
 };
 
 // --- Title / link ------------------------------------------------------------
-$title  = get_the_title( $post );
-$ct_url = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
+$trial_title = get_the_title( $post );
+$ct_url      = ! empty( $meta['ct_url'] ) ? $meta['ct_url'] : '';
 
 if ( $single_pages ) {
 	$title_link = get_permalink( $post );
@@ -82,10 +83,10 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 						<?php if ( ! $single_pages && $ct_url ) : ?>
 						target="_blank" rel="noopener noreferrer"
 						<?php endif; ?>>
-						<?php echo esc_html( $title ); ?>
+						<?php echo esc_html( $trial_title ); ?>
 					</a>
 				<?php else : ?>
-					<?php echo esc_html( $title ); ?>
+					<?php echo esc_html( $trial_title ); ?>
 				<?php endif; ?>
 			</h2>
 
@@ -156,7 +157,7 @@ $brief_summary = ! empty( $meta['brief_summary'] ) ? $meta['brief_summary'] : ''
 					target="_blank"
 					rel="noopener noreferrer">
 					<?php esc_html_e( 'View on ClinicalTrials.gov', 'kisho-clinical-trials' ); ?>
-					<span class="screen-reader-text"><?php echo esc_html( ' (' . get_the_title( $post ) . ')' ); ?></span>
+					<span class="screen-reader-text"><?php echo esc_html( ' (' . $trial_title . ')' ); ?></span>
 				</a>
 			<?php endif; ?>
 

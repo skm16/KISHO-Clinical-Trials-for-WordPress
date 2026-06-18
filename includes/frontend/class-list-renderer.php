@@ -19,6 +19,9 @@ use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Post_Types\Trial_Taxonomies;
 use SKMCTF\Support\Template_Loader;
 
+/**
+ * Renders the clinical trials list component for the shortcode and block.
+ */
 final class List_Renderer {
 
 	/**
@@ -48,9 +51,9 @@ final class List_Renderer {
 		$get_paged  = isset( $_GET['skmctf_paged'] ) ? max( 1, absint( wp_unslash( $_GET['skmctf_paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$filters = array(
-			'status'   => $get_status ?: $atts['status'],
-			'phase'    => $get_phase ?: $atts['phase'],
-			'state'    => $get_state ?: $atts['state'],
+			'status'   => $get_status ? $get_status : $atts['status'],
+			'phase'    => $get_phase ? $get_phase : $atts['phase'],
+			'state'    => $get_state ? $get_state : $atts['state'],
 			'per_page' => absint( $atts['per_page'] ),
 			'paged'    => $get_paged,
 		);
@@ -111,7 +114,7 @@ final class List_Renderer {
 						// Build popup label: facility + city, escaped.
 						$facility = sanitize_text_field( $loc['facility'] ?? '' );
 						$city     = sanitize_text_field( $loc['city'] ?? '' );
-						$label    = $facility ?: $post_title;
+						$label    = $facility ? $facility : $post_title;
 						if ( $city ) {
 							$label .= ' — ' . $city;
 						}

@@ -19,6 +19,9 @@ use SKMCTF\Post_Types\Trial_Post_Type;
 use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Admin\Settings;
 
+/**
+ * Conditionally applies noindex via the wp_robots filter for single trial pages.
+ */
 final class Seo {
 
 	/**

@@ -14,9 +14,16 @@ namespace SKMCTF\Admin;
 
 use SKMCTF\Support\Logger;
 
+/**
+ * Registers the admin settings page and the Settings API option group.
+ */
 final class Settings_Page {
 
-	/** @var string Admin menu slug. */
+	/**
+	 * Admin menu slug.
+	 *
+	 * @var string
+	 */
 	public const MENU_SLUG = 'skmctf-settings';
 
 	// -------------------------------------------------------------------------

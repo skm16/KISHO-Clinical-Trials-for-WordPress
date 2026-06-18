@@ -15,6 +15,9 @@ use SKMCTF\Post_Types\Trial_Post_Type;
 use SKMCTF\Post_Types\Trial_Taxonomies;
 use SKMCTF\Post_Types\Trial_Meta;
 
+/**
+ * Builds and executes WP_Query args from normalised filter inputs.
+ */
 final class Trials_Query {
 
 	/**
@@ -59,12 +62,12 @@ final class Trials_Query {
 		}
 		if ( $tax ) {
 			$tax['relation']   = 'AND';
-			$args['tax_query'] = $tax;
+			$args['tax_query'] = $tax; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- intentional filter on a small (rare-disease) dataset; see design spec.
 		}
 
 		// --- Meta filters -------------------------------------------------------
 		if ( ! empty( $filters['state'] ) ) {
-			$args['meta_query'] = array(
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- intentional filter on a small (rare-disease) dataset; see design spec.
 				array(
 					'key'     => Trial_Meta::KEYS['locations'],
 					'value'   => sanitize_text_field( $filters['state'] ),

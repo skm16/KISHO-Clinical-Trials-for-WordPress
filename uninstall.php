@@ -12,9 +12,11 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 // Remove all plugin options.
-foreach ( array( 'skmctf_settings', 'skmctf_last_sync', 'skmctf_last_error', 'skmctf_log' ) as $opt ) {
-	delete_option( $opt );
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- $opt_key is a local foreach variable in uninstall context, not a global.
+foreach ( array( 'skmctf_settings', 'skmctf_last_sync', 'skmctf_last_error', 'skmctf_log' ) as $opt_key ) {
+	delete_option( $opt_key );
 }
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 // Unschedule the daily sync action (best-effort; Action Scheduler may already be gone).
 if ( function_exists( 'as_unschedule_all_actions' ) ) {

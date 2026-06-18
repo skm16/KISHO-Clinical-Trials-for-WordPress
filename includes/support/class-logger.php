@@ -18,18 +18,37 @@
 
 namespace SKMCTF\Support;
 
+/**
+ * Concrete logger that stores a bounded ring buffer and sync summary in WordPress options.
+ */
 final class Logger implements Logger_Interface {
 
-	/** @var string WordPress option key for the log ring buffer. */
+	/**
+	 * WordPress option key for the log ring buffer.
+	 *
+	 * @var string
+	 */
 	private const LOG_OPTION = 'skmctf_log';
 
-	/** @var string WordPress option key for the last-sync summary. */
+	/**
+	 * WordPress option key for the last-sync summary.
+	 *
+	 * @var string
+	 */
 	private const SYNC_OPTION = 'skmctf_last_sync';
 
-	/** @var string WordPress option key for the last error message. */
+	/**
+	 * WordPress option key for the last error message.
+	 *
+	 * @var string
+	 */
 	private const ERROR_OPTION = 'skmctf_last_error';
 
-	/** @var int Maximum log entries to keep (ring buffer cap). */
+	/**
+	 * Maximum log entries to keep (ring buffer cap).
+	 *
+	 * @var int
+	 */
 	private const MAX_ENTRIES = 50;
 
 	// -------------------------------------------------------------------------

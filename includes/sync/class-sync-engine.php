@@ -22,21 +22,44 @@ use SKMCTF\Admin\Settings;
 use SKMCTF\Support\Logger;
 use SKMCTF\Support\Logger_Interface;
 
+/**
+ * Composition root that orchestrates a full feed sync across all configured conditions.
+ */
 final class Sync_Engine {
 
-	/** @var Ctgov_Client */
+	/**
+	 * HTTP client for ClinicalTrials.gov.
+	 *
+	 * @var Ctgov_Client
+	 */
 	private $client;
 
-	/** @var Trial_Repository */
+	/**
+	 * Trial data repository.
+	 *
+	 * @var Trial_Repository
+	 */
 	private $repo;
 
-	/** @var Reconciler */
+	/**
+	 * Handles trials that drop from the feed.
+	 *
+	 * @var Reconciler
+	 */
 	private $reconciler;
 
-	/** @var Summary_Service */
+	/**
+	 * LLM summary generator.
+	 *
+	 * @var Summary_Service
+	 */
 	private $summaries;
 
-	/** @var Logger_Interface */
+	/**
+	 * Logger.
+	 *
+	 * @var Logger_Interface
+	 */
 	private $log;
 
 	/**
@@ -85,7 +108,7 @@ final class Sync_Engine {
 	 * @param string $trigger Who triggered this run: 'scheduled', 'manual', 'test', etc.
 	 * @return array{inserted:int,updated:int,summarized:int,dropped_result:string,errors:array}
 	 */
-	public function run( string $trigger = 'manual' ): array {
+	public function run( string $trigger = 'manual' ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- $trigger reserved for future audit logging; part of public API contract
 		$summary = array(
 			'inserted'       => 0,
 			'updated'        => 0,

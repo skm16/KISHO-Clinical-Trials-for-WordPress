@@ -19,12 +19,23 @@
 
 namespace SKMCTF\Sync;
 
+/**
+ * Registers and manages the daily Action Scheduler recurring sync job.
+ */
 final class Scheduler {
 
-	/** @var string Action Scheduler hook name. */
+	/**
+	 * Action Scheduler hook name.
+	 *
+	 * @var string
+	 */
 	public const ACTION = 'skmctf_daily_sync';
 
-	/** @var string Action Scheduler group name. */
+	/**
+	 * Action Scheduler group name.
+	 *
+	 * @var string
+	 */
 	public const GROUP = 'kisho-clinical-trials';
 
 	/**

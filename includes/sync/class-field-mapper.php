@@ -10,6 +10,9 @@
 
 namespace SKMCTF\Sync;
 
+/**
+ * Transforms raw CT.gov v2 study JSON into the flat meta array used by Trial_Repository.
+ */
 final class Field_Mapper {
 
 	/**

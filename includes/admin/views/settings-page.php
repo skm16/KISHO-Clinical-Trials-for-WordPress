@@ -18,6 +18,7 @@
  * @license GPL-2.0-or-later
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables injected by Settings_Page::render(); not global assignments.
 defined( 'ABSPATH' ) || exit;
 
 use SKMCTF\Admin\Settings;
@@ -108,15 +109,15 @@ $all_display_fields = array(
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Trial statuses to include', 'kisho-clinical-trials' ); ?></th>
 						<td>
-							<?php foreach ( Settings::VALID_STATUSES as $status ) : ?>
+							<?php foreach ( Settings::VALID_STATUSES as $status_value ) : ?>
 								<label style="display:block;margin-bottom:4px;">
 									<input
 										type="checkbox"
 										name="<?php echo esc_attr( Settings::OPTION ); ?>[statuses][]"
-										value="<?php echo esc_attr( $status ); ?>"
-										<?php checked( in_array( $status, $cur_statuses, true ) ); ?>
+										value="<?php echo esc_attr( $status_value ); ?>"
+										<?php checked( in_array( $status_value, $cur_statuses, true ) ); ?>
 									>
-									<?php echo esc_html( ucwords( strtolower( str_replace( '_', ' ', $status ) ) ) ); ?>
+									<?php echo esc_html( ucwords( strtolower( str_replace( '_', ' ', $status_value ) ) ) ); ?>
 								</label>
 							<?php endforeach; ?>
 							<p class="description"><?php esc_html_e( 'At least one status must be selected; defaults to Recruiting.', 'kisho-clinical-trials' ); ?></p>

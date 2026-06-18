@@ -7,6 +7,9 @@
 
 namespace SKMCTF\Post_Types;
 
+/**
+ * Registers the skmctf_trial custom post type with WordPress.
+ */
 final class Trial_Post_Type {
 
 	public const POST_TYPE = 'skmctf_trial';

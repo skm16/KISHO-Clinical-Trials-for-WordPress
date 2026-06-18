@@ -15,12 +15,23 @@
 
 namespace SKMCTF\Admin;
 
+/**
+ * Typed settings facade over the skmctf_settings WordPress option.
+ */
 final class Settings {
 
-	/** @var string WordPress option name. */
+	/**
+	 * WordPress option name.
+	 *
+	 * @var string
+	 */
 	public const OPTION = 'skmctf_settings';
 
-	/** @var string[] Allowed trial status values from ClinicalTrials.gov. */
+	/**
+	 * Allowed trial status values from ClinicalTrials.gov.
+	 *
+	 * @var string[]
+	 */
 	public const VALID_STATUSES = array(
 		'RECRUITING',
 		'NOT_YET_RECRUITING',
@@ -33,7 +44,11 @@ final class Settings {
 		'UNKNOWN',
 	);
 
-	/** @var string[] Supported LLM providers. */
+	/**
+	 * Supported LLM providers.
+	 *
+	 * @var string[]
+	 */
 	public const PROVIDERS = array( 'anthropic', 'openai' );
 
 	// -------------------------------------------------------------------------
@@ -81,47 +96,75 @@ final class Settings {
 	/**
 	 * Get a single setting value.
 	 *
-	 * @param string $key     Option key.
-	 * @param mixed  $default Fallback when key is absent.
+	 * @param string $key           Option key.
+	 * @param mixed  $default_value Fallback when key is absent.
 	 * @return mixed
 	 */
-	public static function get( string $key, $default = null ) {
+	public static function get( string $key, $default_value = null ) {
 		$a = self::all();
-		return $a[ $key ] ?? $default;
+		return isset( $a[ $key ] ) ? $a[ $key ] : $default_value;
 	}
 
-	/** @return string[] */
+	/**
+	 * Return the configured disease conditions array.
+	 *
+	 * @return string[]
+	 */
 	public static function conditions(): array {
 		return (array) self::get( 'conditions', array() );
 	}
 
-	/** @return string[] */
+	/**
+	 * Return the configured trial statuses, falling back to RECRUITING.
+	 *
+	 * @return string[]
+	 */
 	public static function statuses(): array {
 		$s = (array) self::get( 'statuses', array( 'RECRUITING' ) );
-		return $s ?: array( 'RECRUITING' );
+		return $s ? $s : array( 'RECRUITING' );
 	}
 
-	/** @return string[] */
+	/**
+	 * Return the list of NCT IDs to always include in the feed.
+	 *
+	 * @return string[]
+	 */
 	public static function include_ncts(): array {
 		return (array) self::get( 'include_ncts', array() );
 	}
 
-	/** @return string[] */
+	/**
+	 * Return the list of NCT IDs to always exclude from the feed.
+	 *
+	 * @return string[]
+	 */
 	public static function exclude_ncts(): array {
 		return (array) self::get( 'exclude_ncts', array() );
 	}
 
-	/** @return string 'mark_closed'|'remove' */
+	/**
+	 * Return the reconcile mode ('mark_closed' or 'remove').
+	 *
+	 * @return string
+	 */
 	public static function reconcile_mode(): string {
-		return self::get( 'reconcile_mode' ) === 'remove' ? 'remove' : 'mark_closed';
+		return 'remove' === self::get( 'reconcile_mode' ) ? 'remove' : 'mark_closed';
 	}
 
-	/** @return bool */
+	/**
+	 * Return whether LLM summaries are enabled.
+	 *
+	 * @return bool
+	 */
 	public static function summaries_enabled(): bool {
 		return (bool) self::get( 'summaries_enabled', false );
 	}
 
-	/** @return string 'anthropic'|'openai' */
+	/**
+	 * Return the configured LLM provider slug.
+	 *
+	 * @return string
+	 */
 	public static function provider(): string {
 		$p = (string) self::get( 'provider', 'anthropic' );
 		return in_array( $p, self::PROVIDERS, true ) ? $p : 'anthropic';
@@ -138,32 +181,56 @@ final class Settings {
 		return (string) self::get( 'api_key', '' );
 	}
 
-	/** @return string */
+	/**
+	 * Return the configured LLM model identifier.
+	 *
+	 * @return string
+	 */
 	public static function model(): string {
 		return (string) self::get( 'model', '' );
 	}
 
-	/** @return bool */
+	/**
+	 * Return whether the interactive map is enabled.
+	 *
+	 * @return bool
+	 */
 	public static function show_map(): bool {
 		return (bool) self::get( 'show_map', false );
 	}
 
-	/** @return bool */
+	/**
+	 * Return whether individual trial single pages are enabled.
+	 *
+	 * @return bool
+	 */
 	public static function single_pages_enabled(): bool {
 		return (bool) self::get( 'single_pages', true );
 	}
 
-	/** @return bool */
+	/**
+	 * Return whether the admin override forces single pages to be indexed.
+	 *
+	 * @return bool
+	 */
 	public static function index_singles_override(): bool {
 		return (bool) self::get( 'index_singles_override', false );
 	}
 
-	/** @return string[] */
+	/**
+	 * Return the list of display field keys selected in settings.
+	 *
+	 * @return string[]
+	 */
 	public static function display_fields(): array {
 		return (array) self::get( 'display_fields', array() );
 	}
 
-	/** @return bool */
+	/**
+	 * Return whether SKM Digital attribution is enabled.
+	 *
+	 * @return bool
+	 */
 	public static function attribution_enabled(): bool {
 		return (bool) self::get( 'attribution', false );
 	}

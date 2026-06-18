@@ -13,6 +13,9 @@
 
 namespace SKMCTF\Frontend;
 
+/**
+ * Registers the [skmctf_trials] shortcode and delegates rendering to List_Renderer.
+ */
 final class Shortcode {
 
 	/** Shortcode tag. */
@@ -35,7 +38,7 @@ final class Shortcode {
 	 * @param string                     $tag     Shortcode tag (for shortcode_atts).
 	 * @return string Rendered HTML.
 	 */
-	public static function handle( $atts, ?string $content = null, string $tag = '' ): string {
+	public static function handle( $atts, ?string $content = null, string $tag = '' ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $content and $tag required by WP shortcode callback signature
 		$atts = shortcode_atts(
 			array(
 				'status'   => '',

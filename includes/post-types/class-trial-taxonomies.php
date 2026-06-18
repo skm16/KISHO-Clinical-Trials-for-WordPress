@@ -7,6 +7,9 @@
 
 namespace SKMCTF\Post_Types;
 
+/**
+ * Registers the trial_status and trial_phase taxonomies for the skmctf_trial post type.
+ */
 final class Trial_Taxonomies {
 
 	public const STATUS = 'trial_status';

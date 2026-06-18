@@ -13,9 +13,16 @@ namespace SKMCTF\Admin;
 
 use SKMCTF\Sync\Sync_Engine;
 
+/**
+ * Handles the manual Sync Now admin-post form action.
+ */
 final class Sync_Now_Controller {
 
-	/** @var string The admin-post action name. */
+	/**
+	 * The admin-post action name.
+	 *
+	 * @var string
+	 */
 	public const ACTION = 'skmctf_sync_now';
 
 	/**

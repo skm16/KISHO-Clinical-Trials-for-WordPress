@@ -11,6 +11,9 @@
 
 namespace SKMCTF\Support;
 
+/**
+ * Locates templates, preferring active-theme overrides over the plugin bundle.
+ */
 final class Template_Loader {
 
 	/**

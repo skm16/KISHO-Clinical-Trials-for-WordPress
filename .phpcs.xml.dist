@@ -45,4 +45,12 @@
 
 	<!-- Minimum supported WP version for deprecation/feature checks. -->
 	<config name="minimum_wp_version" value="6.4"/>
+
+	<!-- WP template hierarchy requires archive-{post_type}.php / single-{post_type}.php naming.
+	     The post type slug (skmctf_trial) contains an underscore by design — renaming the files
+	     would break WordPress template loading. Suppress the filename sniff for these two files only. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>templates/archive-skmctf_trial\.php</exclude-pattern>
+		<exclude-pattern>templates/single-skmctf_trial\.php</exclude-pattern>
+	</rule>
 </ruleset>

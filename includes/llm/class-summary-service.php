@@ -20,12 +20,23 @@ namespace SKMCTF\LLM;
 use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Support\Logger_Interface;
 
+/**
+ * Generates and caches plain-language trial summaries via the configured LLM provider.
+ */
 final class Summary_Service {
 
-	/** @var Llm_Provider|null */
+	/**
+	 * LLM back-end, or null when summaries are disabled.
+	 *
+	 * @var Llm_Provider|null
+	 */
 	private $provider;
 
-	/** @var Logger_Interface */
+	/**
+	 * Logger for recording errors.
+	 *
+	 * @var Logger_Interface
+	 */
 	private $log;
 
 	/**

@@ -11,6 +11,9 @@
 
 namespace SKMCTF\Sync;
 
+/**
+ * HTTP client for the ClinicalTrials.gov v2 REST API with automatic pagination.
+ */
 final class Ctgov_Client {
 
 	/**

@@ -11,9 +11,16 @@
 
 namespace SKMCTF\Post_Types;
 
+/**
+ * Single source of truth for all post meta keys and sanitizers used by skmctf_trial.
+ */
 final class Trial_Meta {
 
-	/** short_key => full meta_key */
+	/**
+	 * Short key to full meta-key mapping.
+	 *
+	 * @var array<string,string>
+	 */
 	public const KEYS = array(
 		'nct_id'                    => 'skmctf_nct_id',
 		'official_title'            => 'skmctf_official_title',

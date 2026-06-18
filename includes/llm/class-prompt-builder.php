@@ -9,6 +9,9 @@
 
 namespace SKMCTF\LLM;
 
+/**
+ * Assembles system and user prompts and enforces the medical disclaimer on summaries.
+ */
 final class Prompt_Builder {
 
 	/**

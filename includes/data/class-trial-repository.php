@@ -14,6 +14,9 @@ use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Post_Types\Trial_Post_Type;
 use SKMCTF\Post_Types\Trial_Taxonomies;
 
+/**
+ * Single writer of skmctf_trial posts — all inserts and updates go through this class.
+ */
 final class Trial_Repository implements Repo_Interface {
 
 	/**
@@ -54,7 +57,7 @@ final class Trial_Repository implements Repo_Interface {
 		$postarr = array(
 			'post_type'    => Trial_Post_Type::POST_TYPE,
 			'post_status'  => 'publish',
-			'post_title'   => $meta['brief_title'] !== '' ? $meta['brief_title'] : $meta['official_title'],
+			'post_title'   => '' !== $meta['brief_title'] ? $meta['brief_title'] : $meta['official_title'],
 			'post_name'    => strtolower( $nct ),
 			'post_content' => '',
 		);
@@ -81,7 +84,7 @@ final class Trial_Repository implements Repo_Interface {
 		}
 		update_post_meta( $id, Trial_Meta::KEYS['last_synced'], time() );
 
-		if ( $meta['overall_status'] !== '' ) {
+		if ( '' !== $meta['overall_status'] ) {
 			wp_set_object_terms( $id, $meta['overall_status'], Trial_Taxonomies::STATUS );
 		}
 		if ( ! empty( $meta['phase'] ) ) {

@@ -7,9 +7,23 @@
 
 namespace SKMCTF;
 
+/**
+ * Main plugin singleton — boots all subsystems via WordPress hooks.
+ */
 final class Plugin {
+
+	/**
+	 * Singleton instance.
+	 *
+	 * @var Plugin|null
+	 */
 	private static ?Plugin $instance = null;
 
+	/**
+	 * Return the single Plugin instance, creating it if needed.
+	 *
+	 * @return Plugin
+	 */
 	public static function instance(): Plugin {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -45,6 +59,11 @@ final class Plugin {
 		}
 	}
 
+	/**
+	 * Load the plugin text domain for i18n.
+	 *
+	 * @return void
+	 */
 	public function load_textdomain(): void {
 		load_plugin_textdomain( SKMCTF_TEXT_DOMAIN, false, dirname( plugin_basename( SKMCTF_FILE ) ) . '/languages' );
 	}

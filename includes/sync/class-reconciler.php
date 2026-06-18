@@ -22,15 +22,26 @@ namespace SKMCTF\Sync;
 use SKMCTF\Data\Repo_Interface;
 use SKMCTF\Support\Logger_Interface;
 
+/**
+ * Compares seen NCT IDs against stored trials and closes or removes those that dropped from the feed.
+ */
 final class Reconciler {
 
 	/** Maximum fraction of existing trials that may be dropped in one run. */
 	public const MAX_DROP_RATIO = 0.5;
 
-	/** @var Repo_Interface */
+	/**
+	 * Trial data repository.
+	 *
+	 * @var Repo_Interface
+	 */
 	private $repo;
 
-	/** @var Logger_Interface */
+	/**
+	 * Logger for audit messages.
+	 *
+	 * @var Logger_Interface
+	 */
 	private $log;
 
 	/**

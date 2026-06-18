@@ -9,6 +9,7 @@
  * @license GPL-2.0-or-later
  */
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- template-scope variables injected by caller; not global assignments.
 defined( 'ABSPATH' ) || exit;
 
 $elig_sex      = ! empty( $eligibility['sex'] ) ? $eligibility['sex'] : '';
