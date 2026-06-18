@@ -49,10 +49,13 @@ final class Ctgov_Client {
 		$token   = null;
 		$pages   = 0;
 
+		// Filter seam: allows synonym expansion / MONDO normalization of the condition query.
+		$query_cond = (string) apply_filters( 'skmctf_condition_query', $condition );
+
 		do {
 			++$pages;
 			$args = array(
-				'query.cond'           => $condition,
+				'query.cond'           => $query_cond,
 				'filter.overallStatus' => implode( '|', array_map( 'sanitize_text_field', $statuses ) ),
 				'fields'               => self::FIELDS,
 				'pageSize'             => 100,
@@ -102,6 +105,55 @@ final class Ctgov_Client {
 		return array(
 			'studies' => $studies,
 			'error'   => null,
+		);
+	}
+
+	/**
+	 * Fetch specific studies by their NCT IDs.
+	 *
+	 * Each NCT is fetched individually from the single-study endpoint.
+	 * Failures for individual NCTs are collected but do not abort the batch.
+	 *
+	 * @param string[] $nct_ids List of NCT IDs (e.g. ['NCT01234567']).
+	 * @return array{studies:array[],error:\WP_Error|null}
+	 */
+	public function fetch_by_nct_ids( array $nct_ids ): array {
+		$studies = array();
+		$errors  = array();
+		foreach ( $nct_ids as $nct ) {
+			$nct = strtoupper( trim( (string) $nct ) );
+			if ( ! preg_match( '/^NCT\d{8}$/', $nct ) ) {
+				continue;
+			}
+			$url      = self::ENDPOINT . '/' . rawurlencode( $nct ) . '?' . http_build_query(
+				array(
+					'fields' => self::FIELDS,
+					'format' => 'json',
+				)
+			);
+			$response = $this->request( $url );
+			if ( is_wp_error( $response ) ) {
+				$errors[] = $nct;
+				continue;
+			}
+			$code = (int) wp_remote_retrieve_response_code( $response );
+			if ( 200 !== $code ) {
+				// 404 = NCT not found; skip silently (not a fatal error).
+				continue;
+			}
+			$data = json_decode( wp_remote_retrieve_body( $response ), true );
+			// Single-study endpoint returns the study object directly (protocolSection at top level).
+			if ( is_array( $data ) && isset( $data['protocolSection'] ) ) {
+				$studies[] = $data;
+			}
+		}
+		$error = empty( $errors ) ? null : new \WP_Error(
+			'skmctf_include_fetch',
+			'Some included NCTs failed to fetch: ' . implode( ', ', $errors )
+		);
+		return array(
+			'studies' => $studies,
+			'error'   => $error,
 		);
 	}
 

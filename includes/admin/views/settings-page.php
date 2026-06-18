@@ -308,7 +308,7 @@ $all_display_fields = array(
 								placeholder="<?php echo $key_set ? esc_attr__( 'Enter a new key to replace', 'kisho-clinical-trials' ) : esc_attr__( 'Paste your API key', 'kisho-clinical-trials' ); ?>"
 							>
 							<p class="description">
-								<?php esc_html_e( 'Your key is stored encrypted-at-rest in the WordPress database and is never displayed here.', 'kisho-clinical-trials' ); ?>
+								<?php esc_html_e( 'Your key is stored in the WordPress database (autoload disabled) and is never displayed here. Treat your site database as you would any credential store.', 'kisho-clinical-trials' ); ?>
 							</p>
 						</td>
 					</tr>

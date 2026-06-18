@@ -144,32 +144,24 @@ final class Sync_Engine {
 			}
 
 			foreach ( $result['studies'] as $study ) {
-				$meta = Field_Mapper::map( $study );
+				$this->process_study( $study, $exclude, $summary, $seen );
+			}
+		}
 
-				// Skip unmappable studies or excluded NCT IDs.
-				if ( '' === $meta['nct_id'] || isset( $exclude[ $meta['nct_id'] ] ) ) {
-					continue;
-				}
-
-				// Determine insert vs update BEFORE the upsert.
-				$existing = $this->repo->find_id_by_nct( $meta['nct_id'] );
-				$post_id  = $this->repo->upsert( $meta );
-
-				if ( ! $post_id ) {
-					continue;
-				}
-
-				if ( $existing ) {
-					++$summary['updated'];
-				} else {
-					++$summary['inserted'];
-				}
-
-				$seen[] = $meta['nct_id'];
-
-				if ( $this->summaries->maybe_generate( $post_id, $meta ) ) {
-					++$summary['summarized'];
-				}
+		// Manual include list: fetch specific NCTs and upsert them.
+		$include = Settings::include_ncts();
+		if ( ! empty( $include ) ) {
+			$inc_result = $this->client->fetch_by_nct_ids( $include );
+			if ( null !== $inc_result['error'] ) {
+				$summary['errors'][] = $inc_result['error']->get_error_message();
+				$this->log->warn( $inc_result['error']->get_error_message() );
+				// NOTE: do NOT set $had_error here — a partial include-fetch failure must
+				// not block reconciliation of the (successful) condition results. Only
+				// condition-fetch errors set $had_error. Included NCTs that did fetch are
+				// already in $seen, so they won't be reconciled away.
+			}
+			foreach ( $inc_result['studies'] as $study ) {
+				$this->process_study( $study, $exclude, $summary, $seen );
 			}
 		}
 
@@ -182,5 +174,35 @@ final class Sync_Engine {
 
 		$this->log->record_sync( $summary );
 		return $summary;
+	}
+
+	/**
+	 * Process one raw study: map, upsert, summarize, and update the run summary.
+	 *
+	 * @param array             $study   Raw CT.gov study object.
+	 * @param array<string,int> $exclude NCT-keyed exclusion lookup.
+	 * @param array             $summary Run summary (by reference).
+	 * @param string[]          $seen    Seen-NCT list (by reference).
+	 * @return void
+	 */
+	private function process_study( array $study, array $exclude, array &$summary, array &$seen ): void {
+		$meta = Field_Mapper::map( $study );
+		if ( '' === $meta['nct_id'] || isset( $exclude[ $meta['nct_id'] ] ) ) {
+			return;
+		}
+		$existing = $this->repo->find_id_by_nct( $meta['nct_id'] );
+		$post_id  = $this->repo->upsert( $meta );
+		if ( ! $post_id ) {
+			return;
+		}
+		if ( $existing ) {
+			++$summary['updated'];
+		} else {
+			++$summary['inserted'];
+		}
+		$seen[] = $meta['nct_id'];
+		if ( $this->summaries->maybe_generate( $post_id, $meta ) ) {
+			++$summary['summarized'];
+		}
 	}
 }

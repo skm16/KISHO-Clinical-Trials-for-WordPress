@@ -116,6 +116,50 @@ final class SyncEngineTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test 3 (include list): manually-included NCTs are fetched and upserted.
+	 *
+	 * Mocks the single-study endpoint (URL contains the NCT ID) to return a
+	 * study object with protocolSection at the top level, as the v2 API does.
+	 * Asserts the trial is inserted and survives (find_id_by_nct returns non-null).
+	 *
+	 * @return void
+	 */
+	public function test_include_nct_list_inserts_trial(): void {
+		// No conditions — only the include list should insert this trial.
+		$this->set_conditions( array() );
+		update_option(
+			Settings::OPTION,
+			array_merge( Settings::all(), array( 'include_ncts' => array( 'NCT99999999' ) ) )
+		);
+
+		add_filter(
+			'pre_http_request',
+			function ( $pre, $args, $url ) {
+				if ( false === strpos( $url, 'clinicaltrials.gov' ) ) {
+					return $pre;
+				}
+				// Single-study endpoint returns the study object directly.
+				return array(
+					'response' => array( 'code' => 200 ),
+					'body'     => wp_json_encode( $this->study( 'NCT99999999' ) ),
+				);
+			},
+			10,
+			3
+		);
+
+		$summary = Sync_Engine::build()->run( 'test' );
+
+		remove_all_filters( 'pre_http_request' );
+
+		$this->assertSame( 1, $summary['inserted'], 'Included NCT must be inserted.' );
+		$this->assertNotNull(
+			( new Trial_Repository() )->find_id_by_nct( 'NCT99999999' ),
+			'Included NCT must be findable after run.'
+		);
+	}
+
+	/**
 	 * Test 2 (no-wipe guard): a fetch error must NOT cause existing trials to be removed.
 	 *
 	 * This is the critical safety test. When the API returns an error status,
