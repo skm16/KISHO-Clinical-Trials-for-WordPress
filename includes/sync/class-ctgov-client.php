@@ -32,7 +32,7 @@ final class Ctgov_Client {
 	 * These are the "piece name" identifiers used in the `fields` query
 	 * parameter. The API returns them nested under module paths in the JSON.
 	 */
-	public const FIELDS = 'NCTId,BriefTitle,OfficialTitle,OverallStatus,LastUpdatePostDate,BriefSummary,Conditions,Phase,StudyType,LeadSponsorName,Sex,MinimumAge,MaximumAge,EligibilityCriteria,LocationFacility,LocationCity,LocationState,LocationCountry,LocationStatus,LocationGeoPoint';
+	public const FIELDS = 'NCTId,BriefTitle,OfficialTitle,OverallStatus,LastUpdatePostDate,BriefSummary,Condition,Phase,StudyType,LeadSponsorName,Sex,MinimumAge,MaximumAge,EligibilityCriteria,LocationFacility,LocationCity,LocationState,LocationCountry,LocationStatus,LocationGeoPoint';
 
 	/**
 	 * Fetch all studies for a given condition and set of statuses.
