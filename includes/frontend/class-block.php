@@ -71,12 +71,17 @@ final class Block {
 	public function render( array $attributes ): string {
 		return List_Renderer::render(
 			array(
-				'status'   => $attributes['status'] ?? '',
-				'phase'    => $attributes['phase'] ?? '',
-				'state'    => $attributes['state'] ?? '',
-				'per_page' => $attributes['perPage'] ?? 20,
-				'map'      => ! empty( $attributes['showMap'] ),
-				'columns'  => $attributes['columns'] ?? 1,
+				'status'       => $attributes['status'] ?? '',
+				'phase'        => $attributes['phase'] ?? '',
+				'state'        => $attributes['state'] ?? '',
+				'per_page'     => $attributes['perPage'] ?? 20,
+				'map'          => ! empty( $attributes['showMap'] ),
+				'columns'      => $attributes['columns'] ?? 1,
+				'country'      => $attributes['country'] ?? '',
+				'default_lat'  => $attributes['defaultLat'] ?? '',
+				'default_lng'  => $attributes['defaultLng'] ?? '',
+				'default_zoom' => $attributes['defaultZoom'] ?? '',
+				'geolocation'  => ! empty( $attributes['enableGeolocation'] ),
 			)
 		);
 	}

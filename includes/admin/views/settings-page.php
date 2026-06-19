@@ -239,6 +239,81 @@ $all_display_fields = array(
 
 				</table>
 
+				<!-- ── Map View Configuration ──────────────────────────── -->
+				<h2><?php esc_html_e( 'Map View Configuration', 'kisho-clinical-trials' ); ?></h2>
+				<table class="form-table" role="presentation">
+
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Enable geolocation button', 'kisho-clinical-trials' ); ?></th>
+						<td>
+							<label>
+								<input
+									type="checkbox"
+									name="<?php echo esc_attr( Settings::OPTION ); ?>[enable_geolocation]"
+									value="1"
+									<?php checked( ! empty( $s['enable_geolocation'] ) ); ?>
+								>
+								<?php esc_html_e( 'Show a "Find trials near me" button on map-enabled listings', 'kisho-clinical-trials' ); ?>
+							</label>
+							<p class="description"><?php esc_html_e( 'When checked, a "Find trials near me" button appears on map-enabled listings. Requires HTTPS. Coordinates are used only in the visitor\'s browser and are never sent to the server.', 'kisho-clinical-trials' ); ?></p>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_default_lat"><?php esc_html_e( 'Default map latitude', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="text"
+								id="skmctf_default_lat"
+								name="<?php echo esc_attr( Settings::OPTION ); ?>[default_lat]"
+								value="<?php echo esc_attr( $s['default_lat'] ); ?>"
+								class="regular-text"
+								placeholder="<?php esc_attr_e( 'e.g. 40.7128 (range: -90 to 90)', 'kisho-clinical-trials' ); ?>"
+							>
+							<p class="description"><?php esc_html_e( 'Decimal degrees, -90 to 90. Leave blank to auto-fit to trial locations.', 'kisho-clinical-trials' ); ?></p>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_default_lng"><?php esc_html_e( 'Default map longitude', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="text"
+								id="skmctf_default_lng"
+								name="<?php echo esc_attr( Settings::OPTION ); ?>[default_lng]"
+								value="<?php echo esc_attr( $s['default_lng'] ); ?>"
+								class="regular-text"
+								placeholder="<?php esc_attr_e( 'e.g. -74.0060 (range: -180 to 180)', 'kisho-clinical-trials' ); ?>"
+							>
+							<p class="description"><?php esc_html_e( 'Decimal degrees, -180 to 180. Leave blank to auto-fit to trial locations.', 'kisho-clinical-trials' ); ?></p>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_default_zoom"><?php esc_html_e( 'Default map zoom', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<input
+								type="number"
+								id="skmctf_default_zoom"
+								name="<?php echo esc_attr( Settings::OPTION ); ?>[default_zoom]"
+								value="<?php echo esc_attr( $s['default_zoom'] ); ?>"
+								class="small-text"
+								min="1"
+								max="19"
+								placeholder="<?php esc_attr_e( '1–19', 'kisho-clinical-trials' ); ?>"
+							>
+							<p class="description"><?php esc_html_e( 'Integer 1–19. Leave blank to use the auto-fit zoom. Only applies when a default latitude and longitude are set.', 'kisho-clinical-trials' ); ?></p>
+						</td>
+					</tr>
+
+				</table>
+
 				<!-- ── AI Summaries ────────────────────────────────────── -->
 				<h2><?php esc_html_e( 'AI Summaries (optional)', 'kisho-clinical-trials' ); ?></h2>
 				<table class="form-table" role="presentation">
