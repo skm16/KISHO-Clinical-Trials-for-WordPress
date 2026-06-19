@@ -12,8 +12,26 @@ namespace SKMCTF\Post_Types;
  */
 final class Trial_Taxonomies {
 
+	/**
+	 * Taxonomy slug for trial status.
+	 *
+	 * @var string
+	 */
 	public const STATUS = 'trial_status';
-	public const PHASE  = 'trial_phase';
+
+	/**
+	 * Taxonomy slug for trial phase.
+	 *
+	 * @var string
+	 */
+	public const PHASE = 'trial_phase';
+
+	/**
+	 * Taxonomy slug for trial country.
+	 *
+	 * @var string
+	 */
+	public const COUNTRY = 'trial_country';
 
 	/**
 	 * Register both taxonomies with WordPress.
@@ -22,8 +40,9 @@ final class Trial_Taxonomies {
 	 */
 	public static function register(): void {
 		foreach ( array(
-			self::STATUS => __( 'Trial Status', 'kisho-clinical-trials' ),
-			self::PHASE  => __( 'Trial Phase', 'kisho-clinical-trials' ),
+			self::STATUS  => __( 'Trial Status', 'kisho-clinical-trials' ),
+			self::PHASE   => __( 'Trial Phase', 'kisho-clinical-trials' ),
+			self::COUNTRY => __( 'Trial Country', 'kisho-clinical-trials' ),
 		) as $tax => $label ) {
 			register_taxonomy(
 				$tax,

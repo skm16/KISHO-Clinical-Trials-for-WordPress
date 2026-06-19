@@ -31,7 +31,19 @@ import ServerSideRender from '@wordpress/server-side-render';
  * @return {JSX.Element} Editor UI.
  */
 export default function Edit( { attributes, setAttributes } ) {
-	const { status, phase, state, perPage, showMap, columns } = attributes;
+	const {
+		status,
+		phase,
+		state,
+		country,
+		perPage,
+		showMap,
+		columns,
+		enableGeolocation,
+		defaultLat,
+		defaultLng,
+		defaultZoom,
+	} = attributes;
 	const blockProps = useBlockProps();
 
 	return (
@@ -80,6 +92,13 @@ export default function Edit( { attributes, setAttributes } ) {
 						value={ state }
 						onChange={ ( value ) => setAttributes( { state: value } ) }
 					/>
+
+					<TextControl
+						label={ __( 'Country', 'kisho-clinical-trials' ) }
+						help={ __( 'Pre-filter by country name, e.g. United States', 'kisho-clinical-trials' ) }
+						value={ country }
+						onChange={ ( value ) => setAttributes( { country: value } ) }
+					/>
 				</PanelBody>
 
 				<PanelBody
@@ -106,6 +125,39 @@ export default function Edit( { attributes, setAttributes } ) {
 						label={ __( 'Show map', 'kisho-clinical-trials' ) }
 						checked={ showMap }
 						onChange={ ( value ) => setAttributes( { showMap: value } ) }
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Map Settings', 'kisho-clinical-trials' ) }
+					initialOpen={ false }
+				>
+					<ToggleControl
+						label={ __( 'Enable geolocation button', 'kisho-clinical-trials' ) }
+						help={ __( 'Requires HTTPS. Coordinates never leave the browser.', 'kisho-clinical-trials' ) }
+						checked={ enableGeolocation }
+						onChange={ ( value ) => setAttributes( { enableGeolocation: value } ) }
+					/>
+
+					<TextControl
+						label={ __( 'Default latitude', 'kisho-clinical-trials' ) }
+						help={ __( 'Decimal degrees, -90 to 90. Leave blank to auto-fit.', 'kisho-clinical-trials' ) }
+						value={ defaultLat }
+						onChange={ ( value ) => setAttributes( { defaultLat: value } ) }
+					/>
+
+					<TextControl
+						label={ __( 'Default longitude', 'kisho-clinical-trials' ) }
+						help={ __( 'Decimal degrees, -180 to 180. Leave blank to auto-fit.', 'kisho-clinical-trials' ) }
+						value={ defaultLng }
+						onChange={ ( value ) => setAttributes( { defaultLng: value } ) }
+					/>
+
+					<TextControl
+						label={ __( 'Default zoom', 'kisho-clinical-trials' ) }
+						help={ __( 'Integer 1–19. Leave blank to use auto-fit zoom.', 'kisho-clinical-trials' ) }
+						value={ defaultZoom }
+						onChange={ ( value ) => setAttributes( { defaultZoom: value } ) }
 					/>
 				</PanelBody>
 			</InspectorControls>

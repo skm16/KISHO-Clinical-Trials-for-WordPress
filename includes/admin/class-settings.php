@@ -72,6 +72,10 @@ final class Settings {
 			'api_key'                => '',
 			'model'                  => '',
 			'show_map'               => false,
+			'default_lat'            => '',
+			'default_lng'            => '',
+			'default_zoom'           => '',
+			'enable_geolocation'     => false,
 			'single_pages'           => true,
 			'index_singles_override' => false,
 			'display_fields'         => array( 'status', 'phase', 'conditions', 'sponsor', 'locations', 'summary' ),
@@ -200,6 +204,42 @@ final class Settings {
 	}
 
 	/**
+	 * Return the configured default map latitude, or empty string if unset.
+	 *
+	 * @return string
+	 */
+	public static function default_lat(): string {
+		return (string) self::get( 'default_lat', '' );
+	}
+
+	/**
+	 * Return the configured default map longitude, or empty string if unset.
+	 *
+	 * @return string
+	 */
+	public static function default_lng(): string {
+		return (string) self::get( 'default_lng', '' );
+	}
+
+	/**
+	 * Return the configured default map zoom level, or empty string if unset.
+	 *
+	 * @return string
+	 */
+	public static function default_zoom(): string {
+		return (string) self::get( 'default_zoom', '' );
+	}
+
+	/**
+	 * Return whether the client-side geolocation feature is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function geolocation_enabled(): bool {
+		return (bool) self::get( 'enable_geolocation', false );
+	}
+
+	/**
 	 * Return whether individual trial single pages are enabled.
 	 *
 	 * @return bool
@@ -238,6 +278,54 @@ final class Settings {
 	// -------------------------------------------------------------------------
 	// Sanitizer
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Sanitize a latitude value; returns '' when invalid or out of range.
+	 *
+	 * Range: -90.0 to 90.0 (inclusive). Pure — no WordPress calls.
+	 *
+	 * @param mixed $v Raw input value.
+	 * @return string Validated float as string, or empty string.
+	 */
+	public static function sanitize_lat( $v ): string {
+		if ( '' === $v || ! is_numeric( $v ) ) {
+			return '';
+		}
+		$f = (float) $v;
+		return ( $f >= -90.0 && $f <= 90.0 ) ? (string) $f : '';
+	}
+
+	/**
+	 * Sanitize a longitude value; returns '' when invalid or out of range.
+	 *
+	 * Range: -180.0 to 180.0 (inclusive). Pure — no WordPress calls.
+	 *
+	 * @param mixed $v Raw input value.
+	 * @return string Validated float as string, or empty string.
+	 */
+	public static function sanitize_lng( $v ): string {
+		if ( '' === $v || ! is_numeric( $v ) ) {
+			return '';
+		}
+		$f = (float) $v;
+		return ( $f >= -180.0 && $f <= 180.0 ) ? (string) $f : '';
+	}
+
+	/**
+	 * Sanitize a Leaflet zoom level; returns '' when invalid or out of range.
+	 *
+	 * Range: 1 to 19 (inclusive), integer. Pure — no WordPress calls.
+	 *
+	 * @param mixed $v Raw input value.
+	 * @return string Validated integer as string, or empty string.
+	 */
+	public static function sanitize_zoom( $v ): string {
+		if ( '' === $v || ! is_numeric( $v ) ) {
+			return '';
+		}
+		$i = (int) $v;
+		return ( $i >= 1 && $i <= 19 ) ? (string) $i : '';
+	}
 
 	/**
 	 * Parse a newline-separated list of NCT IDs, validate format, deduplicate.
@@ -311,7 +399,7 @@ final class Settings {
 		}
 
 		// Reconcile mode.
-		$out['reconcile_mode'] = ( ( $input['reconcile_mode'] ?? '' ) === 'remove' )
+		$out['reconcile_mode'] = ( 'remove' === ( $input['reconcile_mode'] ?? '' ) )
 			? 'remove'
 			: 'mark_closed';
 
@@ -321,6 +409,12 @@ final class Settings {
 		$out['single_pages']           = ! empty( $input['single_pages'] );
 		$out['index_singles_override'] = ! empty( $input['index_singles_override'] );
 		$out['attribution']            = ! empty( $input['attribution'] );
+		$out['enable_geolocation']     = ! empty( $input['enable_geolocation'] );
+
+		// Map view defaults — validated through pure sanitizers.
+		$out['default_lat']  = self::sanitize_lat( $input['default_lat'] ?? '' );
+		$out['default_lng']  = self::sanitize_lng( $input['default_lng'] ?? '' );
+		$out['default_zoom'] = self::sanitize_zoom( $input['default_zoom'] ?? '' );
 
 		// LLM provider (whitelisted).
 		$p               = sanitize_text_field( $input['provider'] ?? 'anthropic' );

@@ -83,6 +83,38 @@
 }
 
 /* ==========================================================================
+   Map
+   --------------------------------------------------------------------------
+   Leaflet measures its container's height at init; a container with no
+   explicit height collapses to 0px and the map renders invisibly. This rule
+   gives .skmctf-map a real height. Override it in a child theme to resize.
+   ========================================================================== */
+
+.skmctf-map {
+	height: 420px;
+	width: 100%;
+	margin-block-end: 1.5rem;
+	border: 1px solid #d0d0d0;
+	border-radius: 6px;
+	/* Keep map panes below typical sticky theme headers / admin bar. */
+	z-index: 0;
+}
+
+/* Leaflet's own panes/controls inherit a high z-index; scope them under our
+   container so they cannot overlay site chrome outside the map. */
+.skmctf-map .leaflet-pane,
+.skmctf-map .leaflet-top,
+.skmctf-map .leaflet-bottom {
+	z-index: 1;
+}
+
+@media (max-width: 640px) {
+	.skmctf-map {
+		height: 300px;
+	}
+}
+
+/* ==========================================================================
    Trial list
    ========================================================================== */
 
@@ -210,6 +242,58 @@
 .skmctf-card__ctgov-link:focus {
 	outline: 3px solid #005fcc;
 	outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Geolocation — "Find trials near me" button and status feedback
+   ========================================================================== */
+
+.skmctf-geo {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-block-end: 0.75rem;
+}
+
+.skmctf-geo-btn {
+	border: 1px solid #005fcc;
+	background: transparent;
+	color: #005fcc;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	padding: 0.4em 1em;
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.skmctf-geo-btn {
+		transition: none;
+	}
+}
+
+.skmctf-geo-btn:hover,
+.skmctf-geo-btn:focus {
+	background: #005fcc;
+	color: #fff;
+	outline: 3px solid #005fcc;
+	outline-offset: 2px;
+}
+
+.skmctf-geo-status {
+	font-size: 0.875rem;
+	color: #555;
+}
+
+/* ==========================================================================
+   "You are here" circle marker (Leaflet circleMarker svg path)
+   ========================================================================== */
+
+.skmctf-you-are-here path {
+	fill: #c0392b;
+	stroke: #7f1d1d;
+	stroke-width: 2;
 }
 
 /* ==========================================================================

@@ -48,4 +48,54 @@ final class TrialsQueryArgsTest extends TestCase {
 		$args = Trials_Query::args( [] );
 		$this->assertArrayNotHasKey( 'tax_query', $args );
 	}
+
+	/**
+	 * A country filter must produce a tax_query entry with taxonomy trial_country and field name.
+	 */
+	public function test_country_filter_adds_tax_query_entry(): void {
+		$args = Trials_Query::args( array( 'country' => 'United States' ) );
+		$this->assertArrayHasKey( 'tax_query', $args );
+		$slugs  = array_column( $args['tax_query'], 'taxonomy' );
+		$this->assertContains( 'trial_country', $slugs );
+		// Find the country clause and assert field.
+		$clause = array_values(
+			array_filter(
+				$args['tax_query'],
+				fn( $c ) => is_array( $c ) && isset( $c['taxonomy'] ) && 'trial_country' === $c['taxonomy']
+			)
+		)[0];
+		$this->assertSame( 'name', $clause['field'] );
+		$this->assertSame( 'United States', $clause['terms'] );
+	}
+
+	/**
+	 * When country filter is absent the tax_query must have no trial_country clause.
+	 */
+	public function test_no_country_filter_has_no_country_clause(): void {
+		$args = Trials_Query::args( array( 'status' => 'RECRUITING' ) );
+		$tax  = $args['tax_query'] ?? array();
+		$slugs = array_column( $tax, 'taxonomy' );
+		$this->assertNotContains( 'trial_country', $slugs );
+	}
+
+	/**
+	 * When country filter is an empty string no trial_country clause is added.
+	 */
+	public function test_empty_country_filter_has_no_country_clause(): void {
+		$args  = Trials_Query::args( array( 'country' => '' ) );
+		$tax   = $args['tax_query'] ?? array();
+		$slugs = array_column( $tax, 'taxonomy' );
+		$this->assertNotContains( 'trial_country', $slugs );
+	}
+
+	/**
+	 * Country and status together both appear in the tax_query with relation AND.
+	 */
+	public function test_country_and_status_together_use_and_relation(): void {
+		$args = Trials_Query::args( array( 'status' => 'RECRUITING', 'country' => 'Germany' ) );
+		$this->assertSame( 'AND', $args['tax_query']['relation'] );
+		$slugs = array_column( $args['tax_query'], 'taxonomy' );
+		$this->assertContains( 'trial_status', $slugs );
+		$this->assertContains( 'trial_country', $slugs );
+	}
 }

@@ -26,6 +26,7 @@ final class Trials_Query {
 	 * Filters accepted:
 	 *   status   (string)  — trial_status taxonomy term name
 	 *   phase    (string)  — trial_phase taxonomy term name
+	 *   country  (string)  — trial_country taxonomy term name
 	 *   state    (string)  — two-letter state abbrev; LIKE search on locations meta
 	 *   per_page (int)
 	 *   paged    (int)
@@ -58,6 +59,13 @@ final class Trials_Query {
 				'taxonomy' => Trial_Taxonomies::PHASE,
 				'field'    => 'name',
 				'terms'    => sanitize_text_field( $filters['phase'] ),
+			);
+		}
+		if ( ! empty( $filters['country'] ) ) {
+			$tax[] = array(
+				'taxonomy' => Trial_Taxonomies::COUNTRY,
+				'field'    => 'name',
+				'terms'    => sanitize_text_field( $filters['country'] ),
 			);
 		}
 		if ( $tax ) {

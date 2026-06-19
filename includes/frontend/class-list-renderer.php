@@ -34,26 +34,41 @@ final class List_Renderer {
 		// --- Normalise atts --------------------------------------------------
 		$atts = array_merge(
 			array(
-				'status'   => '',
-				'phase'    => '',
-				'state'    => '',
-				'per_page' => 20,
-				'columns'  => 1,
-				'map'      => false,
+				'status'       => '',
+				'phase'        => '',
+				'state'        => '',
+				'country'      => '',
+				'per_page'     => 20,
+				'columns'      => 1,
+				'map'          => false,
+				'default_lat'  => '',
+				'default_lng'  => '',
+				'default_zoom' => '',
+				'geolocation'  => false,
 			),
 			$atts
 		);
 
 		// Merge any GET params that match filter keys (form submission).
-		$get_status = isset( $_GET['skmctf_status'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_phase  = isset( $_GET['skmctf_phase'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_phase'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_state  = isset( $_GET['skmctf_state'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$get_paged  = isset( $_GET['skmctf_paged'] ) ? max( 1, absint( wp_unslash( $_GET['skmctf_paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_status  = isset( $_GET['skmctf_status'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_phase   = isset( $_GET['skmctf_phase'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_phase'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_state   = isset( $_GET['skmctf_state'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_state'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_country = isset( $_GET['skmctf_country'] ) ? sanitize_text_field( wp_unslash( $_GET['skmctf_country'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$get_paged   = isset( $_GET['skmctf_paged'] ) ? max( 1, absint( wp_unslash( $_GET['skmctf_paged'] ) ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		// Resolve map-view precedence: explicit att → global setting → default ('').
+		$default_lat  = '' !== (string) $atts['default_lat'] ? Settings::sanitize_lat( $atts['default_lat'] ) : Settings::default_lat();
+		$default_lng  = '' !== (string) $atts['default_lng'] ? Settings::sanitize_lng( $atts['default_lng'] ) : Settings::default_lng();
+		$default_zoom = '' !== (string) $atts['default_zoom'] ? Settings::sanitize_zoom( $atts['default_zoom'] ) : Settings::default_zoom();
+
+		// Geolocation: explicit att (any truthy value) OR global setting.
+		$geo = ! empty( $atts['geolocation'] ) || Settings::geolocation_enabled();
 
 		$filters = array(
 			'status'   => $get_status ? $get_status : $atts['status'],
 			'phase'    => $get_phase ? $get_phase : $atts['phase'],
 			'state'    => $get_state ? $get_state : $atts['state'],
+			'country'  => $get_country ? $get_country : $atts['country'],
 			'per_page' => absint( $atts['per_page'] ),
 			'paged'    => $get_paged,
 		);
@@ -149,6 +164,12 @@ final class List_Renderer {
 					'points'      => $map_points,
 					'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
 					'attribution' => $osm_attribution,
+					'view'        => array(
+						'lat'  => $default_lat,
+						'lng'  => $default_lng,
+						'zoom' => $default_zoom,
+					),
+					'geolocation' => (bool) $geo,
 				)
 			);
 		}
@@ -165,6 +186,16 @@ final class List_Renderer {
 		// No empty container is emitted when there are no valid coordinates
 		// (graceful degradation to list-only view).
 		if ( $show_map ) {
+			// Gate geolocation button on HTTPS: navigator.geolocation is unavailable
+			// on plain HTTP, so showing the button there produces a broken UX.
+			if ( $geo && is_ssl() ) {
+				echo '<div class="skmctf-geo">';
+				echo '<button type="button" class="skmctf-geo-btn" data-skmctf-geo>'
+					. esc_html__( 'Find trials near me', 'kisho-clinical-trials' ) . '</button>';
+				echo '<span class="skmctf-geo-status" data-skmctf-geo-status role="status" aria-live="polite"></span>';
+				echo '</div>';
+			}
+
 			echo '<div class="skmctf-map" role="region" aria-label="'
 				. esc_attr__( 'Trial locations map', 'kisho-clinical-trials' )
 				. '"></div>';
@@ -222,9 +253,10 @@ final class List_Renderer {
 					'format'   => '?skmctf_paged=%#%',
 					'add_args' => array_filter(
 						array(
-							'skmctf_status' => $filters['status'],
-							'skmctf_phase'  => $filters['phase'],
-							'skmctf_state'  => $filters['state'],
+							'skmctf_status'  => $filters['status'],
+							'skmctf_phase'   => $filters['phase'],
+							'skmctf_state'   => $filters['state'],
+							'skmctf_country' => $filters['country'],
 						)
 					),
 				)
@@ -293,23 +325,31 @@ final class List_Renderer {
 	 * @return void
 	 */
 	private static function render_filter_form( array $current ): void {
-		$statuses = get_terms(
+		$statuses  = get_terms(
 			array(
 				'taxonomy'   => Trial_Taxonomies::STATUS,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 			)
 		);
-		$phases   = get_terms(
+		$phases    = get_terms(
 			array(
 				'taxonomy'   => Trial_Taxonomies::PHASE,
 				'hide_empty' => true,
 				'orderby'    => 'name',
 			)
 		);
+		$countries = get_terms(
+			array(
+				'taxonomy'   => Trial_Taxonomies::COUNTRY,
+				'hide_empty' => true,
+				'orderby'    => 'name',
+			)
+		);
 
-		$statuses = is_wp_error( $statuses ) ? array() : (array) $statuses;
-		$phases   = is_wp_error( $phases ) ? array() : (array) $phases;
+		$statuses  = is_wp_error( $statuses ) ? array() : (array) $statuses;
+		$phases    = is_wp_error( $phases ) ? array() : (array) $phases;
+		$countries = is_wp_error( $countries ) ? array() : (array) $countries;
 		?>
 		<form method="get" class="skmctf-filters" data-skmctf-filters>
 			<fieldset class="skmctf-filters__fieldset">
@@ -366,12 +406,29 @@ final class List_Renderer {
 					/>
 				</div>
 
+				<?php if ( $countries ) : ?>
+				<div class="skmctf-filters__group">
+					<label for="skmctf-filter-country" class="skmctf-filters__label">
+						<?php esc_html_e( 'Country', 'kisho-clinical-trials' ); ?>
+					</label>
+					<select id="skmctf-filter-country" name="skmctf_country" class="skmctf-filters__select">
+						<option value=""><?php esc_html_e( 'All countries', 'kisho-clinical-trials' ); ?></option>
+						<?php foreach ( $countries as $term ) : ?>
+							<option value="<?php echo esc_attr( $term->name ); ?>"
+								<?php selected( $current['country'], $term->name ); ?>>
+								<?php echo esc_html( $term->name ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<?php endif; ?>
+
 				<div class="skmctf-filters__group skmctf-filters__group--submit">
 					<button type="submit" class="skmctf-filters__submit">
 						<?php esc_html_e( 'Filter', 'kisho-clinical-trials' ); ?>
 					</button>
-					<?php if ( $current['status'] || $current['phase'] || $current['state'] ) : ?>
-						<a href="<?php echo esc_url( remove_query_arg( array( 'skmctf_status', 'skmctf_phase', 'skmctf_state', 'skmctf_paged' ) ) ); ?>" class="skmctf-filters__reset">
+					<?php if ( $current['status'] || $current['phase'] || $current['state'] || $current['country'] ) : ?>
+						<a href="<?php echo esc_url( remove_query_arg( array( 'skmctf_status', 'skmctf_phase', 'skmctf_state', 'skmctf_country', 'skmctf_paged' ) ) ); ?>" class="skmctf-filters__reset">
 							<?php esc_html_e( 'Reset filters', 'kisho-clinical-trials' ); ?>
 						</a>
 					<?php endif; ?>

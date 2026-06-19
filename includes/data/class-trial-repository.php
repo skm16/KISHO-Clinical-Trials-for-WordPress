@@ -91,7 +91,51 @@ final class Trial_Repository implements Repo_Interface {
 			wp_set_object_terms( $id, $meta['phase'], Trial_Taxonomies::PHASE );
 		}
 
+		$countries = array();
+		foreach ( (array) ( $meta['locations'] ?? array() ) as $loc ) {
+			$c = is_array( $loc ) && isset( $loc['country'] ) ? trim( (string) $loc['country'] ) : '';
+			if ( '' !== $c ) {
+				$countries[ $c ] = true;
+			}
+		}
+		wp_set_object_terms( $id, array_keys( $countries ), Trial_Taxonomies::COUNTRY );
+
 		return $id;
+	}
+
+	/**
+	 * Backfill trial_country terms for all existing trial posts from their stored locations meta.
+	 *
+	 * Iterates every skmctf_trial post, reads the locations meta, derives distinct country
+	 * strings, and assigns them as trial_country terms. Passing an empty array clears stale
+	 * terms, so posts without locations end up with no country terms.
+	 *
+	 * @return int Number of posts processed.
+	 */
+	public function backfill_country_terms(): int {
+		$ids   = get_posts(
+			array( // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- admin-only backfill; small CPT dataset by design.
+				'post_type'      => Trial_Post_Type::POST_TYPE,
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+			)
+		);
+		$count = 0;
+		foreach ( $ids as $id ) {
+			$locations = get_post_meta( $id, Trial_Meta::KEYS['locations'], true );
+			$countries = array();
+			foreach ( (array) $locations as $loc ) {
+				$c = is_array( $loc ) && isset( $loc['country'] ) ? trim( (string) $loc['country'] ) : '';
+				if ( '' !== $c ) {
+					$countries[ $c ] = true;
+				}
+			}
+			wp_set_object_terms( (int) $id, array_keys( $countries ), Trial_Taxonomies::COUNTRY );
+			++$count;
+		}
+		return $count;
 	}
 
 	/**
