@@ -17,6 +17,9 @@ if ( empty( $locations ) || ! is_array( $locations ) ) {
 	return;
 }
 
+// Enqueue frontend assets (filters.js + frontend.css) so they load on single pages.
+\SKMCTF\Frontend\Assets::enqueue();
+
 // Collect valid map points when map is requested.
 $map_points = array();
 
@@ -41,26 +44,27 @@ if ( $show_map ) {
 		if ( $facility && $city ) {
 			$label .= ' — ' . $city;
 		}
+		// Store the RAW label — map.js inserts via textContent (the XSS boundary).
+		// HTML-escaping here would embed entities that corrupt rendering in the popup.
 		$map_points[] = array(
 			'lat'   => $lat,
 			'lng'   => $lng,
-			'title' => esc_html( $label ),
+			'title' => $label,
 		);
 	}
 
 	if ( ! empty( $map_points ) ) {
 		\SKMCTF\Frontend\Assets::enqueue_map();
-
+		$skmctf_map_uid  = wp_unique_id( 'skmctf-map-' );
 		$osm_attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
-		wp_localize_script(
-			\SKMCTF\Frontend\Assets::MAP_SCRIPT_HANDLE,
-			'skmctfMap',
-			array(
-				'points'      => $map_points,
-				'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
-				'attribution' => $osm_attribution,
-			)
+		$skmctf_payload  = array(
+			'points' => $map_points,
+			'view'   => array(
+				'lat'  => '',
+				'lng'  => '',
+				'zoom' => '',
+			),
+			'i18n'   => array(),
 		);
 	}
 }
@@ -73,11 +77,21 @@ if ( $show_map ) {
 	<?php if ( $show_map && ! empty( $map_points ) ) : ?>
 	<div class="skmctf-map skmctf-trial__map"
 		role="region"
-		aria-label="<?php esc_attr_e( 'Trial locations map', 'kisho-clinical-trials' ); ?>">
-	</div>
+		aria-label="<?php esc_attr_e( 'Trial locations map', 'kisho-clinical-trials' ); ?>"
+		data-skmctf-map
+		data-skmctf-data="<?php echo esc_attr( $skmctf_map_uid ); ?>"
+		data-skmctf-image-path="<?php echo esc_attr( SKMCTF_URL . 'assets/lib/leaflet/images/' ); ?>"
+		data-skmctf-attribution="<?php echo esc_attr( $osm_attribution ); ?>"
+		data-skmctf-geolocation="0"></div>
+	<script type="application/json" class="skmctf-map-data" id="<?php echo esc_attr( $skmctf_map_uid ); ?>"><?php echo wp_json_encode( $skmctf_payload, JSON_HEX_TAG | JSON_HEX_AMP ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON in a JSON script element; HEX flags neutralise markup. ?></script>
 	<?php endif; ?>
 
-	<ul class="skmctf-trial__locations-list">
+	<?php
+	$skmctf_total   = count( $locations );
+	$skmctf_visible = 10;
+	$skmctf_index   = 0;
+	?>
+	<ul class="skmctf-trial__locations-list" data-skmctf-loclist>
 		<?php
 		foreach ( $locations as $loc ) :
 			if ( ! is_array( $loc ) ) {
@@ -93,8 +107,10 @@ if ( $show_map ) {
 			if ( ! $facility && ! $address_parts ) {
 				continue;
 			}
+			$hidden = $skmctf_index >= $skmctf_visible ? ' hidden' : '';
+			++$skmctf_index;
 			?>
-		<li class="skmctf-trial__location">
+		<li class="skmctf-trial__location"<?php echo esc_attr( $hidden ) ? ' hidden' : ''; ?>>
 			<?php if ( $facility ) : ?>
 				<span class="skmctf-trial__location-facility"><?php echo esc_html( $facility ); ?></span>
 			<?php endif; ?>
@@ -107,4 +123,12 @@ if ( $show_map ) {
 		</li>
 		<?php endforeach; ?>
 	</ul>
+	<?php if ( $skmctf_index > $skmctf_visible ) : ?>
+		<button type="button" class="skmctf-trial__locations-toggle" data-skmctf-loctoggle aria-expanded="false">
+			<?php
+			/* translators: %d: total number of locations. */
+			printf( esc_html__( 'Show all %d locations', 'kisho-clinical-trials' ), (int) $skmctf_index );
+			?>
+		</button>
+	<?php endif; ?>
 </section>

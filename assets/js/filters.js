@@ -97,4 +97,20 @@
 	} else {
 		boot();
 	}
+
+	// Single-trial "show all locations" toggle.
+	var locToggles = document.querySelectorAll( '[data-skmctf-loctoggle]' );
+	for ( var t = 0; t < locToggles.length; t++ ) {
+		locToggles[ t ].addEventListener( 'click', function () {
+			var wrap = this.previousElementSibling; // the <ul data-skmctf-loclist>
+			if ( wrap ) {
+				var hiddenItems = wrap.querySelectorAll( 'li[hidden]' );
+				for ( var i = 0; i < hiddenItems.length; i++ ) {
+					hiddenItems[ i ].removeAttribute( 'hidden' );
+				}
+			}
+			this.setAttribute( 'aria-expanded', 'true' );
+			this.hidden = true;
+		} );
+	}
 }() );

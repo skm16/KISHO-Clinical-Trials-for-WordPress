@@ -339,3 +339,10 @@
 	outline: 3px solid #005fcc;
 	outline-offset: 2px;
 }
+
+/* ==========================================================================
+   Single-trial locations collapse
+   ========================================================================== */
+
+.skmctf-trial__locations-toggle { margin-top: .5rem; cursor: pointer; }
+.skmctf-trial__location[hidden] { display: none; }
