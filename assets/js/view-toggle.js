@@ -15,18 +15,41 @@
 	var KEY   = 'skmctf_view';
 	var VALID = [ 'grid', 'list' ];
 
-	function read() {
+	/**
+	 * Return the stored visitor view, but ONLY if it was saved against the
+	 * current admin default. A preference is a deliberate override OF a known
+	 * default; when the admin changes that default, prior preferences are stale
+	 * and must not silently override the new default. We stamp each saved
+	 * preference with the default it was made against and discard on mismatch.
+	 *
+	 * Legacy bare-string entries (no stamped default) are treated as stale and
+	 * discarded, so existing visitors fall back to the admin default once.
+	 *
+	 * @param {string} defaultView Current admin default ('grid' | 'list').
+	 * @returns {string|null} A valid stored view, or null to use the default.
+	 */
+	function read( defaultView ) {
 		try {
-			var v = window.localStorage.getItem( KEY );
-			return VALID.indexOf( v ) !== -1 ? v : null;
+			var raw = window.localStorage.getItem( KEY );
+			if ( ! raw ) {
+				return null;
+			}
+			var data = JSON.parse( raw );
+			if ( ! data || typeof data !== 'object' ) {
+				return null; // legacy bare string → stale, ignore.
+			}
+			if ( VALID.indexOf( data.v ) === -1 || data.d !== defaultView ) {
+				return null; // unknown view, or saved against a different default.
+			}
+			return data.v;
 		} catch ( e ) {
 			return null;
 		}
 	}
 
-	function write( v ) {
+	function write( view, defaultView ) {
 		try {
-			window.localStorage.setItem( KEY, v );
+			window.localStorage.setItem( KEY, JSON.stringify( { v: view, d: defaultView } ) );
 		} catch ( e ) {
 			/* storage unavailable — ignore; the view still switches this load. */
 		}
@@ -52,7 +75,12 @@
 			return;
 		}
 
-		var stored = read();
+		// The admin default the server rendered against; preferences are scoped
+		// to it so a changed default invalidates stale visitor choices.
+		var defaultView = toggle.getAttribute( 'data-skmctf-default-view' )
+			|| list.getAttribute( 'data-skmctf-view' );
+
+		var stored = read( defaultView );
 		if ( stored && stored !== list.getAttribute( 'data-skmctf-view' ) ) {
 			apply( toggle, list, stored );
 		}
@@ -67,7 +95,7 @@
 				return;
 			}
 			apply( toggle, list, view );
-			write( view );
+			write( view, defaultView );
 		} );
 	}
 

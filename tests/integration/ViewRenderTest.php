@@ -69,4 +69,24 @@ final class ViewRenderTest extends WP_UnitTestCase {
 		List_Renderer::render( array() );
 		$this->assertTrue( wp_script_is( 'skmctf-view-toggle', 'enqueued' ) );
 	}
+
+	/**
+	 * The toggle must expose the admin default so the JS can invalidate a stored
+	 * visitor preference when the admin changes the default.
+	 */
+	public function test_toggle_exposes_admin_default_view(): void {
+		$this->set_view( 'grid' );
+		$html = List_Renderer::render( array() );
+		$this->assertMatchesRegularExpression(
+			'/class="skmctf-view-toggle"[^>]*data-skmctf-default-view="grid"/',
+			$html
+		);
+
+		$this->set_view( 'list' );
+		$html = List_Renderer::render( array() );
+		$this->assertMatchesRegularExpression(
+			'/class="skmctf-view-toggle"[^>]*data-skmctf-default-view="list"/',
+			$html
+		);
+	}
 }

@@ -430,7 +430,8 @@ final class List_Renderer {
 			'grid' => __( 'Grid view', 'kisho-clinical-trials' ),
 			'list' => __( 'List view', 'kisho-clinical-trials' ),
 		);
-		echo '<div class="skmctf-view-toggle" role="group" aria-label="'
+		echo '<div class="skmctf-view-toggle" role="group" data-skmctf-default-view="'
+			. esc_attr( $active ) . '" aria-label="'
 			. esc_attr__( 'Choose how trials are displayed', 'kisho-clinical-trials' ) . '">';
 		foreach ( $buttons as $view => $label ) {
 			$is = $view === $active;
