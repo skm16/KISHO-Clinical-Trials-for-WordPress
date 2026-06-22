@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,11 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 4. Gutenberg block in the editor sidebar.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: Two optional, admin-selectable front-end themes — **Clinical** and **Patient-friendly** — each available in light and dark. Choose them under Settings → Clinical Trials → Theme & appearance. The default (**Skeleton**) is unchanged in behavior and now also offers a dark mode.
+* New: Themes are pure CSS skins over the existing markup, applied only to the plugin's own trials list and single-trial pages (never the surrounding site). Fonts (Public Sans, Newsreader, Mulish) are bundled locally — no external requests.
+* Improved: The trials list and single-trial layout were refined as the shared baseline structure for all themes.
 
 = 1.1.3 =
 * Fixed: The patient-friendly fields ("What this study is testing", "Who can join", "Questions to ask your doctor") were not generated for trials that already had a plain-language summary, because the summary cache short-circuited before they ran. They are now generated independently of the summary cache, so existing trials get them on the next sync.
