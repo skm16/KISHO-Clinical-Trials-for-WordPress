@@ -17,7 +17,7 @@ use SKMCTF\Post_Types\Trial_Taxonomies;
 /**
  * Single writer of skmctf_trial posts — all inserts and updates go through this class.
  */
-class Trial_Repository implements Repo_Interface {
+final class Trial_Repository implements Repo_Interface {
 
 	/**
 	 * Find a trial post ID by its NCT ID.
@@ -236,19 +236,6 @@ class Trial_Repository implements Repo_Interface {
 	}
 
 	/**
-	 * Whether a trial with the given NCT ID exists.
-	 *
-	 * Extracted as a protected seam so delete_by_ncts() can be unit-tested
-	 * without a live database.
-	 *
-	 * @param string $nct NCT ID.
-	 * @return bool
-	 */
-	protected function exists( string $nct ): bool {
-		return (bool) $this->find_id_by_nct( $nct );
-	}
-
-	/**
 	 * Permanently delete multiple trials by NCT ID.
 	 *
 	 * @param string[] $ncts NCT IDs to delete.
@@ -258,7 +245,7 @@ class Trial_Repository implements Repo_Interface {
 		$count = 0;
 		foreach ( $ncts as $nct ) {
 			$nct = strtoupper( trim( (string) $nct ) );
-			if ( '' === $nct || ! $this->exists( $nct ) ) {
+			if ( '' === $nct || ! $this->find_id_by_nct( $nct ) ) {
 				continue;
 			}
 			$this->delete_by_nct( $nct );
