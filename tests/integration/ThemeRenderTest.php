@@ -14,6 +14,19 @@ use SKMCTF\Frontend\List_Renderer;
 
 final class ThemeRenderTest extends WP_UnitTestCase {
 
+	/**
+	 * Reset the global style registry before each test.
+	 *
+	 * $wp_styles is a process-global singleton that WP_UnitTestCase does not
+	 * reset between tests, so an enqueue in one test would otherwise leak into
+	 * the next. Each real front-end request starts with a fresh registry; this
+	 * restores that invariant for the test process.
+	 */
+	public function set_up(): void {
+		parent::set_up();
+		$GLOBALS['wp_styles'] = null;
+	}
+
 	private function set_theme( string $theme, string $mode ): void {
 		update_option( Settings::OPTION, array( 'theme' => $theme, 'theme_mode' => $mode ) );
 	}
@@ -37,7 +50,19 @@ final class ThemeRenderTest extends WP_UnitTestCase {
 
 	// ---- Task 4: conditional asset enqueue ----
 
+	/**
+	 * Register the plugin's assets the way a real front-end request would.
+	 *
+	 * do_register() is hooked to wp_enqueue_scripts, which does not fire during a
+	 * plain WP_UnitTestCase render. Firing it here mirrors a real page load so the
+	 * handles exist before enqueue() runs.
+	 */
+	private function register_assets(): void {
+		\SKMCTF\Frontend\Assets::do_register();
+	}
+
 	public function test_clinical_theme_enqueues_theme_and_font_css(): void {
+		$this->register_assets();
 		$this->set_theme( 'clinical', 'light' );
 		List_Renderer::render( array() );
 		$this->assertTrue( wp_style_is( 'skmctf-theme-clinical', 'enqueued' ) );
@@ -46,6 +71,7 @@ final class ThemeRenderTest extends WP_UnitTestCase {
 	}
 
 	public function test_skeleton_enqueues_no_theme_css(): void {
+		$this->register_assets();
 		$this->set_theme( 'skeleton', 'light' );
 		List_Renderer::render( array() );
 		$this->assertFalse( wp_style_is( 'skmctf-theme-clinical', 'enqueued' ) );

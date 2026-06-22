@@ -29,6 +29,12 @@ final class Assets {
 	/** Map initialisation script handle. */
 	public const MAP_SCRIPT_HANDLE = 'skmctf-map';
 
+	/** Per-theme token stylesheet handle prefix (suffix = theme key). */
+	public const THEME_STYLE_PREFIX = 'skmctf-theme-';
+
+	/** Per-theme font stylesheet handle prefix (suffix = theme key). */
+	public const FONT_STYLE_PREFIX = 'skmctf-fonts-';
+
 	/**
 	 * Hook into wp_enqueue_scripts to register assets.
 	 *
@@ -82,6 +88,32 @@ final class Assets {
 			SKMCTF_VERSION,
 			true // Load in footer.
 		);
+
+		// Per-theme token + font stylesheets (registered always, enqueued on demand).
+		$themes = array(
+			'clinical' => array(
+				'tokens' => 'assets/css/themes/clinical.css',
+				'fonts'  => 'assets/css/fonts-clinical.css',
+			),
+			'warm'     => array(
+				'tokens' => 'assets/css/themes/warm.css',
+				'fonts'  => 'assets/css/fonts-warm.css',
+			),
+		);
+		foreach ( $themes as $key => $paths ) {
+			wp_register_style(
+				self::FONT_STYLE_PREFIX . $key,
+				plugins_url( $paths['fonts'], SKMCTF_FILE ),
+				array(),
+				SKMCTF_VERSION
+			);
+			wp_register_style(
+				self::THEME_STYLE_PREFIX . $key,
+				plugins_url( $paths['tokens'], SKMCTF_FILE ),
+				array( self::STYLE_HANDLE, self::FONT_STYLE_PREFIX . $key ),
+				SKMCTF_VERSION
+			);
+		}
 	}
 
 	/**
@@ -92,6 +124,24 @@ final class Assets {
 	public static function enqueue(): void {
 		wp_enqueue_style( self::STYLE_HANDLE );
 		wp_enqueue_script( self::SCRIPT_HANDLE );
+		self::enqueue_theme();
+	}
+
+	/**
+	 * Enqueue the active theme's token + font stylesheets, if any.
+	 *
+	 * Skeleton enqueues nothing — the base frontend.css already carries the
+	 * neutral default tokens.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_theme(): void {
+		$theme = Theme::active();
+		if ( 'skeleton' === $theme ) {
+			return;
+		}
+		wp_enqueue_style( self::FONT_STYLE_PREFIX . $theme );
+		wp_enqueue_style( self::THEME_STYLE_PREFIX . $theme );
 	}
 
 	/**
