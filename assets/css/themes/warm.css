@@ -1,0 +1,96 @@
+/*
+ * Clinical Trials Feed — "Patient-friendly" (warm) theme tokens.
+ *
+ * Token-only stylesheet. The structural rules live in frontend.css and read
+ * these custom properties via var(). Enqueued only when the Patient-friendly
+ * theme is active (handle skmctf-theme-warm), after frontend.css and the
+ * bundled Newsreader + Mulish @font-face sheet.
+ *
+ * @package SKMCTF
+ * @license GPL-2.0-or-later
+ */
+
+.skmctf-skin--warm {
+	/* Type — serif headings (Newsreader), humanist sans body (Mulish) */
+	--font-head: 'Newsreader', Georgia, serif;
+	--font-body: 'Mulish', system-ui, sans-serif;
+	--head-ls: -.01em;
+	--head-wt: 560;
+
+	/* Surfaces / ink */
+	--bg: #f8f2ea;
+	--surface: #ffffff;
+	--surface-2: #fbf5ee;
+	--inset: #f3ebe0;
+	--ink: #2c2622;
+	--ink-2: #54493f;
+	--muted: #7a6d60;
+	--faint: #9c8e7f;
+	--border: #ece0d2;
+	--border-strong: #ddccb9;
+
+	/* Brand */
+	--primary: #2f7d6b;
+	--primary-2: #266659;
+	--on-primary: #ffffff;
+	--primary-soft: #e6f0ea;
+	--primary-line: #2f7d6b;
+	--link: #2c6f5f;
+
+	/* Status */
+	--rec: #3a875c;
+	--rec-bg: #e7f1e7;
+	--rec-line: #5aab78;
+	--enr: #b9682f;
+	--enr-bg: #f8e7d8;
+	--enr-line: #d68a52;
+
+	/* Shape — rounded, pill controls */
+	--radius: 16px;
+	--radius-sm: 11px;
+	--radius-lg: 22px;
+	--pill-radius: 999px;
+
+	/* Elevation */
+	--shadow: 0 2px 4px rgba(120,90,60,.06), 0 6px 18px -10px rgba(120,90,60,.18);
+	--shadow-hover: 0 16px 38px -16px rgba(47,125,107,.4);
+
+	/* Layout */
+	--map-h: 360px;
+
+	/* Select chevron (light) */
+	--chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a6d60' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.skmctf-skin--warm[data-skmctf-mode="dark"] {
+	--bg: #1d1815;
+	--surface: #29221d;
+	--surface-2: #312822;
+	--inset: #221c18;
+	--ink: #f3ebe1;
+	--ink-2: #cfc1b2;
+	--muted: #a89a8a;
+	--faint: #7e6f5f;
+	--border: #3c322b;
+	--border-strong: #4a3d33;
+
+	--primary: #62b39c;
+	--primary-2: #78c4ae;
+	--on-primary: #06231b;
+	--primary-soft: #1d352e;
+	--primary-line: #62b39c;
+	--link: #78c4ae;
+
+	--rec: #6cc28e;
+	--rec-bg: #16301f;
+	--rec-line: #3f8f5e;
+	--enr: #e0935f;
+	--enr-bg: #3a2719;
+	--enr-line: #a56838;
+
+	--shadow: 0 2px 4px rgba(0,0,0,.35);
+	--shadow-hover: 0 18px 44px -18px rgba(0,0,0,.7);
+
+	/* Select chevron (dark) */
+	--chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a89a8a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}

@@ -1,0 +1,96 @@
+/*
+ * Clinical Trials Feed — "Clinical" theme tokens.
+ *
+ * Token-only stylesheet. The structural rules live in frontend.css and read
+ * these custom properties via var(). Enqueued only when the Clinical theme is
+ * active (handle skmctf-theme-clinical), after frontend.css and the bundled
+ * Public Sans @font-face sheet.
+ *
+ * @package SKMCTF
+ * @license GPL-2.0-or-later
+ */
+
+.skmctf-skin--clinical {
+	/* Type */
+	--font-head: 'Public Sans', system-ui, sans-serif;
+	--font-body: 'Public Sans', system-ui, sans-serif;
+	--head-ls: -.02em;
+	--head-wt: 700;
+
+	/* Surfaces / ink */
+	--bg: #eef2f6;
+	--surface: #ffffff;
+	--surface-2: #f4f7fa;
+	--inset: #eaf0f5;
+	--ink: #16222e;
+	--ink-2: #3a4b59;
+	--muted: #5d6e7c;
+	--faint: #8395a3;
+	--border: #d8e0e8;
+	--border-strong: #c3cfda;
+
+	/* Brand */
+	--primary: #0e6e8c;
+	--primary-2: #0a566e;
+	--on-primary: #ffffff;
+	--primary-soft: #e2eff4;
+	--primary-line: #0e6e8c;
+	--link: #0c6480;
+
+	/* Status */
+	--rec: #16794f;
+	--rec-bg: #e2f2ea;
+	--rec-line: #3aa776;
+	--enr: #9a6512;
+	--enr-bg: #f8eed7;
+	--enr-line: #caa54a;
+
+	/* Shape */
+	--radius: 8px;
+	--radius-sm: 6px;
+	--radius-lg: 10px;
+	--pill-radius: 5px;
+
+	/* Elevation */
+	--shadow: 0 1px 2px rgba(16,34,48,.06), 0 1px 3px rgba(16,34,48,.05);
+	--shadow-hover: 0 8px 24px -10px rgba(14,110,140,.35);
+
+	/* Layout */
+	--map-h: 330px;
+
+	/* Select chevron (light) */
+	--chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235d6e7c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+.skmctf-skin--clinical[data-skmctf-mode="dark"] {
+	--bg: #0b1219;
+	--surface: #121d27;
+	--surface-2: #172430;
+	--inset: #0f1922;
+	--ink: #e9f1f7;
+	--ink-2: #b8c8d4;
+	--muted: #8ea1b0;
+	--faint: #65798a;
+	--border: #243441;
+	--border-strong: #2e4150;
+
+	--primary: #3fa9c9;
+	--primary-2: #5cbcd8;
+	--on-primary: #05202a;
+	--primary-soft: #16323f;
+	--primary-line: #3fa9c9;
+	--link: #5cbcd8;
+
+	--rec: #56cc97;
+	--rec-bg: #103025;
+	--rec-line: #2f8f64;
+	--enr: #e0b25a;
+	--enr-bg: #33270f;
+	--enr-line: #9a7a32;
+
+	--shadow: 0 1px 2px rgba(0,0,0,.4);
+	--shadow-hover: 0 10px 30px -12px rgba(0,0,0,.7);
+
+	/* Select chevron (dark) */
+	--chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ea1b0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
