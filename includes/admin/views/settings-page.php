@@ -51,6 +51,10 @@ $all_modes  = array(
 	'light' => __( 'Light', 'kisho-clinical-trials' ),
 	'dark'  => __( 'Dark', 'kisho-clinical-trials' ),
 );
+$all_views  = array(
+	'grid' => __( 'Card grid', 'kisho-clinical-trials' ),
+	'list' => __( 'List', 'kisho-clinical-trials' ),
+);
 ?>
 <div class="wrap">
 	<h1><?php esc_html_e( 'Clinical Trials Feed', 'kisho-clinical-trials' ); ?></h1>
@@ -184,6 +188,27 @@ $all_modes  = array(
 									<?php echo esc_html( $field_label ); ?>
 								</label>
 							<?php endforeach; ?>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_default_view"><?php esc_html_e( 'Default view', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<select id="skmctf_default_view" name="<?php echo esc_attr( Settings::OPTION ); ?>[default_view]">
+								<?php foreach ( $all_views as $view_key => $view_label ) : ?>
+									<option
+										value="<?php echo esc_attr( $view_key ); ?>"
+										<?php selected( $s['default_view'], $view_key ); ?>
+									>
+										<?php echo esc_html( $view_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">
+								<?php esc_html_e( 'Initial layout for the trials list. Visitors can switch between card grid and list, and their choice is remembered in their browser.', 'kisho-clinical-trials' ); ?>
+							</p>
 						</td>
 					</tr>
 
