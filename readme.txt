@@ -19,6 +19,8 @@ Pulls condition-relevant clinical trials from ClinicalTrials.gov and keeps them 
 * **Auto-sync** — A daily scheduled job (powered by Action Scheduler) fetches and upserts trials from ClinicalTrials.gov. A "Sync now" button is available in the admin for on-demand updates.
 * **Gutenberg block + `[skmctf_trials]` shortcode** — Drop trials anywhere on your site with full server-side rendering.
 * **Filter bar** — Visitors can filter by status, phase, state, and country. Works without JavaScript (progressive enhancement).
+* **Grid or list view** — Show trials as a responsive card grid or a compact list. Admin sets the default; visitors get a grid/list toggle and their choice is remembered in their browser.
+* **Optional themes (light & dark)** — Two bundled front-end skins, **Clinical** and **Patient-friendly**, each in light and dark, plus the default **Skeleton**. Pure CSS over the existing markup, scoped to the plugin's own pages; fonts bundled locally (no external requests).
 * **Optional plain-language summaries (BYO-key)** — Supply your own Anthropic or OpenAI API key and the plugin will generate accessible plain-language summaries for changed trials. You are billed directly by the LLM provider; SKM Digital never touches your key.
 * **Optional map view** — Leaflet + OpenStreetMap, bundled locally (no CDN, no Google Maps). Off by default.
 * **Safe reconciliation** — A drop-ratio guard prevents accidental bulk removal of trial posts if the upstream feed returns unexpectedly few results.
