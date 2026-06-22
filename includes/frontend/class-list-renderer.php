@@ -300,11 +300,15 @@ final class List_Renderer {
 				. esc_html__( 'No clinical trials match your current filters.', 'kisho-clinical-trials' )
 				. '</p>';
 		} else {
-			$col_class = absint( $atts['columns'] ) > 1
+			$view      = Settings::default_view();
+			$col_class = ( 'grid' === $view && absint( $atts['columns'] ) > 1 )
 				? ' skmctf-list--cols-' . absint( $atts['columns'] )
 				: '';
 
-			echo '<ul class="skmctf-list' . esc_attr( $col_class ) . '">';
+			self::render_view_toggle( $view );
+
+			echo '<ul class="skmctf-list skmctf-list--view-' . esc_attr( $view ) . esc_attr( $col_class )
+				. '" data-skmctf-view="' . esc_attr( $view ) . '">';
 
 			while ( $query->have_posts() ) {
 				$query->the_post();
@@ -411,6 +415,38 @@ final class List_Renderer {
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Render the grid/list view toggle.
+	 *
+	 * Real buttons; the active view is pre-pressed server-side so the correct
+	 * view renders without JS. view-toggle.js adds switching + persistence.
+	 *
+	 * @param string $active 'grid' | 'list'.
+	 * @return void
+	 */
+	private static function render_view_toggle( string $active ): void {
+		$buttons = array(
+			'grid' => __( 'Grid view', 'kisho-clinical-trials' ),
+			'list' => __( 'List view', 'kisho-clinical-trials' ),
+		);
+		echo '<div class="skmctf-view-toggle" role="group" aria-label="'
+			. esc_attr__( 'Choose how trials are displayed', 'kisho-clinical-trials' ) . '">';
+		foreach ( $buttons as $view => $label ) {
+			$is = $view === $active;
+			printf(
+				'<button type="button" class="skmctf-view-toggle__btn%1$s" data-skmctf-view-btn="%2$s" aria-pressed="%3$s">'
+					. '<span class="skmctf-view-toggle__icon skmctf-view-toggle__icon--%2$s" aria-hidden="true"></span>'
+					. '<span class="skmctf-view-toggle__label">%4$s</span>'
+					. '</button>',
+				$is ? ' is-active' : '',
+				esc_attr( $view ),
+				$is ? 'true' : 'false',
+				esc_html( $label )
+			);
+		}
+		echo '</div>';
+	}
 
 	/**
 	 * Render the no-JS-compatible filter form.
