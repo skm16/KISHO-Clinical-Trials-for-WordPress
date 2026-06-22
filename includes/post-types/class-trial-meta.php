@@ -22,22 +22,28 @@ final class Trial_Meta {
 	 * @var array<string,string>
 	 */
 	public const KEYS = array(
-		'nct_id'                    => 'skmctf_nct_id',
-		'official_title'            => 'skmctf_official_title',
-		'brief_title'               => 'skmctf_brief_title',
-		'overall_status'            => 'skmctf_overall_status',
-		'phase'                     => 'skmctf_phase',
-		'study_type'                => 'skmctf_study_type',
-		'conditions'                => 'skmctf_conditions',
-		'lead_sponsor'              => 'skmctf_lead_sponsor',
-		'locations'                 => 'skmctf_locations',
-		'eligibility'               => 'skmctf_eligibility',
-		'brief_summary'             => 'skmctf_brief_summary',
-		'plain_summary'             => 'skmctf_plain_summary',
-		'plain_summary_source_date' => 'skmctf_plain_summary_source_date',
-		'ct_last_update'            => 'skmctf_ct_last_update',
-		'last_synced'               => 'skmctf_last_synced',
-		'ct_url'                    => 'skmctf_ct_url',
+		'nct_id'                       => 'skmctf_nct_id',
+		'official_title'               => 'skmctf_official_title',
+		'brief_title'                  => 'skmctf_brief_title',
+		'overall_status'               => 'skmctf_overall_status',
+		'phase'                        => 'skmctf_phase',
+		'study_type'                   => 'skmctf_study_type',
+		'conditions'                   => 'skmctf_conditions',
+		'lead_sponsor'                 => 'skmctf_lead_sponsor',
+		'locations'                    => 'skmctf_locations',
+		'eligibility'                  => 'skmctf_eligibility',
+		'brief_summary'                => 'skmctf_brief_summary',
+		'plain_summary'                => 'skmctf_plain_summary',
+		'plain_summary_source_date'    => 'skmctf_plain_summary_source_date',
+		'study_purpose'                => 'skmctf_study_purpose',
+		'study_purpose_source_date'    => 'skmctf_study_purpose_source_date',
+		'who_can_join'                 => 'skmctf_who_can_join',
+		'who_can_join_source_date'     => 'skmctf_who_can_join_source_date',
+		'doctor_questions'             => 'skmctf_doctor_questions',
+		'doctor_questions_source_date' => 'skmctf_doctor_questions_source_date',
+		'ct_last_update'               => 'skmctf_ct_last_update',
+		'last_synced'                  => 'skmctf_last_synced',
+		'ct_url'                       => 'skmctf_ct_url',
 	);
 
 	/**
@@ -140,50 +146,51 @@ final class Trial_Meta {
 			'show_in_rest'      => true,
 		);
 		return array(
-			$k['nct_id']                    => array(
+			$k['nct_id']                       => array(
 				'type'              => 'string',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_nct' ),
 				'show_in_rest'      => true,
 			),
-			$k['official_title']            => $str,
-			$k['brief_title']               => $str,
-			$k['overall_status']            => $str,
-			$k['phase']                     => $str,
-			$k['study_type']                => $str,
-			$k['lead_sponsor']              => $str,
-			$k['ct_last_update']            => array(
+			$k['official_title']               => $str,
+			$k['brief_title']                  => $str,
+			$k['overall_status']               => $str,
+			$k['phase']                        => $str,
+			$k['study_type']                   => $str,
+			$k['lead_sponsor']                 => $str,
+			$k['ct_last_update']               => array(
 				'type'              => 'string',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_date' ),
 				'show_in_rest'      => true,
 			),
-			$k['plain_summary_source_date'] => array(
+			$k['plain_summary_source_date']    => array(
 				'type'              => 'string',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_date' ),
 				'show_in_rest'      => true,
 			),
-			$k['last_synced']               => array(
-				'type'              => 'integer',
-				'single'            => true,
-				'sanitize_callback' => 'absint',
-				'show_in_rest'      => true,
-			),
-			$k['ct_url']                    => array(
+			$k['study_purpose']                => $text,
+			$k['who_can_join']                 => $text,
+			$k['study_purpose_source_date']    => array(
 				'type'              => 'string',
 				'single'            => true,
-				'sanitize_callback' => 'esc_url_raw',
+				'sanitize_callback' => array( self::class, 'sanitize_date' ),
 				'show_in_rest'      => true,
 			),
-			$k['brief_summary']             => $text,
-			$k['plain_summary']             => array(
+			$k['who_can_join_source_date']     => array(
 				'type'              => 'string',
 				'single'            => true,
-				'sanitize_callback' => 'wp_kses_post',
+				'sanitize_callback' => array( self::class, 'sanitize_date' ),
 				'show_in_rest'      => true,
 			),
-			$k['conditions']                => array(
+			$k['doctor_questions_source_date'] => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => array( self::class, 'sanitize_date' ),
+				'show_in_rest'      => true,
+			),
+			$k['doctor_questions']             => array(
 				'type'              => 'array',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_string_list' ),
@@ -194,7 +201,37 @@ final class Trial_Meta {
 					),
 				),
 			),
-			$k['locations']                 => array(
+			$k['last_synced']                  => array(
+				'type'              => 'integer',
+				'single'            => true,
+				'sanitize_callback' => 'absint',
+				'show_in_rest'      => true,
+			),
+			$k['ct_url']                       => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => 'esc_url_raw',
+				'show_in_rest'      => true,
+			),
+			$k['brief_summary']                => $text,
+			$k['plain_summary']                => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => 'wp_kses_post',
+				'show_in_rest'      => true,
+			),
+			$k['conditions']                   => array(
+				'type'              => 'array',
+				'single'            => true,
+				'sanitize_callback' => array( self::class, 'sanitize_string_list' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array( 'type' => 'string' ),
+					),
+				),
+			),
+			$k['locations']                    => array(
 				'type'              => 'array',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_locations' ),
@@ -216,7 +253,7 @@ final class Trial_Meta {
 					),
 				),
 			),
-			$k['eligibility']               => array(
+			$k['eligibility']                  => array(
 				'type'              => 'object',
 				'single'            => true,
 				'sanitize_callback' => array( self::class, 'sanitize_eligibility' ),

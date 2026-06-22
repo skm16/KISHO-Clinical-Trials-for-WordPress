@@ -29,4 +29,19 @@ final class TrialMetaTest extends TestCase {
             $this->assertIsCallable( $def['sanitize_callback'] );
         }
     }
+
+	public function test_new_llm_meta_keys_exist(): void {
+		$keys = \SKMCTF\Post_Types\Trial_Meta::KEYS;
+		$this->assertSame( 'skmctf_study_purpose', $keys['study_purpose'] );
+		$this->assertSame( 'skmctf_who_can_join', $keys['who_can_join'] );
+		$this->assertSame( 'skmctf_doctor_questions', $keys['doctor_questions'] );
+		$this->assertSame( 'skmctf_study_purpose_source_date', $keys['study_purpose_source_date'] );
+		$this->assertSame( 'skmctf_who_can_join_source_date', $keys['who_can_join_source_date'] );
+		$this->assertSame( 'skmctf_doctor_questions_source_date', $keys['doctor_questions_source_date'] );
+	}
+
+	public function test_sanitize_string_list_filters_and_trims(): void {
+		$out = \SKMCTF\Post_Types\Trial_Meta::sanitize_string_list( array( ' Ask about risks ', '', 'Eligibility?' ) );
+		$this->assertSame( array( 'Ask about risks', 'Eligibility?' ), $out );
+	}
 }
