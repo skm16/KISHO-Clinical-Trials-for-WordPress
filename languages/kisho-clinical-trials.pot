@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clinical Trials Feed 1.1.1\n"
+"Project-Id-Version: Clinical Trials Feed 1.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kisho-clinical-trials\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-22T14:24:29+00:00\n"
+"POT-Creation-Date: 2026-06-22T16:46:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: kisho-clinical-trials\n"
@@ -33,7 +33,7 @@ msgstr ""
 
 #. Author of the plugin
 #: kisho-clinical-trials.php
-#: includes/frontend/class-list-renderer.php:324
+#: includes/frontend/class-list-renderer.php:395
 msgid "SKM Digital"
 msgstr ""
 
@@ -72,14 +72,14 @@ msgid "Forbidden"
 msgstr ""
 
 #: includes/admin/views/settings-page.php:37
-#: includes/frontend/class-list-renderer.php:388
+#: includes/frontend/class-list-renderer.php:476
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:57
 msgid "Status"
 msgstr ""
 
 #: includes/admin/views/settings-page.php:38
-#: includes/frontend/class-list-renderer.php:405
+#: includes/frontend/class-list-renderer.php:493
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:73
 msgid "Phase"
@@ -94,12 +94,12 @@ msgid "Sponsor"
 msgstr ""
 
 #: includes/admin/views/settings-page.php:41
-#: templates/parts/locations.php:70
+#: templates/parts/locations.php:74
 msgid "Locations"
 msgstr ""
 
 #: includes/admin/views/settings-page.php:42
-#: templates/single-skmctf_trial.php:111
+#: templates/single-skmctf_trial.php:117
 msgid "Summary"
 msgstr ""
 
@@ -353,104 +353,102 @@ msgstr ""
 msgid "skm.digital"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:173
+#: includes/frontend/class-list-renderer.php:226
 msgid "You are here"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:174
+#: includes/frontend/class-list-renderer.php:227
 msgid "Centered on your location."
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:175
+#: includes/frontend/class-list-renderer.php:228
 msgid "Location unavailable — showing default view."
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:176
+#: includes/frontend/class-list-renderer.php:229
 msgid "Location is not available in this browser."
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:211
+#: includes/frontend/class-list-renderer.php:278
 msgid "Find trials near me"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:220
-#: templates/parts/locations.php:76
+#: includes/frontend/class-list-renderer.php:289
+#: templates/parts/locations.php:80
 msgid "Trial locations map"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:226
+#: includes/frontend/class-list-renderer.php:297
 msgid "No clinical trials match your current filters."
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:259
-#: includes/frontend/class-single-renderer.php:74
+#: includes/frontend/class-list-renderer.php:330
+#: includes/frontend/class-single-renderer.php:71
 msgid "Template error."
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:285
+#: includes/frontend/class-list-renderer.php:356
 msgid "Clinical trials pages"
 msgstr ""
 
 #. translators: %s: linked "ClinicalTrials.gov" text
-#: includes/frontend/class-list-renderer.php:308
+#: includes/frontend/class-list-renderer.php:379
 #, php-format
 msgid "Data from %s"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:310
+#: includes/frontend/class-list-renderer.php:381
 #: templates/list-item.php:142
 #: templates/parts/summary-disclaimer.php:33
-#: templates/single-skmctf_trial.php:161
+#: templates/single-skmctf_trial.php:183
 msgid "ClinicalTrials.gov"
 msgstr ""
 
 #. translators: %s: linked "SKM Digital" text
-#: includes/frontend/class-list-renderer.php:322
+#: includes/frontend/class-list-renderer.php:393
 #, php-format
 msgid "Trial display by %s"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:382
+#: includes/frontend/class-list-renderer.php:470
 msgid "Filter clinical trials"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:391
+#: includes/frontend/class-list-renderer.php:479
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:60
 msgid "All statuses"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:408
+#: includes/frontend/class-list-renderer.php:496
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:76
 msgid "All phases"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:421
-#: blocks/trials/build/index.js:1
-#: blocks/trials/edit.js:90
-msgid "State"
-msgstr ""
-
-#: includes/frontend/class-list-renderer.php:429
-msgid "e.g. MA"
-msgstr ""
-
-#: includes/frontend/class-list-renderer.php:437
+#: includes/frontend/class-list-renderer.php:510
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:97
 msgid "Country"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:440
+#: includes/frontend/class-list-renderer.php:513
 msgid "All countries"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:453
+#: includes/frontend/class-list-renderer.php:537
+msgid "State / Province"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:540
+msgid "All states / provinces"
+msgstr ""
+
+#: includes/frontend/class-list-renderer.php:553
 msgid "Filter"
 msgstr ""
 
-#: includes/frontend/class-list-renderer.php:457
+#: includes/frontend/class-list-renderer.php:557
 msgid "Reset filters"
 msgstr ""
 
@@ -464,6 +462,7 @@ msgstr ""
 
 #. translators: %s: the trial's brief title.
 #: includes/llm/class-prompt-builder.php:52
+#: includes/llm/class-prompt-builder.php:126
 #, php-format
 msgid "Title: %s"
 msgstr ""
@@ -482,6 +481,7 @@ msgstr ""
 
 #. translators: %s: comma-separated list of conditions.
 #: includes/llm/class-prompt-builder.php:59
+#: includes/llm/class-prompt-builder.php:129
 #, php-format
 msgid "Conditions: %s"
 msgstr ""
@@ -494,12 +494,15 @@ msgstr ""
 
 #. translators: 1: eligible sex, 2: minimum age, 3: maximum age.
 #: includes/llm/class-prompt-builder.php:66
+#: includes/llm/class-prompt-builder.php:134
 #, php-format
 msgid "Who can join: sex %1$s, ages %2$s to %3$s"
 msgstr ""
 
 #. translators: %s: the official brief summary text from ClinicalTrials.gov.
+#. translators: %s: the official brief summary text.
 #: includes/llm/class-prompt-builder.php:73
+#: includes/llm/class-prompt-builder.php:146
 #, php-format
 msgid "Official description: %s"
 msgstr ""
@@ -508,6 +511,16 @@ msgstr ""
 #: includes/llm/class-prompt-builder.php:79
 #, php-format
 msgid "End your summary with exactly this sentence: %s"
+msgstr ""
+
+#: includes/llm/class-prompt-builder.php:110
+msgid "You help patients and families understand a clinical trial. Use about an 8th-grade reading level. Be factual and use ONLY the information provided. Do not give medical advice, do not speculate, and do not invent details. Respond with ONLY a JSON object with exactly these keys: \"study_purpose\" (one plain sentence describing what the study is testing), \"who_can_join\" (an array of short plain-language bullet strings summarising who is eligible, simplified from the criteria), and \"doctor_questions\" (an array of 3 to 4 short, general, non-advisory questions a person could ask their own doctor about this trial). Output JSON only, no prose, no code fences."
+msgstr ""
+
+#. translators: %s: the official inclusion/exclusion criteria text.
+#: includes/llm/class-prompt-builder.php:141
+#, php-format
+msgid "Eligibility criteria: %s"
 msgstr ""
 
 #: includes/post-types/class-trial-post-type.php:25
@@ -549,17 +562,17 @@ msgid "(+%d more)"
 msgstr ""
 
 #: templates/list-item.php:105
-#: templates/single-skmctf_trial.php:70
+#: templates/single-skmctf_trial.php:84
 msgid "Phase:"
 msgstr ""
 
 #: templates/list-item.php:112
-#: templates/single-skmctf_trial.php:77
+#: templates/single-skmctf_trial.php:91
 msgid "Conditions:"
 msgstr ""
 
 #: templates/list-item.php:119
-#: templates/single-skmctf_trial.php:84
+#: templates/single-skmctf_trial.php:98
 msgid "Sponsor:"
 msgstr ""
 
@@ -569,7 +582,7 @@ msgstr ""
 
 #: templates/list-item.php:140
 #: templates/parts/summary-disclaimer.php:31
-#: templates/single-skmctf_trial.php:159
+#: templates/single-skmctf_trial.php:181
 msgid "Data from"
 msgstr ""
 
@@ -602,20 +615,42 @@ msgstr ""
 msgid "Inclusion/Exclusion Criteria"
 msgstr ""
 
-#: templates/single-skmctf_trial.php:49
+#. translators: %d: total number of locations.
+#: templates/parts/locations.php:129
+#, php-format
+msgid "Show all %d locations"
+msgstr ""
+
+#: templates/parts/questions.php:20
+msgid "Questions to ask your doctor"
+msgstr ""
+
+#: templates/parts/study-purpose.php:19
+msgid "What this study is testing:"
+msgstr ""
+
+#: templates/parts/who-can-join.php:20
+msgid "Who can join"
+msgstr ""
+
+#: templates/parts/who-can-join.php:26
+msgid "This is a simplified summary of the official criteria — confirm with the study team before making decisions."
+msgstr ""
+
+#: templates/single-skmctf_trial.php:55
 msgid "Official title:"
 msgstr ""
 
-#: templates/single-skmctf_trial.php:93
+#: templates/single-skmctf_trial.php:107
 msgid "Plain-Language Summary"
 msgstr ""
 
-#: templates/single-skmctf_trial.php:143
+#: templates/single-skmctf_trial.php:165
 msgid "View full record on ClinicalTrials.gov"
 msgstr ""
 
 #. translators: %s: trial title.
-#: templates/single-skmctf_trial.php:147
+#: templates/single-skmctf_trial.php:169
 #, php-format
 msgid "(opens %s on ClinicalTrials.gov in a new tab)"
 msgstr ""
@@ -698,6 +733,11 @@ msgstr ""
 #: blocks/trials/build/index.js:1
 #: blocks/trials/edit.js:84
 msgid "Not applicable"
+msgstr ""
+
+#: blocks/trials/build/index.js:1
+#: blocks/trials/edit.js:90
+msgid "State"
 msgstr ""
 
 #: blocks/trials/build/index.js:1

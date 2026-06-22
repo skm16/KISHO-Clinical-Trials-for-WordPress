@@ -87,7 +87,6 @@ if ( $show_map ) {
 	<?php endif; ?>
 
 	<?php
-	$skmctf_total   = count( $locations );
 	$skmctf_visible = 10;
 	$skmctf_index   = 0;
 	?>

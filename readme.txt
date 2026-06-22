@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,11 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixed: Single trial pages now render the full detail (status, conditions, sponsor, summary, eligibility, locations, map) — previously they showed only the title due to a rendering wiring gap.
+* New: Patient-friendly LLM fields on single trial pages — a one-line "What this study is testing", a plain-language "Who can join", and "Questions to ask your doctor". Generated during sync (cached); run "Sync now" to populate them for existing trials. Requires an LLM API key; pages without it show the standard detail.
+* Improved: On trials with many sites, the locations list shows the first 10 with a "Show all" toggle; the single-page map now uses the same robust per-instance data transport as the archive.
+
 = 1.1.1 =
 * Fixed: State filter accuracy — state filtering is now exact via a dedicated `trial_state` taxonomy rather than a substring match. The State / Province filter is now a dropdown of the states/provinces actually present in your data (matching the Country filter), so abbreviations like "CT" no longer silently miss the full state name "Connecticut". Run "Sync now" or `Trial_Repository::backfill_state_terms()` to populate state terms for trials imported before this update — the dropdown stays hidden until at least one state term exists.
 * New: The State / Province filter appears after Country and lists only the states/provinces within the selected country (e.g. choosing United States shows US states; choosing Canada shows Canadian provinces). With no country selected it lists all states/provinces. A state that does not belong to the selected country is ignored rather than returning an empty result.
@@ -163,6 +168,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 * Full i18n support (.pot included).
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Single trial pages now display the full detail plus three new patient-friendly fields: "What this study is testing", "Who can join", and "Questions to ask your doctor" (LLM-generated when an API key is configured). Locations with many sites now collapse to 10 visible items with a "Show all" toggle. Run "Sync now" after upgrading to populate the LLM fields for existing trials.
 
 = 1.1.1 =
 Bug-fix release: exact state filtering via the new `trial_state` taxonomy, fixes for clearing default filters and for multiple trial blocks on one page, multi-phase trials now appear under each phase, stale phase/status terms are cleared on update, "Sync now" is guarded against concurrent runs, and configured included trials are protected from reconciliation on fetch failure. After upgrading, run "Sync now" or `Trial_Repository::backfill_state_terms()` to populate state terms for trials imported before this update.
