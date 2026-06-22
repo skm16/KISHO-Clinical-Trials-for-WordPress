@@ -92,6 +92,58 @@ final class Summary_Service {
 		update_post_meta( $post_id, Trial_Meta::KEYS['plain_summary'], wp_kses_post( $text ) );
 		update_post_meta( $post_id, Trial_Meta::KEYS['plain_summary_source_date'], $new_date );
 
+		$this->maybe_generate_enhanced( $post_id, $meta );
+
+		return true;
+	}
+
+	/**
+	 * Maybe generate + cache the combined patient-facing fields (study purpose,
+	 * who-can-join, doctor questions) in one provider call.
+	 *
+	 * Cache key is study_purpose_source_date vs ct_last_update, mirroring the
+	 * summary cache. Each non-empty parsed value is stored to its meta.
+	 *
+	 * @param int   $post_id WordPress post ID.
+	 * @param array $meta    Trial meta array (must include 'ct_last_update').
+	 * @return bool True when fields were (re)written.
+	 */
+	public function maybe_generate_enhanced( int $post_id, array $meta ): bool {
+		if ( null === $this->provider ) {
+			return false;
+		}
+
+		$new_date = (string) ( $meta['ct_last_update'] ?? '' );
+		$existing = (string) get_post_meta( $post_id, Trial_Meta::KEYS['study_purpose'], true );
+		$src_date = (string) get_post_meta( $post_id, Trial_Meta::KEYS['study_purpose_source_date'], true );
+
+		if ( '' !== $existing && '' !== $new_date && $src_date === $new_date ) {
+			return false;
+		}
+
+		$raw = $this->provider->generate_summary(
+			Prompt_Builder::enhanced_system(),
+			Prompt_Builder::enhanced_user( $meta )
+		);
+
+		if ( is_wp_error( $raw ) ) {
+			$this->log->error(
+				'Enhanced field generation failed: ' . $raw->get_error_message(),
+				array( 'post' => $post_id )
+			);
+			return false;
+		}
+
+		$parsed = Prompt_Builder::parse_enhanced( (string) $raw );
+
+		update_post_meta( $post_id, Trial_Meta::KEYS['study_purpose'], wp_kses_post( $parsed['study_purpose'] ) );
+		update_post_meta( $post_id, Trial_Meta::KEYS['who_can_join'], wp_kses_post( $parsed['who_can_join'] ) );
+		update_post_meta( $post_id, Trial_Meta::KEYS['doctor_questions'], $parsed['doctor_questions'] );
+
+		update_post_meta( $post_id, Trial_Meta::KEYS['study_purpose_source_date'], $new_date );
+		update_post_meta( $post_id, Trial_Meta::KEYS['who_can_join_source_date'], $new_date );
+		update_post_meta( $post_id, Trial_Meta::KEYS['doctor_questions_source_date'], $new_date );
+
 		return true;
 	}
 }

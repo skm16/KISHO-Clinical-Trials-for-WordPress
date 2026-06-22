@@ -91,6 +91,40 @@ final class SummaryServiceTest extends WP_UnitTestCase {
 	public function test_null_provider_is_noop(): void {
 		$svc = new Summary_Service( null, new Logger() );
 		$id  = $this->trial( '2026-03-10' );
-		$this->assertFalse( $svc->maybe_generate( $id, [ 'ct_last_update' => '2026-03-10' ] ) );
+		$this->assertFalse( $svc->maybe_generate( $id, array( 'ct_last_update' => '2026-03-10' ) ) );
+	}
+
+	public function test_maybe_generate_enhanced_writes_three_fields(): void {
+		$post_id  = self::factory()->post->create( array( 'post_type' => 'skmctf_trial' ) );
+		$provider = new class() implements \SKMCTF\LLM\Llm_Provider {
+			public function generate_summary( string $system, string $user, array $opts = array() ) {
+				return '{"study_purpose":"Tests a registry.","who_can_join":["Adults 18+"],"doctor_questions":["Am I eligible?","What is involved?"]}';
+			}
+			public function id(): string { return 'fake'; }
+		};
+		$svc = new \SKMCTF\LLM\Summary_Service( $provider, new \SKMCTF\Support\Logger() );
+
+		$meta  = array( 'ct_last_update' => '2026-03-10', 'brief_title' => 'T', 'conditions' => array(), 'eligibility' => array() );
+		$wrote = $svc->maybe_generate_enhanced( $post_id, $meta );
+
+		$this->assertTrue( $wrote );
+		$this->assertSame( 'Tests a registry.', get_post_meta( $post_id, 'skmctf_study_purpose', true ) );
+		$this->assertStringContainsString( 'Adults 18+', get_post_meta( $post_id, 'skmctf_who_can_join', true ) );
+		$this->assertSame( array( 'Am I eligible?', 'What is involved?' ), get_post_meta( $post_id, 'skmctf_doctor_questions', true ) );
+		$this->assertSame( '2026-03-10', get_post_meta( $post_id, 'skmctf_study_purpose_source_date', true ) );
+	}
+
+	public function test_maybe_generate_enhanced_is_cached(): void {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'skmctf_trial' ) );
+		update_post_meta( $post_id, 'skmctf_study_purpose', 'Existing.' );
+		update_post_meta( $post_id, 'skmctf_study_purpose_source_date', '2026-03-10' );
+		$provider = new class() implements \SKMCTF\LLM\Llm_Provider {
+			public function generate_summary( string $system, string $user, array $opts = array() ) {
+				throw new \RuntimeException( 'should not be called' );
+			}
+			public function id(): string { return 'fake'; }
+		};
+		$svc = new \SKMCTF\LLM\Summary_Service( $provider, new \SKMCTF\Support\Logger() );
+		$this->assertFalse( $svc->maybe_generate_enhanced( $post_id, array( 'ct_last_update' => '2026-03-10' ) ) );
 	}
 }
