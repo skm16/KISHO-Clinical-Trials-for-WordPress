@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.3
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 
 == Changelog ==
 
+= 1.4.0 =
+* New: "Clean up off-condition trials" maintenance action (Settings → Clinical Trials Feed → Maintenance). After you change your configured conditions, use it to remove trials that no longer match. It re-checks ClinicalTrials.gov, shows exactly what would be deleted, and only removes them after you confirm. Trials in the "Always include" list are never removed. The automatic daily sync is unchanged and still never bulk-deletes on a feed error.
+
 = 1.3.3 =
 * Fixed: The trials listing ran the full browser width instead of lining up with the site's header and footer. Its content is now centered at a standard ~1140px measure (matching common themes); themed/dark backgrounds still span the full width behind it. Override per site with the `--skmctf-content-max` CSS variable.
 
@@ -192,6 +195,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 * Full i18n support (.pot included).
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+New: an explicit, preview-and-confirm "Clean up off-condition trials" action to remove trials left over after a condition change. Find it in Settings → Clinical Trials Feed under Maintenance.
 
 = 1.1.3 =
 Bug-fix release: the patient-friendly fields now generate for trials that already had a summary, and "Who can join" entries that previously rendered as a run-on line now repair themselves. Run "Sync now" after upgrading to apply both fixes to existing trials.
