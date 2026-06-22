@@ -99,6 +99,45 @@ final class SummaryServiceTest extends WP_UnitTestCase {
 		$this->assertSame( 4, $p->calls );
 	}
 
+	/**
+	 * Regression: a trial whose plain summary is already current (so the summary
+	 * cache is a hit) must STILL generate the enhanced patient-facing fields,
+	 * which have their own independent cache. Previously the summary cache-hit
+	 * early-return ran before enhanced generation, leaving older trials without
+	 * study_purpose / who_can_join / doctor_questions forever.
+	 */
+	public function test_generates_enhanced_when_summary_already_current(): void {
+		$p   = new CountingProvider();
+		$svc = new Summary_Service( $p, new Logger() );
+		$id  = $this->trial( '2026-03-10' );
+
+		// Simulate a trial summarised by an earlier plugin version: a current
+		// plain summary exists, but no enhanced fields were ever written.
+		update_post_meta( $id, Trial_Meta::KEYS['plain_summary'], 'Old summary.' );
+		update_post_meta( $id, Trial_Meta::KEYS['plain_summary_source_date'], '2026-03-10' );
+
+		$meta = [
+			'ct_last_update' => '2026-03-10',
+			'brief_title'    => 'T',
+			'conditions'     => [],
+			'eligibility'    => [],
+		];
+
+		// Summary cache is a hit (no summary call), but enhanced fields are
+		// missing → exactly one enhanced call, and maybe_generate reports true.
+		$this->assertTrue( $svc->maybe_generate( $id, $meta ) );
+		$this->assertSame( 1, $p->calls );
+		$this->assertNotEmpty( get_post_meta( $id, Trial_Meta::KEYS['study_purpose'], true ) );
+		$this->assertSame( '2026-03-10', get_post_meta( $id, Trial_Meta::KEYS['study_purpose_source_date'], true ) );
+
+		// Plain summary must be left untouched by the enhanced path.
+		$this->assertSame( 'Old summary.', get_post_meta( $id, Trial_Meta::KEYS['plain_summary'], true ) );
+
+		// Second call: both caches now valid → no further calls, returns false.
+		$this->assertFalse( $svc->maybe_generate( $id, $meta ) );
+		$this->assertSame( 1, $p->calls );
+	}
+
 	public function test_null_provider_is_noop(): void {
 		$svc = new Summary_Service( null, new Logger() );
 		$id  = $this->trial( '2026-03-10' );
@@ -138,6 +177,41 @@ final class SummaryServiceTest extends WP_UnitTestCase {
 			public function id(): string { return 'fake'; }
 		};
 		$svc = new \SKMCTF\LLM\Summary_Service( $provider, new \SKMCTF\Support\Logger() );
+		$this->assertFalse( $svc->maybe_generate_enhanced( $post_id, array( 'ct_last_update' => '2026-03-10' ) ) );
+	}
+
+	/**
+	 * Self-heal regression: a trial whose source-date cache is current but whose
+	 * who_can_join is legacy run-on text (no <li> markup, written by an older
+	 * tag-stripping sanitizer) must STILL regenerate on the next sync, replacing
+	 * the malformed value with proper list HTML. Without the self-heal guard the
+	 * source-date cache would short-circuit and the corruption would persist.
+	 */
+	public function test_regenerates_when_who_can_join_lacks_list_markup(): void {
+		$post_id = self::factory()->post->create( array( 'post_type' => 'skmctf_trial' ) );
+
+		// Simulate the corrupted legacy state: cache key is current, but
+		// who_can_join is run-on text with no <li> tags.
+		update_post_meta( $post_id, 'skmctf_study_purpose', 'Existing purpose.' );
+		update_post_meta( $post_id, 'skmctf_study_purpose_source_date', '2026-03-10' );
+		update_post_meta( $post_id, 'skmctf_who_can_join', 'Adults 18 and olderHas the condition' );
+		update_post_meta( $post_id, 'skmctf_who_can_join_source_date', '2026-03-10' );
+
+		$provider = new class() implements \SKMCTF\LLM\Llm_Provider {
+			public function generate_summary( string $system, string $user, array $opts = array() ) {
+				return '{"study_purpose":"Healed.","who_can_join":["Adults 18+","Has the condition"],"doctor_questions":["Q?"]}';
+			}
+			public function id(): string {
+				return 'fake'; }
+		};
+		$svc = new \SKMCTF\LLM\Summary_Service( $provider, new \SKMCTF\Support\Logger() );
+
+		// Malformed who_can_join overrides the cache hit → regenerate.
+		$this->assertTrue( $svc->maybe_generate_enhanced( $post_id, array( 'ct_last_update' => '2026-03-10' ) ) );
+		$this->assertStringContainsString( '<li>Adults 18+</li>', get_post_meta( $post_id, 'skmctf_who_can_join', true ) );
+
+		// Now that who_can_join is well-formed and the date matches, the cache
+		// holds again — no further regeneration.
 		$this->assertFalse( $svc->maybe_generate_enhanced( $post_id, array( 'ct_last_update' => '2026-03-10' ) ) );
 	}
 }

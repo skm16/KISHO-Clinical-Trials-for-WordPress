@@ -65,13 +65,21 @@ final class Summary_Service {
 			return false;
 		}
 
+		// The enhanced patient-facing fields have their own change-detection
+		// cache (keyed on study_purpose_source_date). They must be generated
+		// independently of the plain-summary cache: a trial whose summary is
+		// already current would otherwise never get the enhanced fields, since
+		// the summary cache-hit below returns before they could be produced.
+		$enhanced_written = $this->maybe_generate_enhanced( $post_id, $meta );
+
 		$new_date = (string) ( $meta['ct_last_update'] ?? '' );
 		$existing = (string) get_post_meta( $post_id, Trial_Meta::KEYS['plain_summary'], true );
 		$src_date = (string) get_post_meta( $post_id, Trial_Meta::KEYS['plain_summary_source_date'], true );
 
-		// Cache hit: existing summary and date unchanged — skip API call.
+		// Cache hit: existing summary and date unchanged — skip the summary API
+		// call. Still report whether enhanced fields were (re)written above.
 		if ( '' !== $existing && '' !== $new_date && $src_date === $new_date ) {
-			return false;
+			return $enhanced_written;
 		}
 
 		$text = $this->provider->generate_summary(
@@ -84,15 +92,13 @@ final class Summary_Service {
 				'Summary generation failed: ' . $text->get_error_message(),
 				array( 'post' => $post_id )
 			);
-			return false; // Front end unaffected; falls back to raw display.
+			return $enhanced_written; // Front end unaffected; falls back to raw display.
 		}
 
 		$text = Prompt_Builder::enforce_disclaimer( (string) $text );
 
 		update_post_meta( $post_id, Trial_Meta::KEYS['plain_summary'], wp_kses_post( $text ) );
 		update_post_meta( $post_id, Trial_Meta::KEYS['plain_summary_source_date'], $new_date );
-
-		$this->maybe_generate_enhanced( $post_id, $meta );
 
 		return true;
 	}
@@ -117,7 +123,15 @@ final class Summary_Service {
 		$existing = (string) get_post_meta( $post_id, Trial_Meta::KEYS['study_purpose'], true );
 		$src_date = (string) get_post_meta( $post_id, Trial_Meta::KEYS['study_purpose_source_date'], true );
 
-		if ( '' !== $existing && '' !== $new_date && $src_date === $new_date ) {
+		// Self-heal: an earlier plugin version stored who_can_join through a
+		// tag-stripping sanitizer, leaving run-on text with no list markup. Such
+		// rows would otherwise survive the source-date cache forever. Treat a
+		// non-empty who_can_join that lacks <li> markup as stale so a re-sync
+		// regenerates it through the current (HTML-preserving) path.
+		$who_can_join  = (string) get_post_meta( $post_id, Trial_Meta::KEYS['who_can_join'], true );
+		$wcj_malformed = ( '' !== $who_can_join && false === strpos( $who_can_join, '<li>' ) );
+
+		if ( '' !== $existing && '' !== $new_date && $src_date === $new_date && ! $wcj_malformed ) {
 			return false;
 		}
 
