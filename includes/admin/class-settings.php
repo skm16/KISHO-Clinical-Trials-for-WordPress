@@ -51,6 +51,20 @@ final class Settings {
 	 */
 	public const PROVIDERS = array( 'anthropic', 'openai' );
 
+	/**
+	 * Supported front-end themes (skin keys). 'skeleton' = default, no skin class.
+	 *
+	 * @var string[]
+	 */
+	public const VALID_THEMES = array( 'skeleton', 'clinical', 'warm' );
+
+	/**
+	 * Supported appearance modes.
+	 *
+	 * @var string[]
+	 */
+	public const VALID_THEME_MODES = array( 'light', 'dark' );
+
 	// -------------------------------------------------------------------------
 	// Defaults
 	// -------------------------------------------------------------------------
@@ -80,6 +94,8 @@ final class Settings {
 			'index_singles_override' => false,
 			'display_fields'         => array( 'status', 'phase', 'conditions', 'sponsor', 'locations', 'summary' ),
 			'attribution'            => false,
+			'theme'                  => 'skeleton',
+			'theme_mode'             => 'light',
 		);
 	}
 
@@ -172,6 +188,26 @@ final class Settings {
 	public static function provider(): string {
 		$p = (string) self::get( 'provider', 'anthropic' );
 		return in_array( $p, self::PROVIDERS, true ) ? $p : 'anthropic';
+	}
+
+	/**
+	 * Return the active front-end theme key ('skeleton' | 'clinical' | 'warm').
+	 *
+	 * @return string
+	 */
+	public static function theme(): string {
+		$t = (string) self::get( 'theme', 'skeleton' );
+		return in_array( $t, self::VALID_THEMES, true ) ? $t : 'skeleton';
+	}
+
+	/**
+	 * Return the active appearance mode ('light' | 'dark').
+	 *
+	 * @return string
+	 */
+	public static function theme_mode(): string {
+		$m = (string) self::get( 'theme_mode', 'light' );
+		return in_array( $m, self::VALID_THEME_MODES, true ) ? $m : 'light';
 	}
 
 	/**
@@ -419,6 +455,14 @@ final class Settings {
 		// LLM provider (whitelisted).
 		$p               = sanitize_text_field( $input['provider'] ?? 'anthropic' );
 		$out['provider'] = in_array( $p, self::PROVIDERS, true ) ? $p : 'anthropic';
+
+		// Theme (whitelisted).
+		$theme        = sanitize_text_field( $input['theme'] ?? 'skeleton' );
+		$out['theme'] = in_array( $theme, self::VALID_THEMES, true ) ? $theme : 'skeleton';
+
+		// Appearance mode (whitelisted).
+		$mode              = sanitize_text_field( $input['theme_mode'] ?? 'light' );
+		$out['theme_mode'] = in_array( $mode, self::VALID_THEME_MODES, true ) ? $mode : 'light';
 
 		// Model name.
 		$out['model'] = sanitize_text_field( $input['model'] ?? '' );
