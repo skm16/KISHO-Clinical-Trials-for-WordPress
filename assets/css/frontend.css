@@ -1038,3 +1038,158 @@
 		transform: none;
 	}
 }
+
+/* ==========================================================================
+   VIEW TOGGLE (grid / list)
+   ========================================================================== */
+
+.skmctf-view-toggle {
+	display: inline-flex;
+	gap: 2px;
+	margin-block-end: 1rem;
+	padding: 3px;
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+}
+
+.skmctf-view-toggle__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	border: 0;
+	background: transparent;
+	color: var(--muted);
+	font: inherit;
+	font-size: 0.85rem;
+	font-weight: 600;
+	padding: 0.35em 0.8em;
+	border-radius: calc(var(--radius-sm) - 2px);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.skmctf-view-toggle__btn:hover {
+	color: var(--ink);
+}
+
+.skmctf-view-toggle__btn.is-active {
+	background: var(--primary);
+	color: var(--on-primary);
+}
+
+.skmctf-view-toggle__btn:focus-visible {
+	outline: 3px solid var(--primary);
+	outline-offset: 2px;
+}
+
+/* Simple CSS icons (no image requests); recolour with currentColor. */
+.skmctf-view-toggle__icon {
+	width: 14px;
+	height: 14px;
+	flex: none;
+}
+
+.skmctf-view-toggle__icon--grid {
+	background:
+		linear-gradient(currentColor 0 0) 0 0 / 5px 5px no-repeat,
+		linear-gradient(currentColor 0 0) 9px 0 / 5px 5px no-repeat,
+		linear-gradient(currentColor 0 0) 0 9px / 5px 5px no-repeat,
+		linear-gradient(currentColor 0 0) 9px 9px / 5px 5px no-repeat;
+}
+
+.skmctf-view-toggle__icon--list {
+	background:
+		linear-gradient(currentColor 0 0) 0 1px / 14px 2px no-repeat,
+		linear-gradient(currentColor 0 0) 0 6px / 14px 2px no-repeat,
+		linear-gradient(currentColor 0 0) 0 11px / 14px 2px no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.skmctf-view-toggle__btn {
+		transition: none;
+	}
+}
+
+/* ==========================================================================
+   LIST VIEW — compact full-width rows (restyle of the card markup)
+   --------------------------------------------------------------------------
+   Same .skmctf-card / .skmctf-card__* markup as the grid; this modifier turns
+   each card into a horizontal row. Token-driven, so it themes automatically.
+   ========================================================================== */
+
+.skmctf-list--view-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.skmctf-list--view-list .skmctf-card {
+	border-radius: var(--radius);
+}
+
+.skmctf-list--view-list .skmctf-card:hover {
+	transform: none;
+	box-shadow: var(--shadow);
+	border-color: var(--border-strong);
+	background: var(--surface-2);
+}
+
+.skmctf-list--view-list .skmctf-card > article {
+	flex-direction: column;
+	height: auto;
+}
+
+/* Title + status badge share one line. */
+.skmctf-list--view-list .skmctf-card__header {
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	padding: 0.85rem 1.1rem 0;
+}
+
+.skmctf-list--view-list .skmctf-card__title {
+	font-size: 1.02rem;
+}
+
+/* Meta flows inline instead of stacking. */
+.skmctf-list--view-list .skmctf-card__body {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.25rem 1.1rem;
+	padding: 0.5rem 1.1rem 0.85rem;
+}
+
+.skmctf-list--view-list .skmctf-card__phase,
+.skmctf-list--view-list .skmctf-card__conditions,
+.skmctf-list--view-list .skmctf-card__sponsor,
+.skmctf-list--view-list .skmctf-card__locations {
+	margin: 0;
+	font-size: 0.85rem;
+}
+
+/* Summary clamps tighter and spans the full row. */
+.skmctf-list--view-list .skmctf-card__summary {
+	flex: 1 0 100%;
+	margin-block: 0.4rem 0;
+	padding-block-start: 0.5rem;
+	-webkit-line-clamp: 2;
+}
+
+.skmctf-list--view-list .skmctf-card__ctgov-link {
+	margin-block-start: 0.5rem;
+}
+
+.skmctf-list--view-list .skmctf-card__footer {
+	flex: 1 0 100%;
+	margin-block-start: 0.6rem;
+}
+
+@media (max-width: 640px) {
+	.skmctf-list--view-list .skmctf-card__header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
