@@ -24,4 +24,5 @@
 /phpunit-integration.xml.dist export-ignore
 /tests export-ignore
 /docs export-ignore
+/.sdd export-ignore
 /bin export-ignore

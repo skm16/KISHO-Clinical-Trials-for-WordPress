@@ -38,10 +38,19 @@ final class TrialsQueryArgsTest extends TestCase {
 		$this->assertContains( 'trial_phase', $slugs );
 	}
 
-	public function test_state_filter_becomes_meta_query(): void {
-		$args = Trials_Query::args( [ 'state' => 'MA' ] );
-		$this->assertSame( 'skmctf_locations', $args['meta_query'][0]['key'] );
-		$this->assertSame( 'LIKE', $args['meta_query'][0]['compare'] );
+	public function test_state_filter_becomes_tax_query(): void {
+		$args   = Trials_Query::args( [ 'state' => 'MA' ] );
+		$this->assertArrayHasKey( 'tax_query', $args );
+		$slugs = array_column( $args['tax_query'], 'taxonomy' );
+		$this->assertContains( 'trial_state', $slugs );
+		$clause = array_values(
+			array_filter(
+				$args['tax_query'],
+				fn( $c ) => is_array( $c ) && isset( $c['taxonomy'] ) && 'trial_state' === $c['taxonomy']
+			)
+		)[0];
+		$this->assertSame( 'name', $clause['field'] );
+		$this->assertSame( 'MA', $clause['terms'] );
 	}
 
 	public function test_empty_filters_have_no_tax_query(): void {

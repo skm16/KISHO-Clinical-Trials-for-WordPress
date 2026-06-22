@@ -13,10 +13,8 @@
 $_wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ?: '/tmp/wordpress-tests-lib';
 
 if ( ! file_exists( $_wp_tests_dir . '/includes/bootstrap.php' ) ) {
-	die(
-		"WordPress test suite not found at {$_wp_tests_dir}.\n" .
-		"Run bin/install-wp-tests.sh first, or set WP_TESTS_DIR.\n"
-	);
+	fwrite( STDERR, "WordPress test suite not found at {$_wp_tests_dir}.\nRun bin/install-wp-tests.sh first, or set WP_TESTS_DIR.\n" );
+	exit( 1 );
 }
 
 // Hook our plugin into the WP test environment before it boots.

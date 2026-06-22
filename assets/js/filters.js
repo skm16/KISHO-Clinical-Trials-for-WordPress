@@ -52,12 +52,23 @@
 			}
 		} );
 
+		// Submit the form, preferring requestSubmit() so the 'submit' event
+		// fires (and the aria-busy loading state applies). form.submit() does
+		// NOT dispatch the event; it is only the fallback for older browsers.
+		function submitForm() {
+			if ( form.requestSubmit ) {
+				form.requestSubmit();
+			} else {
+				form.submit();
+			}
+		}
+
 		// Debounced auto-submit when the state text input changes.
 		if ( stateInput ) {
 			stateInput.addEventListener(
 				'input',
 				debounce( function () {
-					form.submit();
+					submitForm();
 				}, 600 )
 			);
 		}
@@ -66,7 +77,7 @@
 		var selects = form.querySelectorAll( '.skmctf-filters__select' );
 		for ( var i = 0; i < selects.length; i++ ) {
 			selects[ i ].addEventListener( 'change', function () {
-				form.submit();
+				submitForm();
 			} );
 		}
 	}

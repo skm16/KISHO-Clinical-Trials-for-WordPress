@@ -41,6 +41,11 @@ final class Plugin {
 		add_action( 'init', array( \SKMCTF\Post_Types\Trial_Meta::class, 'register' ) );
 		( new \SKMCTF\Sync\Scheduler() )->register();
 
+		// Invalidate the cached country => states map whenever a trial changes, so
+		// the country-scoped State/Province filter reflects the latest data.
+		add_action( 'save_post_' . \SKMCTF\Post_Types\Trial_Post_Type::POST_TYPE, array( \SKMCTF\Data\Trial_Repository::class, 'flush_states_by_country' ) );
+		add_action( 'deleted_post', array( \SKMCTF\Data\Trial_Repository::class, 'flush_states_by_country' ) );
+
 		// Front-end: shortcode + assets (registered early; assets enqueued lazily by renderer).
 		add_action( 'init', array( \SKMCTF\Frontend\Shortcode::class, 'register' ) );
 		\SKMCTF\Frontend\Assets::register();

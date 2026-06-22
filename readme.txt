@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,11 +128,24 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed: State filter accuracy — state filtering is now exact via a dedicated `trial_state` taxonomy rather than a substring match. The State / Province filter is now a dropdown of the states/provinces actually present in your data (matching the Country filter), so abbreviations like "CT" no longer silently miss the full state name "Connecticut". Run "Sync now" or `Trial_Repository::backfill_state_terms()` to populate state terms for trials imported before this update — the dropdown stays hidden until at least one state term exists.
+* New: The State / Province filter appears after Country and lists only the states/provinces within the selected country (e.g. choosing United States shows US states; choosing Canada shows Canadian provinces). With no country selected it lists all states/provinces. A state that does not belong to the selected country is ignored rather than returning an empty result.
+* Fixed: Map pins now respect the active country/state filter — a multinational trial that matches the filter shows only its locations in the filtered country/state, rather than plotting all of its worldwide sites.
+* Fixed: Clearing a default filter (status, phase, state, or country) now works — resetting a pre-configured filter no longer silently falls back to the default.
+* Fixed: Multiple trial blocks/shortcodes on a single page now render correctly — each map carries its own data and filter-form element IDs are unique per instance instead of colliding. Map data is delivered in a per-instance JSON script element so location names containing quotation marks no longer break the map.
+* Fixed: Multi-phase trials now appear under each of their phase filters (e.g. a "Phase 1/Phase 2" trial shows under both Phase 1 and Phase 2).
+* Fixed: Stale phase and status terms are now cleared when a trial is updated, so a trial no longer keeps terms that no longer apply.
+* Fixed: "Sync now" is guarded against concurrent runs to prevent overlapping syncs.
+* Fixed: Trials in the "Always include" list are now protected from reconciliation removal when an upstream fetch fails.
+* Fixed: Map/geolocation user-facing strings ("Find trials near me", "You are here", etc.) are now translatable.
+* Fixed: The integration-test bootstrap now exits with a non-zero status when the WordPress test suite is missing, instead of reporting a false pass.
+
 = 1.1.0 =
 * Added: Country filter — a new `trial_country` taxonomy is assigned on sync; visitors can filter the trial list by country. A trial matches a country if it has at least one location in that country (multi-country trials appear under each country).
 * Added: Configurable initial map view — set a default latitude, longitude, and zoom level globally (Settings → Clinical Trials Feed) or per block/shortcode (`default_lat`, `default_lng`, `default_zoom`). If unset, the map auto-fits to the displayed trial locations (existing behaviour).
 * Added: Optional client-side geolocation button — enable "Find trials near me" globally or per block/shortcode (`geolocation="1"`). Clicking the button pans the map to the visitor's location using the browser's built-in `navigator.geolocation` API. **Coordinates are never sent to the server or stored.** Requires HTTPS.
-* Note: After upgrading, run "Sync now" or use `Trial_Repository::backfill_country_terms()` (e.g. via WP-CLI) to populate the `trial_country` taxonomy for trials that were imported before this release.
+* Note: After upgrading, run "Sync now" or use `Trial_Repository::backfill_country_terms()` (e.g. via WP-CLI) to populate the `trial_country` taxonomy for trials that were imported before this release. After updating to 1.1.1, also run "Sync now" (which re-upserts everything and now assigns state and split-phase terms) or use `Trial_Repository::backfill_state_terms()` to populate the new `trial_state` taxonomy for previously-imported trials.
 * Note: The geolocation button user-facing strings ("Find trials near me", "Centered on your location", etc.) are English only in v1.1.0. Full i18n of JS strings is planned for a future release.
 
 = 1.0.1 =
@@ -150,6 +163,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 * Full i18n support (.pot included).
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Bug-fix release: exact state filtering via the new `trial_state` taxonomy, fixes for clearing default filters and for multiple trial blocks on one page, multi-phase trials now appear under each phase, stale phase/status terms are cleared on update, "Sync now" is guarded against concurrent runs, and configured included trials are protected from reconciliation on fetch failure. After upgrading, run "Sync now" or `Trial_Repository::backfill_state_terms()` to populate state terms for trials imported before this update.
 
 = 1.1.0 =
 New: country filter, configurable map view, optional client-side geolocation. After upgrading, run "Sync now" (or trigger `Trial_Repository::backfill_country_terms()`) to populate country terms for trials imported before this release. The geolocation button requires HTTPS.

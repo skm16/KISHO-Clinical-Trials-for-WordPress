@@ -13,7 +13,6 @@ namespace SKMCTF\Frontend;
 
 use SKMCTF\Post_Types\Trial_Post_Type;
 use SKMCTF\Post_Types\Trial_Taxonomies;
-use SKMCTF\Post_Types\Trial_Meta;
 
 /**
  * Builds and executes WP_Query args from normalised filter inputs.
@@ -27,7 +26,7 @@ final class Trials_Query {
 	 *   status   (string)  — trial_status taxonomy term name
 	 *   phase    (string)  — trial_phase taxonomy term name
 	 *   country  (string)  — trial_country taxonomy term name
-	 *   state    (string)  — two-letter state abbrev; LIKE search on locations meta
+	 *   state    (string)  — trial_state taxonomy term name; exact match
 	 *   per_page (int)
 	 *   paged    (int)
 	 *
@@ -68,20 +67,16 @@ final class Trials_Query {
 				'terms'    => sanitize_text_field( $filters['country'] ),
 			);
 		}
+		if ( ! empty( $filters['state'] ) ) {
+			$tax[] = array(
+				'taxonomy' => Trial_Taxonomies::STATE,
+				'field'    => 'name',
+				'terms'    => sanitize_text_field( $filters['state'] ),
+			);
+		}
 		if ( $tax ) {
 			$tax['relation']   = 'AND';
 			$args['tax_query'] = $tax; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- intentional filter on a small (rare-disease) dataset; see design spec.
-		}
-
-		// --- Meta filters -------------------------------------------------------
-		if ( ! empty( $filters['state'] ) ) {
-			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- intentional filter on a small (rare-disease) dataset; see design spec.
-				array(
-					'key'     => Trial_Meta::KEYS['locations'],
-					'value'   => sanitize_text_field( $filters['state'] ),
-					'compare' => 'LIKE',
-				),
-			);
 		}
 
 		return $args;

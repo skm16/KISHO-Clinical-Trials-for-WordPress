@@ -34,6 +34,13 @@ final class Trial_Taxonomies {
 	public const COUNTRY = 'trial_country';
 
 	/**
+	 * Taxonomy slug for trial state.
+	 *
+	 * @var string
+	 */
+	public const STATE = 'trial_state';
+
+	/**
 	 * Register both taxonomies with WordPress.
 	 *
 	 * @return void
@@ -43,6 +50,7 @@ final class Trial_Taxonomies {
 			self::STATUS  => __( 'Trial Status', 'kisho-clinical-trials' ),
 			self::PHASE   => __( 'Trial Phase', 'kisho-clinical-trials' ),
 			self::COUNTRY => __( 'Trial Country', 'kisho-clinical-trials' ),
+			self::STATE   => __( 'Trial State', 'kisho-clinical-trials' ),
 		) as $tax => $label ) {
 			register_taxonomy(
 				$tax,

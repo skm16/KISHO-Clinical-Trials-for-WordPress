@@ -11,4 +11,5 @@ phpunit-integration.xml.dist
 package.json
 package-lock.json
 docs/
+.sdd/
 .distignore

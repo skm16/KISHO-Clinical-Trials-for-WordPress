@@ -15,6 +15,7 @@
 namespace SKMCTF\Frontend;
 
 use SKMCTF\Admin\Settings;
+use SKMCTF\Data\Trial_Repository;
 use SKMCTF\Post_Types\Trial_Meta;
 use SKMCTF\Post_Types\Trial_Taxonomies;
 use SKMCTF\Support\Template_Loader;
@@ -64,14 +65,30 @@ final class List_Renderer {
 		// Geolocation: explicit att (any truthy value) OR global setting.
 		$geo = ! empty( $atts['geolocation'] ) || Settings::geolocation_enabled();
 
+		// Distinguish "param absent" (use att default) from "param present but
+		// empty" (honour the cleared filter) via isset() — mirrors the GET reads
+		// above. A bare truthiness check would silently re-apply the att default
+		// when the user selects "All …" / clears the field.
 		$filters = array(
-			'status'   => $get_status ? $get_status : $atts['status'],
-			'phase'    => $get_phase ? $get_phase : $atts['phase'],
-			'state'    => $get_state ? $get_state : $atts['state'],
-			'country'  => $get_country ? $get_country : $atts['country'],
+			'status'   => isset( $_GET['skmctf_status'] ) ? $get_status : $atts['status'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			'phase'    => isset( $_GET['skmctf_phase'] ) ? $get_phase : $atts['phase'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			'state'    => isset( $_GET['skmctf_state'] ) ? $get_state : $atts['state'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			'country'  => isset( $_GET['skmctf_country'] ) ? $get_country : $atts['country'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			'per_page' => absint( $atts['per_page'] ),
 			'paged'    => $get_paged,
 		);
+
+		// Drop a state filter that does not belong to the selected country — e.g.
+		// a stale ?skmctf_state=Connecticut left over when switching to Canada —
+		// so the query never filters to an impossible (empty) result. The form
+		// applies the same rule when rendering its dropdown.
+		if ( '' !== (string) $filters['state'] && '' !== (string) $filters['country'] ) {
+			$states_for_country = ( new Trial_Repository() )->states_by_country();
+			$allowed_states     = $states_for_country[ $filters['country'] ] ?? array();
+			if ( ! in_array( (string) $filters['state'], $allowed_states, true ) ) {
+				$filters['state'] = '';
+			}
+		}
 
 		// --- Query -----------------------------------------------------------
 		$query = Trials_Query::query( $filters );
@@ -93,6 +110,16 @@ final class List_Renderer {
 
 		// --- Collect map points (when map is requested and query has posts) ----
 		$map_points = array();
+
+		// Geographic filters constrain WHICH locations are plotted, not just which
+		// trials match. A multinational trial can match a country/state filter on
+		// the strength of one site; without this, the map would plot all of that
+		// trial's worldwide sites. When a country and/or state filter is active we
+		// plot only the locations matching it, so the map agrees with the filter.
+		// Comparison is case-insensitive and trimmed, mirroring the taxonomy term
+		// match used by Trials_Query. Empty filter => no constraint on that field.
+		$filter_country = isset( $filters['country'] ) ? strtolower( trim( (string) $filters['country'] ) ) : '';
+		$filter_state   = isset( $filters['state'] ) ? strtolower( trim( (string) $filters['state'] ) ) : '';
 
 		if ( $map_requested && $query->have_posts() ) {
 			$location_key = Trial_Meta::KEYS['locations'];
@@ -118,6 +145,21 @@ final class List_Renderer {
 							continue;
 						}
 
+						// Respect the active geographic filter: skip locations that
+						// do not match the filtered country/state.
+						if (
+							'' !== $filter_country &&
+							strtolower( trim( (string) ( $loc['country'] ?? '' ) ) ) !== $filter_country
+						) {
+							continue;
+						}
+						if (
+							'' !== $filter_state &&
+							strtolower( trim( (string) ( $loc['state'] ?? '' ) ) ) !== $filter_state
+						) {
+							continue;
+						}
+
 						$lat = (float) $loc['lat'];
 						$lng = (float) $loc['lng'];
 
@@ -126,7 +168,13 @@ final class List_Renderer {
 							continue;
 						}
 
-						// Build popup label: facility + city, escaped.
+						// Build popup label: facility + city.
+						// NOTE: store the RAW label (sanitised, but NOT HTML-escaped).
+						// map.js inserts it via Node.textContent, which is the XSS
+						// boundary, and the payload travels as JSON. HTML-escaping here
+						// would embed entities (e.g. &#034;) that the browser decodes on
+						// read, corrupting the JSON — so escaping must NOT happen at this
+						// layer.
 						$facility = sanitize_text_field( $loc['facility'] ?? '' );
 						$city     = sanitize_text_field( $loc['city'] ?? '' );
 						$label    = $facility ? $facility : $post_title;
@@ -137,7 +185,7 @@ final class List_Renderer {
 						$map_points[] = array(
 							'lat'   => $lat,
 							'lng'   => $lng,
-							'title' => esc_html( $label ),
+							'title' => $label,
 							'url'   => esc_url( (string) $post_url ),
 						);
 					}
@@ -151,27 +199,63 @@ final class List_Renderer {
 		// Only render map when at least one valid coordinate exists.
 		$show_map = $map_requested && ! empty( $map_points );
 
+		// Per-instance map payload. Each render emits its OWN data so that
+		// multiple map blocks / shortcodes on one page never clobber a shared
+		// global. The bulky, quote-prone data (points, view, i18n) travels in a
+		// dedicated <script type="application/json"> element rather than an HTML
+		// attribute: a JSON string placed in an attribute is corrupted when the
+		// browser entity-decodes it on read (e.g. a facility name containing a
+		// double quote breaks JSON.parse). Script-element text is not subject to
+		// that attribute round-trip, so the JSON survives intact. Only short,
+		// simple strings remain as data-* attributes on the container.
+		$map_uid        = '';
+		$map_data_attrs = '';
+		$map_data_json  = '';
+
 		if ( $show_map ) {
 			Assets::enqueue_map();
+
+			$map_uid = wp_unique_id( 'skmctf-map-' );
 
 			// OSM attribution (required by OpenStreetMap licence).
 			$osm_attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-			wp_localize_script(
-				Assets::MAP_SCRIPT_HANDLE,
-				'skmctfMap',
-				array(
-					'points'      => $map_points,
-					'imagePath'   => SKMCTF_URL . 'assets/lib/leaflet/images/',
-					'attribution' => $osm_attribution,
-					'view'        => array(
-						'lat'  => $default_lat,
-						'lng'  => $default_lng,
-						'zoom' => $default_zoom,
-					),
-					'geolocation' => (bool) $geo,
-				)
+			// Translated geolocation strings handed to map.js (F7). map.js falls
+			// back to identical English literals if any key is missing.
+			$map_i18n = array(
+				'youAreHere'  => __( 'You are here', 'kisho-clinical-trials' ),
+				'centered'    => __( 'Centered on your location.', 'kisho-clinical-trials' ),
+				'unavailable' => __( 'Location unavailable — showing default view.', 'kisho-clinical-trials' ),
+				'noGeo'       => __( 'Location is not available in this browser.', 'kisho-clinical-trials' ),
 			);
+
+			$map_payload = array(
+				'points' => $map_points,
+				'view'   => array(
+					'lat'  => $default_lat,
+					'lng'  => $default_lng,
+					'zoom' => $default_zoom,
+				),
+				'i18n'   => $map_i18n,
+			);
+
+			// Container attributes: only short, entity-safe scalar strings here.
+			$map_data_attrs = ' data-skmctf-map'
+				. ' data-skmctf-data="' . esc_attr( $map_uid ) . '"'
+				. ' data-skmctf-image-path="' . esc_attr( SKMCTF_URL . 'assets/lib/leaflet/images/' ) . '"'
+				. ' data-skmctf-attribution="' . esc_attr( $osm_attribution ) . '"'
+				. ' data-skmctf-geolocation="' . ( $geo ? '1' : '0' ) . '"';
+
+			// JSON payload for this instance, inlined in a JSON script element.
+			// JSON_HEX_TAG|JSON_HEX_AMP escape '<', '>' and '&' to < etc., so a
+			// stray "</script>" (or any markup) inside facility names cannot break
+			// out of the script element — defence-in-depth on top of the JSON
+			// transport. The data is also read with JSON.parse, which is unaffected
+			// by the \uXXXX escaping.
+			$map_data_json = '<script type="application/json" class="skmctf-map-data" id="'
+				. esc_attr( $map_uid ) . '">'
+				. wp_json_encode( $map_payload, JSON_HEX_TAG | JSON_HEX_AMP )
+				. '</script>';
 		}
 
 		// --- Build output ----------------------------------------------------
@@ -196,9 +280,16 @@ final class List_Renderer {
 				echo '</div>';
 			}
 
+			// Per-instance map payload: short scalars live on the container's
+			// data-* attributes ($map_data_attrs, pre-escaped above); the bulky
+			// JSON (points/view/i18n) lives in the adjacent <script> element
+			// ($map_data_json) keyed by $map_uid. Each map block initialises from
+			// its own data, so multiple blocks on a page never collide.
 			echo '<div class="skmctf-map" role="region" aria-label="'
 				. esc_attr__( 'Trial locations map', 'kisho-clinical-trials' )
-				. '"></div>';
+				. '"' . $map_data_attrs . '></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+			echo $map_data_json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- contents are wp_json_encode (HTML-safe) inside a JSON script element; markup is static.
 		}
 
 		if ( ! $query->have_posts() ) {
@@ -346,10 +437,32 @@ final class List_Renderer {
 				'orderby'    => 'name',
 			)
 		);
-
 		$statuses  = is_wp_error( $statuses ) ? array() : (array) $statuses;
 		$phases    = is_wp_error( $phases ) ? array() : (array) $phases;
 		$countries = is_wp_error( $countries ) ? array() : (array) $countries;
+
+		// State/Province options are scoped to the selected country (the map is
+		// derived from location meta, since trial_state terms carry no country).
+		// With no country selected, offer the union of all states/provinces.
+		$states_by_country = ( new Trial_Repository() )->states_by_country();
+		$current_country   = (string) ( $current['country'] ?? '' );
+		if ( '' !== $current_country && isset( $states_by_country[ $current_country ] ) ) {
+			$state_options = $states_by_country[ $current_country ];
+		} else {
+			$all = array();
+			foreach ( $states_by_country as $list ) {
+				foreach ( $list as $s ) {
+					$all[ $s ] = true;
+				}
+			}
+			$state_options = array_keys( $all );
+			sort( $state_options );
+		}
+
+		// Unique per-instance prefix so multiple forms on one page never share
+		// element IDs (which would break label/control association). CSS and JS
+		// target classes, so prefixed IDs are safe.
+		$uid = wp_unique_id( 'skmctf-' );
 		?>
 		<form method="get" class="skmctf-filters" data-skmctf-filters>
 			<fieldset class="skmctf-filters__fieldset">
@@ -359,10 +472,10 @@ final class List_Renderer {
 
 				<?php if ( $statuses ) : ?>
 				<div class="skmctf-filters__group">
-					<label for="skmctf-filter-status" class="skmctf-filters__label">
+					<label for="<?php echo esc_attr( $uid ); ?>-status" class="skmctf-filters__label">
 						<?php esc_html_e( 'Status', 'kisho-clinical-trials' ); ?>
 					</label>
-					<select id="skmctf-filter-status" name="skmctf_status" class="skmctf-filters__select">
+					<select id="<?php echo esc_attr( $uid ); ?>-status" name="skmctf_status" class="skmctf-filters__select">
 						<option value=""><?php esc_html_e( 'All statuses', 'kisho-clinical-trials' ); ?></option>
 						<?php foreach ( $statuses as $term ) : ?>
 							<option value="<?php echo esc_attr( $term->name ); ?>"
@@ -376,10 +489,10 @@ final class List_Renderer {
 
 				<?php if ( $phases ) : ?>
 				<div class="skmctf-filters__group">
-					<label for="skmctf-filter-phase" class="skmctf-filters__label">
+					<label for="<?php echo esc_attr( $uid ); ?>-phase" class="skmctf-filters__label">
 						<?php esc_html_e( 'Phase', 'kisho-clinical-trials' ); ?>
 					</label>
-					<select id="skmctf-filter-phase" name="skmctf_phase" class="skmctf-filters__select">
+					<select id="<?php echo esc_attr( $uid ); ?>-phase" name="skmctf_phase" class="skmctf-filters__select">
 						<option value=""><?php esc_html_e( 'All phases', 'kisho-clinical-trials' ); ?></option>
 						<?php foreach ( $phases as $term ) : ?>
 							<option value="<?php echo esc_attr( $term->name ); ?>"
@@ -391,32 +504,44 @@ final class List_Renderer {
 				</div>
 				<?php endif; ?>
 
-				<div class="skmctf-filters__group">
-					<label for="skmctf-filter-state" class="skmctf-filters__label">
-						<?php esc_html_e( 'State', 'kisho-clinical-trials' ); ?>
-					</label>
-					<input
-						type="text"
-						id="skmctf-filter-state"
-						name="skmctf_state"
-						class="skmctf-filters__input"
-						value="<?php echo esc_attr( $current['state'] ); ?>"
-						placeholder="<?php esc_attr_e( 'e.g. MA', 'kisho-clinical-trials' ); ?>"
-						maxlength="50"
-					/>
-				</div>
-
 				<?php if ( $countries ) : ?>
 				<div class="skmctf-filters__group">
-					<label for="skmctf-filter-country" class="skmctf-filters__label">
+					<label for="<?php echo esc_attr( $uid ); ?>-country" class="skmctf-filters__label">
 						<?php esc_html_e( 'Country', 'kisho-clinical-trials' ); ?>
 					</label>
-					<select id="skmctf-filter-country" name="skmctf_country" class="skmctf-filters__select">
+					<select id="<?php echo esc_attr( $uid ); ?>-country" name="skmctf_country" class="skmctf-filters__select">
 						<option value=""><?php esc_html_e( 'All countries', 'kisho-clinical-trials' ); ?></option>
 						<?php foreach ( $countries as $term ) : ?>
 							<option value="<?php echo esc_attr( $term->name ); ?>"
 								<?php selected( $current['country'], $term->name ); ?>>
 								<?php echo esc_html( $term->name ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<?php endif; ?>
+
+				<?php
+				// State/Province appears AFTER Country and lists only the states /
+				// provinces within the selected country (or the union of all when no
+				// country is chosen). A previously-selected state that is not in the
+				// current option set is treated as "All" so a country switch never
+				// silently filters to an empty result.
+				if ( $state_options ) :
+					$selected_state = in_array( (string) $current['state'], $state_options, true )
+						? (string) $current['state']
+						: '';
+					?>
+				<div class="skmctf-filters__group">
+					<label for="<?php echo esc_attr( $uid ); ?>-state" class="skmctf-filters__label">
+						<?php esc_html_e( 'State / Province', 'kisho-clinical-trials' ); ?>
+					</label>
+					<select id="<?php echo esc_attr( $uid ); ?>-state" name="skmctf_state" class="skmctf-filters__select">
+						<option value=""><?php esc_html_e( 'All states / provinces', 'kisho-clinical-trials' ); ?></option>
+						<?php foreach ( $state_options as $state_name ) : ?>
+							<option value="<?php echo esc_attr( $state_name ); ?>"
+								<?php selected( $selected_state, $state_name ); ?>>
+								<?php echo esc_html( $state_name ); ?>
 							</option>
 						<?php endforeach; ?>
 					</select>
