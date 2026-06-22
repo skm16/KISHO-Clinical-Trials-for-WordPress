@@ -3,7 +3,7 @@
  * Plugin Name:       Clinical Trials Feed
  * Plugin URI:        https://skm.digital/clinical-trials-feed
  * Description:       Pulls condition-relevant trials from ClinicalTrials.gov and displays them on your site, kept fresh automatically, with optional plain-language summaries via your own LLM API key.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            SKM Digital
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SKMCTF_VERSION', '1.2.0' );
+define( 'SKMCTF_VERSION', '1.3.0' );
 define( 'SKMCTF_FILE', __FILE__ );
 define( 'SKMCTF_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SKMCTF_URL', plugin_dir_url( __FILE__ ) );

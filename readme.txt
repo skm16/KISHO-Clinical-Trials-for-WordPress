@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 4. Gutenberg block in the editor sidebar.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: Trials can now be shown as a compact **list** or the **card grid**. Pick the default under Settings → Clinical Trials → Display → Default view; visitors get a grid/list toggle and their choice is remembered in their browser.
 
 = 1.2.0 =
 * New: Two optional, admin-selectable front-end themes — **Clinical** and **Patient-friendly** — each available in light and dark. Choose them under Settings → Clinical Trials → Theme & appearance. The default (**Skeleton**) is unchanged in behavior and now also offers a dark mode.
