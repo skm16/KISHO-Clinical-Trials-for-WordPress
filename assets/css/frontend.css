@@ -132,6 +132,26 @@
 .skmctf-trials-wrap {
 	font-family: var(--font-body);
 	color: var(--ink);
+	/* Centered content measure. Defaults to the common ~1140px content width so
+	   the listing lines up with typical host-theme headers/footers; override per
+	   site with: .skmctf-archive-trials{--skmctf-content-max:1320px}. */
+	--skmctf-content-max: 1140px;
+}
+
+/* Constrain + center the inner content (NOT the <main>, so a themed/dark canvas
+   still spans the full page width while its content stays aligned). The archive
+   delegates to a host-theme <main> that is often full-bleed, so we bound the
+   header and content blocks here. */
+.skmctf-archive-trials__header,
+.skmctf-archive-trials__content {
+	max-width: var(--skmctf-content-max);
+	margin-inline: auto;
+}
+
+/* Block/shortcode wrapper sits inline in post content; bound it directly. */
+.skmctf-trials-wrap {
+	max-width: var(--skmctf-content-max);
+	margin-inline: auto;
 }
 
 /* ---------------------------------------------------------------------------

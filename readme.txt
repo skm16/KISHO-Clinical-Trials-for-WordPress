@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 4. Gutenberg block in the editor sidebar.
 
 == Changelog ==
+
+= 1.3.3 =
+* Fixed: The trials listing ran the full browser width instead of lining up with the site's header and footer. Its content is now centered at a standard ~1140px measure (matching common themes); themed/dark backgrounds still span the full width behind it. Override per site with the `--skmctf-content-max` CSS variable.
 
 = 1.3.2 =
 * Fixed: "Grid view" looked the same as "List view" — a single full-width column — unless the Columns setting was raised to 2 or 3. Grid view is now a responsive multi-column card grid by default (it fits as many columns as the screen allows); the Columns setting still pins an exact count when you want one.
