@@ -17,6 +17,11 @@ if ( ! file_exists( $_wp_tests_dir . '/includes/bootstrap.php' ) ) {
 	exit( 1 );
 }
 
+// Load the test-suite helpers (defines tests_add_filter(), etc.) BEFORE we
+// register any filters. functions.php must be required before bootstrap.php so
+// hooks registered here run when bootstrap.php later boots WordPress.
+require_once $_wp_tests_dir . '/includes/functions.php';
+
 // Hook our plugin into the WP test environment before it boots.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ 'kisho-clinical-trials/kisho-clinical-trials.php' ],

@@ -34,6 +34,11 @@ final class CountingProvider implements Llm_Provider {
 	}
 
 	/**
+	 * Returns the plain summary text, or — when the enhanced JSON prompt is in
+	 * use — a valid enhanced JSON block. Both paths contain 'Generated text.'
+	 * so the plain-summary assertion still holds, while the enhanced parser gets
+	 * non-empty values so its change-detection cache engages like the summary's.
+	 *
 	 * @param string $s System prompt.
 	 * @param string $u User prompt.
 	 * @param array  $o Options.
@@ -41,6 +46,9 @@ final class CountingProvider implements Llm_Provider {
 	 */
 	public function generate_summary( string $s, string $u, array $o = [] ) {
 		$this->calls++;
+		if ( false !== strpos( $s, 'JSON object' ) ) {
+			return '{"study_purpose":"Generated text.","who_can_join":["Adults"],"doctor_questions":["Q1?"]}';
+		}
 		return 'Generated text.';
 	}
 }
@@ -70,22 +78,25 @@ final class SummaryServiceTest extends WP_UnitTestCase {
 		];
 		$id = $this->trial( '2026-03-10' );
 
-		// New post — no existing summary → should generate.
+		// New post — no existing summary → should generate. maybe_generate()
+		// makes two provider calls per generation: one for the plain summary and
+		// one combined call for the enhanced patient-facing fields (study
+		// purpose / who-can-join / doctor questions).
 		$this->assertTrue( $svc->maybe_generate( $id, $meta ) );
-		$this->assertSame( 1, $p->calls );
+		$this->assertSame( 2, $p->calls );
 		$this->assertStringContainsString(
 			'Generated text.',
 			get_post_meta( $id, Trial_Meta::KEYS['plain_summary'], true )
 		);
 
-		// Same date — cache valid → should skip.
+		// Same date — both caches valid → should skip, no further calls.
 		$this->assertFalse( $svc->maybe_generate( $id, $meta ) );
-		$this->assertSame( 1, $p->calls );
+		$this->assertSame( 2, $p->calls );
 
-		// Date advanced → cache stale → should regenerate.
+		// Date advanced → both caches stale → regenerate (two more calls).
 		$meta['ct_last_update'] = '2026-04-01';
 		$this->assertTrue( $svc->maybe_generate( $id, $meta ) );
-		$this->assertSame( 2, $p->calls );
+		$this->assertSame( 4, $p->calls );
 	}
 
 	public function test_null_provider_is_noop(): void {
