@@ -41,6 +41,16 @@ $all_display_fields = array(
 	'locations'  => __( 'Locations', 'kisho-clinical-trials' ),
 	'summary'    => __( 'Summary', 'kisho-clinical-trials' ),
 );
+
+$all_themes = array(
+	'skeleton' => __( 'Skeleton (default)', 'kisho-clinical-trials' ),
+	'clinical' => __( 'Clinical', 'kisho-clinical-trials' ),
+	'warm'     => __( 'Patient-friendly', 'kisho-clinical-trials' ),
+);
+$all_modes  = array(
+	'light' => __( 'Light', 'kisho-clinical-trials' ),
+	'dark'  => __( 'Dark', 'kisho-clinical-trials' ),
+);
 ?>
 <div class="wrap">
 	<h1><?php esc_html_e( 'Clinical Trials Feed', 'kisho-clinical-trials' ); ?></h1>
@@ -234,6 +244,54 @@ $all_display_fields = array(
 								>
 								<?php esc_html_e( 'Show "Data sourced from ClinicalTrials.gov" attribution on trial listings', 'kisho-clinical-trials' ); ?>
 							</label>
+						</td>
+					</tr>
+
+				</table>
+
+				<!-- ── Theme & appearance ──────────────────────────────── -->
+				<h2><?php esc_html_e( 'Theme &amp; appearance', 'kisho-clinical-trials' ); ?></h2>
+				<table class="form-table" role="presentation">
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_theme"><?php esc_html_e( 'Theme', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<select id="skmctf_theme" name="<?php echo esc_attr( Settings::OPTION ); ?>[theme]">
+								<?php foreach ( $all_themes as $theme_key => $theme_label ) : ?>
+									<option
+										value="<?php echo esc_attr( $theme_key ); ?>"
+										<?php selected( $s['theme'], $theme_key ); ?>
+									>
+										<?php echo esc_html( $theme_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">
+								<?php esc_html_e( 'Out-of-the-box look for the trials list and single-trial pages. Skeleton keeps the default styling.', 'kisho-clinical-trials' ); ?>
+							</p>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row">
+							<label for="skmctf_theme_mode"><?php esc_html_e( 'Appearance', 'kisho-clinical-trials' ); ?></label>
+						</th>
+						<td>
+							<select id="skmctf_theme_mode" name="<?php echo esc_attr( Settings::OPTION ); ?>[theme_mode]">
+								<?php foreach ( $all_modes as $mode_key => $mode_label ) : ?>
+									<option
+										value="<?php echo esc_attr( $mode_key ); ?>"
+										<?php selected( $s['theme_mode'], $mode_key ); ?>
+									>
+										<?php echo esc_html( $mode_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">
+								<?php esc_html_e( 'Light or dark appearance. Applies to all themes, including Skeleton.', 'kisho-clinical-trials' ); ?>
+							</p>
 						</td>
 					</tr>
 
