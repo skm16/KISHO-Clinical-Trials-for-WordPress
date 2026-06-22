@@ -71,6 +71,14 @@ get_header();
 
 		<div class="skmctf-trial__body">
 
+			<?php
+			try {
+				include \SKMCTF\Support\Template_Loader::locate( 'parts/study-purpose.php' );
+			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- part missing; skip gracefully
+				// Part missing — skip gracefully.
+			}
+			?>
+
 			<?php if ( $phase ) : ?>
 			<p class="skmctf-trial__phase">
 				<span class="skmctf-trial__label"><?php esc_html_e( 'Phase:', 'kisho-clinical-trials' ); ?></span>
@@ -101,14 +109,6 @@ get_header();
 				<div class="skmctf-trial__summary-content">
 					<?php echo wp_kses_post( $plain_summary ); ?>
 				</div>
-				<?php
-				// Summary disclaimer partial.
-				try {
-					include \SKMCTF\Support\Template_Loader::locate( 'parts/summary-disclaimer.php' );
-				} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- disclaimer template missing; skip gracefully
-					// Disclaimer template missing — skip gracefully.
-				}
-				?>
 			</section>
 			<?php elseif ( ! empty( $brief_summary ) ) : ?>
 			<section class="skmctf-trial__summary skmctf-trial__summary--brief"
@@ -121,6 +121,14 @@ get_header();
 				</p>
 			</section>
 			<?php endif; ?>
+
+			<?php
+			try {
+				include \SKMCTF\Support\Template_Loader::locate( 'parts/who-can-join.php' );
+			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- part missing; skip gracefully
+				// Part missing — skip gracefully.
+			}
+			?>
 
 			<?php
 			// Eligibility partial.
@@ -137,6 +145,14 @@ get_header();
 				include \SKMCTF\Support\Template_Loader::locate( 'parts/locations.php' );
 			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- locations template missing; skip gracefully
 				// Locations template missing — skip gracefully.
+			}
+			?>
+
+			<?php
+			try {
+				include \SKMCTF\Support\Template_Loader::locate( 'parts/questions.php' );
+			} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- part missing; skip gracefully
+				// Part missing — skip gracefully.
 			}
 			?>
 
