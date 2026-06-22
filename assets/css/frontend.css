@@ -384,9 +384,13 @@
 /* ==========================================================================
    TRIAL LIST (grid)
    --------------------------------------------------------------------------
-   The plugin emits the grid on .skmctf-list with .--cols-2 / .--cols-3
-   modifiers (NOT the design's .skmctf-cards). Layout ported here; columns
-   collapse to a single column under ~760px.
+   The plugin emits the grid on .skmctf-list with an explicit view modifier
+   (.--view-grid / .--view-list) and optional .--cols-2 / .--cols-3.
+
+   Grid view is a RESPONSIVE multi-column grid by default (auto-fills as many
+   ~22rem columns as fit), so "Grid view" always reads as a grid even when the
+   admin leaves the column count at its default of 1. Setting columns to 2 or 3
+   pins an exact count and overrides the responsive default.
    ========================================================================== */
 
 .skmctf-list {
@@ -397,6 +401,12 @@
 	gap: 1.25rem;
 }
 
+/* Default grid: as many ~22rem columns as fit; single column on narrow screens. */
+.skmctf-list--view-grid {
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+
+/* Explicit column counts (admin "Columns" control) pin an exact grid. */
 .skmctf-list--cols-2 { grid-template-columns: repeat(2, 1fr); }
 .skmctf-list--cols-3 { grid-template-columns: repeat(3, 1fr); }
 

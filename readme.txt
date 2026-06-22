@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 4. Gutenberg block in the editor sidebar.
 
 == Changelog ==
+
+= 1.3.2 =
+* Fixed: "Grid view" looked the same as "List view" — a single full-width column — unless the Columns setting was raised to 2 or 3. Grid view is now a responsive multi-column card grid by default (it fits as many columns as the screen allows); the Columns setting still pins an exact count when you want one.
 
 = 1.3.1 =
 * Fixed: The grid/list view choice a visitor made in their browser could permanently override the admin's "Default view" setting — once someone viewed the list, they kept getting the list even after the admin set the default back to grid. A remembered choice is now tied to the admin default and is reset whenever the admin changes it.
