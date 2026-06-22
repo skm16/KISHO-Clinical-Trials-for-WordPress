@@ -13,7 +13,6 @@
 namespace SKMCTF\Admin;
 
 use SKMCTF\Support\Logger;
-use SKMCTF\Admin\Cleanup_Controller;
 
 /**
  * Displays sync-result and last-error admin notices on the settings screen.
