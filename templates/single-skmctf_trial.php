@@ -33,6 +33,12 @@ get_header();
 	<?php
 	while ( have_posts() ) :
 		the_post();
+
+		// Populate view variables directly from the post so the template works
+		// on WordPress's single_template path (no external renderer call).
+		// phpcs:disable WordPress.PHP.DontExtract.extract_extract
+		extract( \SKMCTF\Frontend\Single_Renderer::view_data( get_the_ID() ) );
+		// phpcs:enable
 		?>
 
 	<article id="skmctf-trial-<?php echo esc_attr( (string) $post_id ); ?>"
