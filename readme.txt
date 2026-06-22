@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,11 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed: The patient-friendly fields ("What this study is testing", "Who can join", "Questions to ask your doctor") were not generated for trials that already had a plain-language summary, because the summary cache short-circuited before they ran. They are now generated independently of the summary cache, so existing trials get them on the next sync.
+* Fixed: "Who can join" displayed as a run-on line instead of a bulleted list on trials imported before 1.1.2 (the list markup had been removed by an earlier version's sanitizer). These entries now repair themselves automatically on the next sync, and the field is regenerated whenever its stored value is missing its list markup.
+* Developer: The integration test suite is now runnable from a standard checkout — added the `yoast/phpunit-polyfills` dev dependency, fixed the test bootstrap to load the WordPress test helpers before registering hooks, and added a Subversion-free, Windows-aware test installer (`bin/install-wp-tests-git.sh`).
+
 = 1.1.2 =
 * Fixed: Single trial pages now render the full detail (status, conditions, sponsor, summary, eligibility, locations, map) — previously they showed only the title due to a rendering wiring gap.
 * New: Patient-friendly LLM fields on single trial pages — a one-line "What this study is testing", a plain-language "Who can join", and "Questions to ask your doctor". Generated during sync (cached); run "Sync now" to populate them for existing trials. Requires an LLM API key; pages without it show the standard detail.
@@ -168,6 +173,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 * Full i18n support (.pot included).
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+Bug-fix release: the patient-friendly fields now generate for trials that already had a summary, and "Who can join" entries that previously rendered as a run-on line now repair themselves. Run "Sync now" after upgrading to apply both fixes to existing trials.
 
 = 1.1.2 =
 Single trial pages now display the full detail plus three new patient-friendly fields: "What this study is testing", "Who can join", and "Questions to ask your doctor" (LLM-generated when an API key is configured). Locations with many sites now collapse to 10 visible items with a "Show all" toggle. Run "Sync now" after upgrading to populate the LLM fields for existing trials.
