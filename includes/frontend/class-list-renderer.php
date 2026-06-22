@@ -261,7 +261,10 @@ final class List_Renderer {
 		// --- Build output ----------------------------------------------------
 		ob_start();
 
-		echo '<div class="skmctf-trials-wrap">';
+		$skmctf_skin = Theme::skin_class();
+		echo '<div class="skmctf-trials-wrap'
+			. ( '' !== $skmctf_skin ? ' ' . esc_attr( $skmctf_skin ) : '' )
+			. '" ' . Theme::mode_attr() . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- skin class is esc_attr'd; mode_attr() returns a pre-escaped attribute.
 
 		// Filter form — works with or without JS.
 		self::render_filter_form( $filters );

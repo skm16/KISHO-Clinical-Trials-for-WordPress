@@ -29,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 ?>
 
-<main id="main" class="site-main skmctf-single-trial" role="main">
+<main id="main" class="site-main skmctf-single-trial<?php echo \SKMCTF\Frontend\Theme::has_skin() ? ' ' . esc_attr( \SKMCTF\Frontend\Theme::skin_class() ) : ''; ?>" role="main" <?php echo \SKMCTF\Frontend\Theme::mode_attr(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- mode_attr() returns a pre-escaped attribute. ?>>
 	<?php
 	while ( have_posts() ) :
 		the_post();

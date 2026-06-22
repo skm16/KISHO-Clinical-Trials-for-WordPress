@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 ?>
 
-<main id="main" class="site-main skmctf-archive-trials" role="main">
+<main id="main" class="site-main skmctf-archive-trials<?php echo \SKMCTF\Frontend\Theme::has_skin() ? ' ' . esc_attr( \SKMCTF\Frontend\Theme::skin_class() ) : ''; ?>" role="main" <?php echo \SKMCTF\Frontend\Theme::mode_attr(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- mode_attr() returns a pre-escaped attribute. ?>>
 
 	<header class="skmctf-archive-trials__header page-header">
 		<h1 class="skmctf-archive-trials__title page-title">
