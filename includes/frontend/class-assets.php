@@ -20,6 +20,9 @@ final class Assets {
 	public const STYLE_HANDLE  = 'skmctf-frontend';
 	public const SCRIPT_HANDLE = 'skmctf-filters';
 
+	/** Grid/list view toggle script handle. */
+	public const VIEW_TOGGLE_HANDLE = 'skmctf-view-toggle';
+
 	/** Leaflet CSS handle (bundled). */
 	public const LEAFLET_STYLE_HANDLE = 'skmctf-leaflet';
 
@@ -60,6 +63,14 @@ final class Assets {
 		wp_register_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/js/filters.js', SKMCTF_FILE ),
+			array(),
+			SKMCTF_VERSION,
+			true // Load in footer.
+		);
+
+		wp_register_script(
+			self::VIEW_TOGGLE_HANDLE,
+			plugins_url( 'assets/js/view-toggle.js', SKMCTF_FILE ),
 			array(),
 			SKMCTF_VERSION,
 			true // Load in footer.
@@ -124,6 +135,7 @@ final class Assets {
 	public static function enqueue(): void {
 		wp_enqueue_style( self::STYLE_HANDLE );
 		wp_enqueue_script( self::SCRIPT_HANDLE );
+		wp_enqueue_script( self::VIEW_TOGGLE_HANDLE );
 		self::enqueue_theme();
 	}
 
