@@ -63,6 +63,9 @@ final class PromptBuilderTest extends TestCase {
 		$s = strtolower( Prompt_Builder::enhanced_system() );
 		$this->assertStringContainsString( 'json', $s );
 		$this->assertStringContainsString( 'medical advice', $s );
+		$this->assertStringContainsString( 'study_purpose', $s );
+		$this->assertStringContainsString( 'who_can_join', $s );
+		$this->assertStringContainsString( 'doctor_questions', $s );
 	}
 
 	public function test_enhanced_user_includes_criteria(): void {
@@ -74,6 +77,7 @@ final class PromptBuilderTest extends TestCase {
 		) );
 		$this->assertStringContainsString( 'Inclusion: adults.', $u );
 		$this->assertStringContainsString( 'Pompe Disease', $u );
+		$this->assertStringContainsString( 'Studying X.', $u );
 	}
 
 	public function test_parse_enhanced_reads_valid_json(): void {
@@ -95,5 +99,7 @@ final class PromptBuilderTest extends TestCase {
 		$raw = "```json\n{\"study_purpose\":\"P\",\"who_can_join\":[\"A\"],\"doctor_questions\":[\"Q\"]}\n```";
 		$out = Prompt_Builder::parse_enhanced( $raw );
 		$this->assertSame( 'P', $out['study_purpose'] );
+		$this->assertStringContainsString( 'A', $out['who_can_join'] );
+		$this->assertSame( array( 'Q' ), $out['doctor_questions'] );
 	}
 }

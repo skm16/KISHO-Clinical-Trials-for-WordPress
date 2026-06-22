@@ -192,7 +192,7 @@ final class Prompt_Builder {
 		if ( $join_items ) {
 			$join_html = '<ul>';
 			foreach ( $join_items as $li ) {
-				$join_html .= '<li>' . $li . '</li>';
+				$join_html .= '<li>' . esc_html( $li ) . '</li>';
 			}
 			$join_html .= '</ul>';
 		}
