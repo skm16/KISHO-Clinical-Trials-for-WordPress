@@ -23,6 +23,7 @@ defined( 'ABSPATH' ) || exit;
 
 use SKMCTF\Admin\Settings;
 use SKMCTF\Admin\Sync_Now_Controller;
+use SKMCTF\Admin\Cleanup_Controller;
 use SKMCTF\Admin\Settings_Page;
 
 // Convenience shorthands for the arrays stored in $s. Raw values here; each is
@@ -555,6 +556,83 @@ $all_views  = array(
 					);
 					?>
 				</form>
+			</div>
+
+			<!-- ── Maintenance ─────────────────────────────────────────── -->
+			<div class="postbox" style="padding:12px 16px;margin-bottom:16px;">
+				<h3 style="margin-top:0;"><?php esc_html_e( 'Maintenance', 'kisho-clinical-trials' ); ?></h3>
+
+				<p style="margin:0 0 8px;">
+					<?php esc_html_e( 'Remove trials that no longer match your current conditions. This re-checks ClinicalTrials.gov, shows you what would be removed, and only deletes after you confirm.', 'kisho-clinical-trials' ); ?>
+				</p>
+
+				<?php $skmctf_has_conditions = ! empty( Settings::conditions() ); ?>
+
+				<?php if ( ! $skmctf_has_conditions ) : ?>
+					<p style="color:#646970;margin:0;">
+						<?php esc_html_e( 'Add at least one condition to use cleanup.', 'kisho-clinical-trials' ); ?>
+					</p>
+				<?php else : ?>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+						<input type="hidden" name="action" value="<?php echo esc_attr( Cleanup_Controller::ACTION_PREVIEW ); ?>">
+						<?php wp_nonce_field( Cleanup_Controller::ACTION_PREVIEW ); ?>
+						<?php submit_button( __( 'Preview cleanup', 'kisho-clinical-trials' ), 'secondary', 'skmctf_cleanup_preview_btn', false ); ?>
+					</form>
+
+					<?php
+					$skmctf_cleanup  = isset( $_GET['skmctf_cleanup'] ) ? sanitize_key( wp_unslash( $_GET['skmctf_cleanup'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$skmctf_snapshot = get_transient( Cleanup_Controller::TRANSIENT );
+					if ( 'preview' === $skmctf_cleanup && is_array( $skmctf_snapshot ) ) :
+						$skmctf_count = count( $skmctf_snapshot );
+						?>
+						<?php if ( 0 === $skmctf_count ) : ?>
+							<p style="margin:8px 0 0;"><?php esc_html_e( 'No off-condition trials found.', 'kisho-clinical-trials' ); ?></p>
+						<?php else : ?>
+							<p style="margin:8px 0 4px;"><strong>
+								<?php
+								printf(
+									/* translators: %d: number of trials that would be deleted */
+									esc_html( _n( '%d trial would be deleted:', '%d trials would be deleted:', $skmctf_count, 'kisho-clinical-trials' ) ),
+									(int) $skmctf_count
+								);
+								?>
+							</strong></p>
+							<ul style="margin:0 0 8px;max-height:160px;overflow:auto;font-size:12px;">
+								<?php foreach ( array_slice( $skmctf_snapshot, 0, 20 ) as $skmctf_nct ) : ?>
+									<li><?php echo esc_html( $skmctf_nct ); ?></li>
+								<?php endforeach; ?>
+								<?php if ( $skmctf_count > 20 ) : ?>
+									<li>
+										<?php
+										printf(
+											/* translators: %d: number of additional trials not listed */
+											esc_html__( '…and %d more', 'kisho-clinical-trials' ),
+											(int) ( $skmctf_count - 20 )
+										);
+										?>
+									</li>
+								<?php endif; ?>
+							</ul>
+							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
+								onsubmit="return confirm('<?php echo esc_js( __( 'Permanently delete these trials? This cannot be undone.', 'kisho-clinical-trials' ) ); ?>');">
+								<input type="hidden" name="action" value="<?php echo esc_attr( Cleanup_Controller::ACTION_CONFIRM ); ?>">
+								<?php wp_nonce_field( Cleanup_Controller::ACTION_CONFIRM ); ?>
+								<?php
+								submit_button(
+									sprintf(
+										/* translators: %d: number of trials to delete */
+										_n( 'Delete %d trial', 'Delete %d trials', $skmctf_count, 'kisho-clinical-trials' ),
+										(int) $skmctf_count
+									),
+									'delete',
+									'skmctf_cleanup_confirm_btn',
+									false
+								);
+								?>
+							</form>
+						<?php endif; ?>
+					<?php endif; ?>
+				<?php endif; ?>
 			</div>
 
 			<!-- ── SKM Digital card ─────────────────────────────────────── -->

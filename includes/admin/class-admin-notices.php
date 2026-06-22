@@ -66,7 +66,30 @@ final class Admin_Notices {
 			}
 		}
 
-		// ── 2. Persistent last-error warning ────────────────────────────────
+		// ── 2. Cleanup result notices ────────────────────────────────────────
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$skmctf_cleanup = isset( $_GET['skmctf_cleanup'] ) ? sanitize_key( wp_unslash( $_GET['skmctf_cleanup'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$skmctf_clean_n = isset( $_GET['n'] ) ? absint( wp_unslash( $_GET['n'] ) ) : 0;
+		if ( 'done' === $skmctf_cleanup ) {
+			echo '<div class="notice notice-success is-dismissible"><p>';
+			printf(
+				/* translators: %d: number of trials deleted */
+				esc_html( _n( 'Deleted %d off-condition trial.', 'Deleted %d off-condition trials.', $skmctf_clean_n, 'kisho-clinical-trials' ) ),
+				(int) $skmctf_clean_n
+			);
+			echo '</p></div>';
+		} elseif ( 'err' === $skmctf_cleanup ) {
+			echo '<div class="notice notice-error is-dismissible"><p>';
+			echo esc_html__( 'Cleanup preview failed: a ClinicalTrials.gov fetch error occurred. Nothing was deleted. Please try again.', 'kisho-clinical-trials' );
+			echo '</p></div>';
+		} elseif ( 'expired' === $skmctf_cleanup ) {
+			echo '<div class="notice notice-warning is-dismissible"><p>';
+			echo esc_html__( 'The cleanup preview expired. Please run the preview again before deleting.', 'kisho-clinical-trials' );
+			echo '</p></div>';
+		}
+
+		// ── 3. Persistent last-error warning ────────────────────────────────
 		$log        = new Logger();
 		$last_error = $log->last_error();
 

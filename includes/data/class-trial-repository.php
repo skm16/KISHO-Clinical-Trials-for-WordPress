@@ -235,6 +235,25 @@ final class Trial_Repository implements Repo_Interface {
 		}
 	}
 
+	/**
+	 * Permanently delete multiple trials by NCT ID.
+	 *
+	 * @param string[] $ncts NCT IDs to delete.
+	 * @return int Count of trials actually deleted (unknown NCTs are skipped).
+	 */
+	public function delete_by_ncts( array $ncts ): int {
+		$count = 0;
+		foreach ( $ncts as $nct ) {
+			$nct = strtoupper( trim( (string) $nct ) );
+			if ( '' === $nct || ! $this->find_id_by_nct( $nct ) ) {
+				continue;
+			}
+			$this->delete_by_nct( $nct );
+			++$count;
+		}
+		return $count;
+	}
+
 	/** Transient key for the cached country => states map. */
 	private const STATES_BY_COUNTRY_CACHE = 'skmctf_states_by_country';
 

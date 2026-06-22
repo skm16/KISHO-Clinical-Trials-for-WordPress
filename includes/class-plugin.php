@@ -60,6 +60,7 @@ final class Plugin {
 		if ( is_admin() ) {
 			( new \SKMCTF\Admin\Settings_Page() )->register();
 			( new \SKMCTF\Admin\Sync_Now_Controller() )->register();
+			( new \SKMCTF\Admin\Cleanup_Controller() )->register();
 			( new \SKMCTF\Admin\Admin_Notices() )->register();
 		}
 	}

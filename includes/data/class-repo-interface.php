@@ -38,4 +38,12 @@ interface Repo_Interface {
 	 * @return void
 	 */
 	public function delete_by_nct( string $nct ): void;
+
+	/**
+	 * Permanently delete multiple trials by NCT ID.
+	 *
+	 * @param string[] $ncts NCT IDs to delete.
+	 * @return int Count of trials actually deleted (unknown NCTs are skipped).
+	 */
+	public function delete_by_ncts( array $ncts ): int;
 }
