@@ -17,6 +17,7 @@
 
 namespace SKMCTF\Sync;
 
+use SKMCTF\Admin\Settings;
 use SKMCTF\Data\Repo_Interface;
 use SKMCTF\Support\Logger_Interface;
 
@@ -93,6 +94,53 @@ final class Condition_Cleanup {
 		}
 		sort( $off );
 		return $off;
+	}
+
+	/**
+	 * Build a preview of trials that no longer match any configured condition.
+	 *
+	 * Performs a live re-fetch of every configured condition. If ANY condition
+	 * fetch errors, had_error is true and the off_condition list should not be
+	 * acted upon (the controller suppresses the confirm step).
+	 *
+	 * @return array{off_condition:string[],had_error:bool,seen_count:int,stored_count:int}
+	 */
+	public function preview(): array {
+		$conditions = Settings::conditions();
+		$statuses   = Settings::statuses();
+		$includes   = Settings::include_ncts();
+
+		$seen      = array();
+		$had_error = false;
+
+		foreach ( $conditions as $condition ) {
+			$result = $this->client->fetch_all_for_condition( $condition, $statuses );
+
+			if ( null !== $result['error'] ) {
+				$had_error = true;
+				$this->log->warn(
+					'Cleanup preview fetch failed for "' . $condition . '": ' . $result['error']->get_error_message()
+				);
+				continue;
+			}
+
+			foreach ( $result['studies'] as $study ) {
+				$meta = Field_Mapper::map( $study );
+				if ( '' !== $meta['nct_id'] ) {
+					$seen[] = $meta['nct_id'];
+				}
+			}
+		}
+
+		$stored = $this->repo->all_nct_ids();
+		$off    = self::compute_off_condition( $stored, $seen, $includes );
+
+		return array(
+			'off_condition' => $off,
+			'had_error'     => $had_error,
+			'seen_count'    => count( array_unique( $seen ) ),
+			'stored_count'  => count( $stored ),
+		);
 	}
 
 	/**
