@@ -66,8 +66,7 @@ conveyed by text + dot icon, not color alone.
   - `active_theme(): string` (from `Settings::theme()`, validated)
   - `mode(): string` (from `Settings::theme_mode()`, validated)
   - `skin_class(): string` — `''` for skeleton, else `skmctf-skin--clinical` / `skmctf-skin--warm`
-  - `wrapper_attrs(): string` — escaped `data-skmctf-mode="…"` (and any future data attrs, e.g. primary color for the map marker)
-  - `primary_color(): string` — active theme+mode primary hex, for the map marker (replaces the design's hardcoded per-theme value)
+  - `wrapper_attrs(): string` — escaped `data-skmctf-mode="…"`
 - `assets/css/themes/clinical.css` — `.skmctf-skin--clinical { … light tokens … }` + `.skmctf-skin--clinical[data-skmctf-mode="dark"] { … dark tokens … }`
 - `assets/css/themes/warm.css` — same shape for `.skmctf-skin--warm`
 - `assets/css/fonts-clinical.css` — `@font-face` for Public Sans (local woff2)
@@ -85,9 +84,11 @@ conveyed by text + dot icon, not color alone.
   to the `.skmctf-trials-wrap` element.
 - `templates/archive-skmctf_trial.php` — append skin class + mode attr to `<main class="site-main skmctf-archive-trials">`.
 - `templates/single-skmctf_trial.php` — append skin class + mode attr to `<main class="site-main skmctf-single-trial">`.
-- `assets/js/map.js` — read the active theme's primary color from a `data-` attribute (emitted by the
-  renderer via `Theme::primary_color()`) for the marker fill, instead of a hardcoded color. Minimal,
-  additive; falls back to current default if absent.
+- `assets/js/map.js` — **no change.** Trial-location markers are the default Leaflet PNG icons
+  (`L.marker`), which have no fill color to theme, and read fine over dark tiles. Recoloring them would
+  mean swapping to `circleMarker`/`divIcon` — a marker-appearance change for *all* themes, outside the
+  scope of "theming." Map dark mode is therefore pure CSS (tile filter + control styling). This keeps the
+  whole feature PHP + CSS, no JS.
 - `includes/admin/class-settings.php` — add `theme` / `theme_mode` to defaults, constants
   (`VALID_THEMES`, `VALID_THEME_MODES`), getters (`theme()`, `theme_mode()`), and sanitize branches
   (whitelist via `in_array(..., true)`, mirroring `provider`).
@@ -133,8 +134,8 @@ dark block can restyle the surrounding site header/footer/content. This is the c
 "plugin markup only." Dark tokens are **never** declared on `:root`.
 
 ### Map dark mode
-From the design: `[data-skmctf-mode="dark"] .skmctf-map .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.92) saturate(.8); }` plus themed zoom/attribution controls. Marker
-fill = `Theme::primary_color()` passed to `map.js` via a data attribute.
+From the design: `[data-skmctf-mode="dark"] .skmctf-map .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.92) saturate(.8); }` plus themed zoom/attribution controls — all CSS.
+Trial markers are default Leaflet PNG icons and are left as-is (see §4, `map.js` — no change).
 
 ## 6. Admin UX, defaults, error handling
 
