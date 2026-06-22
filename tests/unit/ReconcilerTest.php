@@ -35,6 +35,15 @@ final class FakeRepo implements Repo_Interface {
 	public function delete_by_nct( string $nct ): void {
 		$this->deleted[] = $nct;
 	}
+
+	public function delete_by_ncts( array $ncts ): int {
+		$count = 0;
+		foreach ( $ncts as $nct ) {
+			$this->deleted[] = $nct;
+			++$count;
+		}
+		return $count;
+	}
 }
 
 final class NullLog implements Logger_Interface {

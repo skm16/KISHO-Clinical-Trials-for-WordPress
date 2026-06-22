@@ -17,7 +17,7 @@ use SKMCTF\Post_Types\Trial_Taxonomies;
 /**
  * Single writer of skmctf_trial posts — all inserts and updates go through this class.
  */
-final class Trial_Repository implements Repo_Interface {
+class Trial_Repository implements Repo_Interface {
 
 	/**
 	 * Find a trial post ID by its NCT ID.
@@ -233,6 +233,38 @@ final class Trial_Repository implements Repo_Interface {
 		if ( $id ) {
 			wp_delete_post( $id, true );
 		}
+	}
+
+	/**
+	 * Whether a trial with the given NCT ID exists.
+	 *
+	 * Extracted as a protected seam so delete_by_ncts() can be unit-tested
+	 * without a live database.
+	 *
+	 * @param string $nct NCT ID.
+	 * @return bool
+	 */
+	protected function exists( string $nct ): bool {
+		return (bool) $this->find_id_by_nct( $nct );
+	}
+
+	/**
+	 * Permanently delete multiple trials by NCT ID.
+	 *
+	 * @param string[] $ncts NCT IDs to delete.
+	 * @return int Count of trials actually deleted (unknown NCTs are skipped).
+	 */
+	public function delete_by_ncts( array $ncts ): int {
+		$count = 0;
+		foreach ( $ncts as $nct ) {
+			$nct = strtoupper( trim( (string) $nct ) );
+			if ( '' === $nct || ! $this->exists( $nct ) ) {
+				continue;
+			}
+			$this->delete_by_nct( $nct );
+			++$count;
+		}
+		return $count;
 	}
 
 	/** Transient key for the cached country => states map. */
