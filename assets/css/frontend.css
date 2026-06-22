@@ -134,6 +134,42 @@
 	color: var(--ink);
 }
 
+/* ---------------------------------------------------------------------------
+   Themed canvas.
+   Skeleton in light mode stays transparent so it blends into the host theme
+   exactly as before. But a named skin (clinical / warm) — and ANY dark mode —
+   establishes its own surface, so light ink would otherwise sit on the host's
+   (usually light) page background and become unreadable. In those cases the
+   wrapper paints --bg as its own canvas and adds breathing room. Scoped to the
+   plugin's wrappers only; the host header/footer are never touched.
+   --------------------------------------------------------------------------- */
+.skmctf-skin--clinical,
+.skmctf-skin--warm,
+.skmctf-archive-trials[data-skmctf-mode="dark"],
+.skmctf-single-trial[data-skmctf-mode="dark"],
+.skmctf-trials-wrap[data-skmctf-mode="dark"] {
+	background: var(--bg);
+}
+
+/* The archive/single <main> are full-bleed page regions: give the canvas real
+   padding. The .skmctf-trials-wrap (block/shortcode) is inline within post
+   content, so it gets a lighter, rounded inset instead of full-bleed padding. */
+.skmctf-archive-trials.skmctf-skin--clinical,
+.skmctf-archive-trials.skmctf-skin--warm,
+.skmctf-single-trial.skmctf-skin--clinical,
+.skmctf-single-trial.skmctf-skin--warm,
+.skmctf-archive-trials[data-skmctf-mode="dark"],
+.skmctf-single-trial[data-skmctf-mode="dark"] {
+	padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 4vw, 3rem) clamp(2rem, 4vw, 3rem);
+}
+
+.skmctf-trials-wrap.skmctf-skin--clinical,
+.skmctf-trials-wrap.skmctf-skin--warm,
+.skmctf-trials-wrap[data-skmctf-mode="dark"] {
+	padding: clamp(1rem, 3vw, 1.75rem);
+	border-radius: var(--radius-lg);
+}
+
 /* Shared heading treatment (trial / card / section / archive titles). */
 .skmctf-trial__title,
 .skmctf-trial__section-heading,
