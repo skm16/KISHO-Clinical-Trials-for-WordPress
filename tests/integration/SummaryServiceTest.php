@@ -109,9 +109,11 @@ final class SummaryServiceTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $wrote );
 		$this->assertSame( 'Tests a registry.', get_post_meta( $post_id, 'skmctf_study_purpose', true ) );
-		$this->assertStringContainsString( 'Adults 18+', get_post_meta( $post_id, 'skmctf_who_can_join', true ) );
+		$this->assertStringContainsString( '<li>Adults 18+</li>', get_post_meta( $post_id, 'skmctf_who_can_join', true ) );
 		$this->assertSame( array( 'Am I eligible?', 'What is involved?' ), get_post_meta( $post_id, 'skmctf_doctor_questions', true ) );
 		$this->assertSame( '2026-03-10', get_post_meta( $post_id, 'skmctf_study_purpose_source_date', true ) );
+		$this->assertSame( '2026-03-10', get_post_meta( $post_id, 'skmctf_who_can_join_source_date', true ) );
+		$this->assertSame( '2026-03-10', get_post_meta( $post_id, 'skmctf_doctor_questions_source_date', true ) );
 	}
 
 	public function test_maybe_generate_enhanced_is_cached(): void {

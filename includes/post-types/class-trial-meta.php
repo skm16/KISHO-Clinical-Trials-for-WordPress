@@ -171,7 +171,12 @@ final class Trial_Meta {
 				'show_in_rest'      => true,
 			),
 			$k['study_purpose']                => $text,
-			$k['who_can_join']                 => $text,
+			$k['who_can_join']                 => array(
+				'type'              => 'string',
+				'single'            => true,
+				'sanitize_callback' => 'wp_kses_post',
+				'show_in_rest'      => true,
+			),
 			$k['study_purpose_source_date']    => array(
 				'type'              => 'string',
 				'single'            => true,
