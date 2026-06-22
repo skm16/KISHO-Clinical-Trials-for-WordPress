@@ -65,6 +65,13 @@ final class Settings {
 	 */
 	public const VALID_THEME_MODES = array( 'light', 'dark' );
 
+	/**
+	 * Supported listing view modes.
+	 *
+	 * @var string[]
+	 */
+	public const VALID_VIEWS = array( 'grid', 'list' );
+
 	// -------------------------------------------------------------------------
 	// Defaults
 	// -------------------------------------------------------------------------
@@ -96,6 +103,7 @@ final class Settings {
 			'attribution'            => false,
 			'theme'                  => 'skeleton',
 			'theme_mode'             => 'light',
+			'default_view'           => 'grid',
 		);
 	}
 
@@ -208,6 +216,16 @@ final class Settings {
 	public static function theme_mode(): string {
 		$m = (string) self::get( 'theme_mode', 'light' );
 		return in_array( $m, self::VALID_THEME_MODES, true ) ? $m : 'light';
+	}
+
+	/**
+	 * Return the default listing view ('grid' | 'list').
+	 *
+	 * @return string
+	 */
+	public static function default_view(): string {
+		$v = (string) self::get( 'default_view', 'grid' );
+		return in_array( $v, self::VALID_VIEWS, true ) ? $v : 'grid';
 	}
 
 	/**
@@ -463,6 +481,10 @@ final class Settings {
 		// Appearance mode (whitelisted).
 		$mode              = sanitize_text_field( $input['theme_mode'] ?? 'light' );
 		$out['theme_mode'] = in_array( $mode, self::VALID_THEME_MODES, true ) ? $mode : 'light';
+
+		// Default listing view (whitelisted).
+		$view                = sanitize_text_field( $input['default_view'] ?? 'grid' );
+		$out['default_view'] = in_array( $view, self::VALID_VIEWS, true ) ? $view : 'grid';
 
 		// Model name.
 		$out['model'] = sanitize_text_field( $input['model'] ?? '' );
