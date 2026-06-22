@@ -1,0 +1,43 @@
+/*
+ * Clinical Trials Feed — "Patient-friendly" (warm) theme web fonts.
+ *
+ * Newsreader (headings) + Mulish (body), both SIL Open Font License 1.1,
+ * bundled locally — no external requests, GDPR-safe. Variable fonts: one woff2
+ * per family carries the full weight axis, so each @font-face uses a weight
+ * RANGE. Enqueued only when the Patient-friendly theme is active.
+ *
+ * @package SKMCTF
+ * @license GPL-2.0-or-later
+ */
+
+@font-face {
+	font-family: 'Newsreader';
+	font-style: normal;
+	font-weight: 200 800;
+	font-display: swap;
+	src: url('../fonts/newsreader-variable.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Newsreader';
+	font-style: italic;
+	font-weight: 200 800;
+	font-display: swap;
+	src: url('../fonts/newsreader-italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Mulish';
+	font-style: normal;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../fonts/mulish-variable.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Mulish';
+	font-style: italic;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url('../fonts/mulish-italic.woff2') format('woff2');
+}
