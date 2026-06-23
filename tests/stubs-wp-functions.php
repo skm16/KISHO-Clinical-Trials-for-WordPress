@@ -49,3 +49,9 @@ if ( ! function_exists( 'esc_html' ) ) {
 		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
 	}
 }
+if ( ! function_exists( 'get_option' ) ) {
+	function get_option( $option, $default_value = false ) {
+		// No options store in unit context — always yield the caller's default.
+		return $default_value;
+	}
+}

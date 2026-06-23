@@ -106,9 +106,28 @@ final class Condition_Cleanup {
 	 * @return array{off_condition:string[],had_error:bool,seen_count:int,stored_count:int}
 	 */
 	public function preview(): array {
-		$conditions = Settings::conditions();
+		$conditions = array_values(
+			array_filter(
+				array_map( static fn( $c ) => trim( (string) $c ), Settings::conditions() ),
+				static fn( $c ) => '' !== $c
+			)
+		);
 		$statuses   = Settings::statuses();
 		$includes   = Settings::include_ncts();
+
+		// Hard guard: with no configured conditions the off-condition set math
+		// (stored − seen, where seen would be empty) resolves to (nearly) every
+		// stored trial. Refuse outright so neither a direct admin-post request
+		// nor a future caller can snapshot the whole database for deletion.
+		if ( empty( $conditions ) ) {
+			$this->log->warn( 'Cleanup preview refused: no conditions configured.' );
+			return array(
+				'off_condition' => array(),
+				'had_error'     => true,
+				'seen_count'    => 0,
+				'stored_count'  => count( $this->repo->all_nct_ids() ),
+			);
+		}
 
 		$seen      = array();
 		$had_error = false;
@@ -144,16 +163,40 @@ final class Condition_Cleanup {
 	}
 
 	/**
-	 * Delete the given NCT snapshot.
+	 * Delete the given NCT snapshot, honouring the current always-include list.
+	 *
+	 * The include list is re-read and subtracted here — not only at preview — so
+	 * that an NCT added to "always include" between preview and confirm is never
+	 * deleted, even though the frozen snapshot still lists it. The include list is
+	 * the final authority at delete time.
 	 *
 	 * @param string[] $ncts NCT IDs to delete (typically a previewed snapshot).
 	 * @return int Count of trials actually deleted.
 	 */
 	public function delete( array $ncts ): int {
-		$deleted = $this->repo->delete_by_ncts( $ncts );
+		$includes = array();
+		foreach ( Settings::include_ncts() as $nct ) {
+			$nct = strtoupper( trim( (string) $nct ) );
+			if ( '' !== $nct ) {
+				$includes[ $nct ] = true;
+			}
+		}
+
+		$to_delete = array();
+		foreach ( $ncts as $nct ) {
+			$canon = strtoupper( trim( (string) $nct ) );
+			if ( '' !== $canon && ! isset( $includes[ $canon ] ) ) {
+				$to_delete[] = $canon;
+			}
+		}
+
+		$deleted = $this->repo->delete_by_ncts( $to_delete );
 		$this->log->info(
 			'Off-condition cleanup deleted trials.',
-			array( 'deleted' => $deleted )
+			array(
+				'deleted'  => $deleted,
+				'exempted' => count( $ncts ) - count( $to_delete ),
+			)
 		);
 		return $deleted;
 	}

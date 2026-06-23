@@ -35,9 +35,9 @@ interface Repo_Interface {
 	 * Permanently delete a trial post by NCT ID.
 	 *
 	 * @param string $nct NCT ID of the trial to delete.
-	 * @return void
+	 * @return bool True if a post was found and successfully deleted, false otherwise.
 	 */
-	public function delete_by_nct( string $nct ): void;
+	public function delete_by_nct( string $nct ): bool;
 
 	/**
 	 * Permanently delete multiple trials by NCT ID.

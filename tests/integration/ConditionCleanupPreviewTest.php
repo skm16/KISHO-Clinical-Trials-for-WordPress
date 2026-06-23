@@ -118,4 +118,79 @@ final class ConditionCleanupPreviewTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $preview['had_error'] );
 	}
+
+	public function test_preview_aborts_when_no_conditions_configured(): void {
+		// With zero configured conditions, the off-condition set math would be
+		// `stored − (∅ ∪ includes)` = (nearly) ALL stored trials. preview() must
+		// refuse rather than snapshot the whole database for deletion.
+		update_option(
+			Settings::OPTION,
+			array_merge(
+				(array) get_option( Settings::OPTION, array() ),
+				array(
+					'conditions'   => array(),
+					'statuses'     => array( 'RECRUITING' ),
+					'include_ncts' => array(),
+				)
+			)
+		);
+		$this->seed_trial( 'NCT00000001' );
+		$this->seed_trial( 'NCT00000002' );
+
+		// No HTTP stub: if preview tried to fetch, the test would hit the network.
+		$clean   = new Condition_Cleanup( new Ctgov_Client(), new Trial_Repository(), new Logger() );
+		$preview = $clean->preview();
+
+		$this->assertTrue( $preview['had_error'], 'No configured conditions must abort the preview.' );
+		$this->assertSame( array(), $preview['off_condition'], 'Nothing may be marked off-condition when no conditions are configured.' );
+	}
+
+	public function test_preview_flags_had_error_when_results_are_truncated(): void {
+		update_option(
+			Settings::OPTION,
+			array_merge(
+				(array) get_option( Settings::OPTION, array() ),
+				array(
+					'conditions'   => array( 'HHT' ),
+					'statuses'     => array( 'RECRUITING' ),
+					'include_ncts' => array(),
+				)
+			)
+		);
+		$this->seed_trial( 'NCT00000001' );
+
+		// Every page returns a nextPageToken, so the client never reaches the
+		// natural end and stops at MAX_PAGES with results still pending. A
+		// truncated set must surface as an error, never as a complete fetch —
+		// otherwise cleanup would treat NCT00000001 as off-condition.
+		add_filter(
+			'pre_http_request',
+			static function () {
+				$body = wp_json_encode(
+					array(
+						'studies'       => array(
+							array(
+								'protocolSection' => array(
+									'identificationModule' => array( 'nctId' => 'NCT09999999' ),
+								),
+							),
+						),
+						'nextPageToken' => 'always-more',
+					)
+				);
+				return array(
+					'body'     => $body,
+					'response' => array( 'code' => 200, 'message' => 'OK' ),
+					'headers'  => array(),
+				);
+			},
+			10,
+			3
+		);
+
+		$clean   = new Condition_Cleanup( new Ctgov_Client(), new Trial_Repository(), new Logger() );
+		$preview = $clean->preview();
+
+		$this->assertTrue( $preview['had_error'], 'A truncated fetch must set had_error so the destructive step is suppressed.' );
+	}
 }

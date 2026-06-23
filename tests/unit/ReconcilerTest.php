@@ -32,15 +32,25 @@ final class FakeRepo implements Repo_Interface {
 		$this->closed[] = $nct;
 	}
 
-	public function delete_by_nct( string $nct ): void {
+	public function delete_by_nct( string $nct ): bool {
+		// Model "not found / failed delete": only NCTs in $existing delete successfully.
+		if ( ! in_array( $nct, $this->existing, true ) ) {
+			return false;
+		}
 		$this->deleted[] = $nct;
+		return true;
 	}
 
 	public function delete_by_ncts( array $ncts ): int {
 		$count = 0;
 		foreach ( $ncts as $nct ) {
-			$this->deleted[] = $nct;
-			++$count;
+			$nct = strtoupper( trim( (string) $nct ) );
+			if ( '' === $nct ) {
+				continue;
+			}
+			if ( $this->delete_by_nct( $nct ) ) {
+				++$count;
+			}
 		}
 		return $count;
 	}

@@ -102,6 +102,24 @@ final class Ctgov_Client {
 
 		} while ( $token && $pages < self::MAX_PAGES );
 
+		// If the loop stopped at the page cap while more results remained, the
+		// result set is truncated. Returning it as "complete" would let callers
+		// (e.g. off-condition cleanup) treat unseen-but-valid trials as removable,
+		// so surface this as an error and discard the partial set.
+		if ( $token ) {
+			return array(
+				'studies' => array(),
+				'error'   => new \WP_Error(
+					'skmctf_truncated',
+					sprintf(
+						/* translators: %d: the page cap that was hit */
+						'CT.gov results exceeded the %d-page fetch limit; result set is incomplete.',
+						self::MAX_PAGES
+					)
+				),
+			);
+		}
+
 		return array(
 			'studies' => $studies,
 			'error'   => null,

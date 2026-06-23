@@ -87,6 +87,14 @@ final class Admin_Notices {
 			echo '<div class="notice notice-warning is-dismissible"><p>';
 			echo esc_html__( 'The cleanup preview expired. Please run the preview again before deleting.', 'kisho-clinical-trials' );
 			echo '</p></div>';
+		} elseif ( 'stale' === $skmctf_cleanup ) {
+			echo '<div class="notice notice-warning is-dismissible"><p>';
+			echo esc_html__( 'This cleanup preview is no longer current — it was re-run elsewhere. Nothing was deleted. Please review the latest preview before deleting.', 'kisho-clinical-trials' );
+			echo '</p></div>';
+		} elseif ( 'no_conditions' === $skmctf_cleanup ) {
+			echo '<div class="notice notice-error is-dismissible"><p>';
+			echo esc_html__( 'Cleanup needs at least one configured condition. Add a condition before running cleanup. Nothing was deleted.', 'kisho-clinical-trials' );
+			echo '</p></div>';
 		}
 
 		// ── 3. Persistent last-error warning ────────────────────────────────

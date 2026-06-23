@@ -4,7 +4,7 @@ Tags: clinical trials, rare disease, clinicaltrials.gov, patient advocacy, healt
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,14 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 
 == Changelog ==
 
+= 1.4.1 =
+* Hardening for the off-condition cleanup (no change to its everyday behaviour):
+* Fixed: cleanup now refuses to run when no conditions are configured. Previously, running cleanup with an empty condition list could have flagged every stored trial for removal. It is now blocked on the server, not just hidden in the UI.
+* Fixed: if two admins (or two browser tabs) ran a cleanup preview at the same time, confirming the older one could delete the newer, unreviewed list. Each preview is now tied to the exact list you reviewed; a stale confirmation is refused with a clear notice instead of deleting.
+* Fixed: a very large condition (more than 5,000 matching studies at ClinicalTrials.gov) could be fetched only partially and silently, which risked flagging still-matching trials for deletion. A partial fetch is now treated as an error and the cleanup is suppressed — nothing is deleted.
+* Fixed: an NCT added to "Always include" after a preview but before confirming is now always spared, even if it was still listed in the previewed snapshot.
+* Fixed: the "deleted N trials" notice now counts only trials that were actually removed.
+
 = 1.4.0 =
 * New: "Clean up off-condition trials" maintenance action (Settings → Clinical Trials Feed → Maintenance). After you change your configured conditions, use it to remove trials that no longer match. It re-checks ClinicalTrials.gov, shows exactly what would be deleted, and only removes them after you confirm. Trials in the "Always include" list are never removed. The automatic daily sync is unchanged and still never bulk-deletes on a feed error.
 
@@ -195,6 +203,9 @@ By default the plugin syncs once daily via Action Scheduler. A "Sync now" button
 * Full i18n support (.pot included).
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Recommended hardening for the off-condition cleanup: it now refuses to run with no conditions configured, stale previews are refused, partial ClinicalTrials.gov fetches no longer risk deleting valid trials, and the "Always include" list is honoured right up to the moment you confirm. No action needed; everyday cleanup behaviour is unchanged.
 
 = 1.4.0 =
 New: an explicit, preview-and-confirm "Clean up off-condition trials" action to remove trials left over after a condition change. Find it in Settings → Clinical Trials Feed under Maintenance.

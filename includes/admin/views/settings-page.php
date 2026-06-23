@@ -580,8 +580,10 @@ $all_views  = array(
 					</form>
 
 					<?php
-					$skmctf_cleanup  = isset( $_GET['skmctf_cleanup'] ) ? sanitize_key( wp_unslash( $_GET['skmctf_cleanup'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					$skmctf_snapshot = get_transient( Cleanup_Controller::TRANSIENT );
+					$skmctf_cleanup    = isset( $_GET['skmctf_cleanup'] ) ? sanitize_key( wp_unslash( $_GET['skmctf_cleanup'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$skmctf_snap       = Cleanup_Controller::normalise_snapshot( get_transient( Cleanup_Controller::TRANSIENT ) );
+					$skmctf_snapshot   = null === $skmctf_snap ? null : $skmctf_snap['ncts'];
+					$skmctf_snap_token = null === $skmctf_snap ? '' : $skmctf_snap['token'];
 					if ( 'preview' === $skmctf_cleanup && is_array( $skmctf_snapshot ) ) :
 						$skmctf_count = count( $skmctf_snapshot );
 						?>
@@ -616,6 +618,7 @@ $all_views  = array(
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
 								onsubmit="return confirm('<?php echo esc_js( __( 'Permanently delete these trials? This cannot be undone.', 'kisho-clinical-trials' ) ); ?>');">
 								<input type="hidden" name="action" value="<?php echo esc_attr( Cleanup_Controller::ACTION_CONFIRM ); ?>">
+								<input type="hidden" name="<?php echo esc_attr( Cleanup_Controller::TOKEN_FIELD ); ?>" value="<?php echo esc_attr( $skmctf_snap_token ); ?>">
 								<?php wp_nonce_field( Cleanup_Controller::ACTION_CONFIRM ); ?>
 								<?php
 								submit_button(

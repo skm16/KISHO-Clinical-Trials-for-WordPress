@@ -226,30 +226,34 @@ final class Trial_Repository implements Repo_Interface {
 	 * Permanently delete a trial post by NCT ID.
 	 *
 	 * @param string $nct NCT ID of the trial to delete.
-	 * @return void
+	 * @return bool True if a post was found and successfully deleted, false otherwise.
 	 */
-	public function delete_by_nct( string $nct ): void {
+	public function delete_by_nct( string $nct ): bool {
 		$id = $this->find_id_by_nct( $nct );
-		if ( $id ) {
-			wp_delete_post( $id, true );
+		if ( ! $id ) {
+			return false;
 		}
+		// wp_delete_post() returns the deleted post on success, false on failure.
+		return false !== wp_delete_post( $id, true );
 	}
 
 	/**
 	 * Permanently delete multiple trials by NCT ID.
 	 *
 	 * @param string[] $ncts NCT IDs to delete.
-	 * @return int Count of trials actually deleted (unknown NCTs are skipped).
+	 * @return int Count of trials actually deleted (unknown NCTs and failed
+	 *             deletions are not counted).
 	 */
 	public function delete_by_ncts( array $ncts ): int {
 		$count = 0;
 		foreach ( $ncts as $nct ) {
 			$nct = strtoupper( trim( (string) $nct ) );
-			if ( '' === $nct || ! $this->find_id_by_nct( $nct ) ) {
+			if ( '' === $nct ) {
 				continue;
 			}
-			$this->delete_by_nct( $nct );
-			++$count;
+			if ( $this->delete_by_nct( $nct ) ) {
+				++$count;
+			}
 		}
 		return $count;
 	}

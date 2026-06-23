@@ -10,9 +10,35 @@
 namespace SKMCTF\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Brain\Monkey;
+use Brain\Monkey\Functions;
 use SKMCTF\Sync\Condition_Cleanup;
 
 final class ConditionCleanupTest extends TestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		Monkey\setUp();
+	}
+
+	protected function tearDown(): void {
+		Monkey\tearDown();
+		parent::tearDown();
+	}
+
+	/**
+	 * Make Settings::include_ncts() resolve to the given list by stubbing the
+	 * single option read it ultimately performs.
+	 *
+	 * @param string[] $includes Always-include NCT IDs.
+	 */
+	private function stub_includes( array $includes ): void {
+		Functions\when( 'get_option' )->alias(
+			static function ( $option, $default_value = false ) use ( $includes ) {
+				return array( 'include_ncts' => $includes );
+			}
+		);
+	}
 
 	public function test_off_condition_is_stored_minus_seen_and_includes(): void {
 		$stored   = array( 'NCT00000001', 'NCT00000002', 'NCT00000003', 'NCT00000004' );
@@ -55,6 +81,7 @@ final class ConditionCleanupTest extends TestCase {
 	}
 
 	public function test_delete_delegates_to_repo_and_returns_count(): void {
+		$this->stub_includes( array() );
 		$repo  = new FakeRepo( array( 'NCT00000001', 'NCT00000002' ) );
 		$clean = new Condition_Cleanup( new \SKMCTF\Sync\Ctgov_Client(), $repo, new NullLog() );
 
@@ -62,5 +89,43 @@ final class ConditionCleanupTest extends TestCase {
 
 		$this->assertSame( 2, $deleted );
 		$this->assertSame( array( 'NCT00000001', 'NCT00000002' ), $repo->deleted );
+	}
+
+	public function test_delete_re_subtracts_current_includes(): void {
+		// An NCT added to "always include" after the snapshot was frozen must
+		// survive confirmation, even though it is still in the snapshot.
+		$this->stub_includes( array( 'NCT00000002' ) );
+		$repo  = new FakeRepo( array( 'NCT00000001', 'NCT00000002' ) );
+		$clean = new Condition_Cleanup( new \SKMCTF\Sync\Ctgov_Client(), $repo, new NullLog() );
+
+		$deleted = $clean->delete( array( 'NCT00000001', 'NCT00000002' ) );
+
+		$this->assertSame( 1, $deleted );
+		$this->assertSame( array( 'NCT00000001' ), $repo->deleted );
+	}
+
+	public function test_delete_honours_includes_case_insensitively(): void {
+		// Include list is canonical; snapshot may carry any casing.
+		$this->stub_includes( array( 'nct00000002' ) );
+		$repo  = new FakeRepo( array( 'NCT00000001', 'NCT00000002' ) );
+		$clean = new Condition_Cleanup( new \SKMCTF\Sync\Ctgov_Client(), $repo, new NullLog() );
+
+		$deleted = $clean->delete( array( 'NCT00000001', 'NCT00000002' ) );
+
+		$this->assertSame( 1, $deleted );
+		$this->assertSame( array( 'NCT00000001' ), $repo->deleted );
+	}
+
+	public function test_delete_counts_only_successful_deletions(): void {
+		// Snapshot lists an NCT the repo no longer has (deleted in another tab);
+		// delete_by_ncts must not count it.
+		$this->stub_includes( array() );
+		$repo  = new FakeRepo( array( 'NCT00000001' ) ); // only 1 still exists
+		$clean = new Condition_Cleanup( new \SKMCTF\Sync\Ctgov_Client(), $repo, new NullLog() );
+
+		$deleted = $clean->delete( array( 'NCT00000001', 'NCT00000002' ) );
+
+		$this->assertSame( 1, $deleted );
+		$this->assertSame( array( 'NCT00000001' ), $repo->deleted );
 	}
 }
